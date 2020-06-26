@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <!-- Required meta tags -->
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="icon" type="image/png" href="{{ base_url() }}/img/favicon.ico">
+
+	   <!-- Bootstrap CSS -->
+	   <link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/bootstrap.min.css">
+
+		<!-- Mis estilos css -->
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/estilosPrint.css">
+		<title>{{ titulo }}</title>
+		<style type="text/css">
+			.cellRight {
+			  text-align: right;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<div class="container-fluid">
+				<div class="row justify-content-end">
+					<div class="col-xs-3">
+						<button id="btnImprimir" type="button" class="btn btn-primary mr-1">Imprimir</button>
+						<button id="btnVolver" type="button" class="btn btn-light mr-1">Volver</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<hr>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col pr-5 mb-0 mr-5 mt-3">
+					<p class="text-right mb-0">Fecha Emisión: {{ fecha }}</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col mb-3">
+					<br>
+					<h3 class="text-center" id="titImpGuia"><strong>Clientes que NO están en Guía Reparto</strong></h3>
+					<br>
+				</div>
+			</div> {# end row #}
+
+				<div class="row">
+					<div class="col-2"></div>
+					<div class="col">
+						<table class="table table-striped table-sm">
+							<thead class="thead-dark">
+								<tr>
+									<th scope="col" class="cellRight">Id</th>
+									<th scope="col">Apellido Nombre</th>
+							        <th scope="col">Dirección</th>
+							        <th scope="col">Localidad</th>
+							        <th scope="col">Provincia</th>
+							        <th scope="col">Teléfono</th>
+							        <th scope="col">Celular</th>
+						    	</tr>
+							</thead>
+							<tbody>
+
+								{% for clie in listado %}
+									<tr class="small">
+										<td class="cellRight">{{ clie.Id }}</td>
+										<td>{{ clie.ApellidoNombre }}</td>
+										<td>{{ clie.Direccion }}</td>
+										<td>{{ clie.Localidad }}</td>
+										<td>{{ clie.Provincia }}</td>
+										<td>{{ clie.Telefono }}</td>
+										<td>{{ clie.Celular }}</td>
+									</tr>
+								{% endfor %}
+
+							</tbody>
+						</table>
+
+					</div>
+					<div class="col-2"></div>
+				</div>
+
+		</div>  {# end container #}
+
+		<script src="{{ base_url() }}/js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript">
+			// Codigo jQuery
+			$(document).ready(function(){
+
+				// Para boton volver
+				$('#btnVolver').click( function() {
+			    	window.close();
+			    });
+
+				// Boton Imprimir
+				$('#btnImprimir').click( function() {
+                    window.print();
+				});
+			});
+		</script>
+	</body>
+</html>

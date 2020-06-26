@@ -1,0 +1,201 @@
+{% extends 'base.twig' %}
+
+{% block head %}
+	{{ parent() }}
+
+	<link rel="stylesheet" href="{{ base_url() }}/css/all.css">
+	<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+	<link rel="stylesheet" href="{{ base_url() }}/css/toastr.min.css">
+	<link rel="stylesheet" href="{{ base_url() }}/css/estilosCtasCtes.css?ver=1.1.3">
+
+{% endblock %}	
+
+{% block title %} {{ titulo }} {% endblock %} 
+
+{% block navigation %}
+	{% include 'partes/nav_simple_salir.twig' %}
+{% endblock %}
+
+{% block breadcrumbs %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<nav aria-label="breadcrumb">
+				    <ol class="breadcrumb">
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Cuentas Corrientes</a></li>
+					    <li class="breadcrumb-item active" aria-current="page">Facturación abonos</li>
+				    </ol>
+				</nav>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col" id="guiaReparto">
+				<h2><strong>Facturación abonos</strong></h2>
+
+				<div class="bkgFechaActual">
+					<div class="row">
+						<div class="col-2 offset-3">
+							<p class="pt-1"><u>Fecha facturación</u>:</p>
+						</div>
+						<div class="col-3">
+							    <label class="lblFecha sr-only" for="fechaActual">Actual</label>
+							    <input type="date" class="form-control form-control-sm" id="fechaActual" name="fechaActual" value="{{ fechaActual }}">
+						</div>
+					</div>
+				</div>
+
+        		<div class="row pt-2">
+            		<div class="col-3 d-md-inline-flex">
+                		<p class="pFiltros"><u>Período</u>: &nbsp;</p>
+                		<h4 class="text-center pt-1"><span id="h4Periodo" class="badge badge-warning">{{ periodo }}</span></h4>
+            		</div>
+					<div class="col-1 pt-1 d-md-inline-flex">
+						<p class="text-right mt-1"><u>Consumos</u>:</p>
+					</div>
+					<div class="col-3 pt-1 d-md-inline-flex">
+					    <label class="lblFecha" for="fechaDesde">Desde</label>
+					    <input type="date" class="form-control form-control-sm" id="fechaDesde" name="fechaDesde" value="{{ fechaDesde }}" disabled="true">
+					</div>
+					<div class="col-3 pt-1  d-md-inline-flex">
+					    <label class="lblFecha" for="fechaHasta">Hasta</label>
+					    <input type="date" class="form-control form-control-sm" id="fechaHasta" name="fechaHasta" value="{{ fechaHasta }}" disabled="true">
+					</div>
+				</div>
+
+				<div class="bkgFiltroFecha">
+					<div class="row">
+						<div class="col-3">
+							<p class="pFiltros"><u>Filtro por Guia Rep.</u>:</p>
+						</div>
+						<div class="col-6">
+							<select class="form-control" id="selGuiaReparto">
+								<option value="0">Seleccione guía de reparto</option>
+								{% for guia in guiasRep %}
+									{# <option value="{{ guia.id }}">{{ guia.id }} - {{ guia.diaSem }} - {{ guia.turno }} - {{ guia.empleado }}</option> #}
+									<option value="{{ guia.id }}"><pre>{{ guia.linea }}</pre></option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+				</div>
+
+				{# CLIENTES CON ABONO #}
+				<div class="row">
+					<div class="col mb-2 mt-2">
+						<hr>
+						<p class="pFiltros">Clientes con abono</p>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col">
+
+						<table id="tabClientes" class="table table-bordered table-striped table-hover table-sm">
+							<caption>Clientes con abono</caption>
+							<thead class="thead-dark">
+    							<tr>
+							        <th scope="col" class="text-center">Cliente</th>
+							        <th scope="col" class="anchoDisp">Dispensers</th>
+							        <th scope="col" class="cellRight">Bx12</th>
+							        <th scope="col" class="cellRight">Bx20</th>
+							        <th scope="col" class="cellRight anchoAb">Abono</th>
+							        <th scope="col" class="cellRight">Editar Ab.</th>
+							        <th scope="col" class="text-center">Facturado</th>
+							        <th scope="col" class="text-center" colspan="3">Acciones</th>
+						    	</tr>
+							</thead>
+							<tbody id="tabBody">
+								{# {% include 'forTablaClientesFactAbonos.twig' %} #}
+								<tr>
+									<td></td><td></td><td></td><td></td>
+									<td></td><td></td><td></td><td></td>
+								</tr>
+							</tbody>
+						</table>
+
+						<div class="text-center" id="divSpinner">
+							<strong class="pr-4 pb-2">Cargando datos...</strong>
+							<div class="spinner-border text-info" role="status" aria-hidden="true"></div>
+						</div>
+
+					</div>
+				</div>
+			</div>    {# /.col-11 #guiaReparto #}
+		</div>   {# /row #}
+	</div>	 {# /container #}
+
+	<!-- Modal de cantidades -->
+	<div class="modal fade" id="modalCant" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+	  <div class="modal-dialog modal-dialog-centered" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalCenterTitle">Productos entregados</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+			<div>
+			  <div id="tituloModal" class="alert alert-primary" role="alert">
+  				123 - UGOLINO Alberto
+			  </div>
+			</div>
+			<div class="row">
+			  <div class="col ml-4 mr-4 mt-3">
+				<table class="table table-bordered table-sm">
+	  			  <thead class="thead-dark">
+	    			<tr>
+	      			  <th scope="col">Producto</th>
+	      			  <th scope="col" class="cellRight">Cantidad</th>
+				    </tr>
+	  			  </thead>
+	  			  <tbody id="listaProds">
+	  			  </tbody>
+	  			</table>
+	  		  </div>
+			</div>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	{% block javascript %}
+		{{ parent() }}
+
+		<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+		<script src="{{ base_url() }}/js/jquery.inputmask.bundle.min.js"></script>
+		<script src="{{ base_url() }}/js/toastr.min.js"></script>
+
+		<script type="text/javascript">
+
+			// Variable global
+			var FACTABONO = {
+				// Variables de path
+				productosClie:    "{{ path_for('ctasctes.factabonos.productos') }}",
+				confirmComprob:   "{{ path_for('ctasctes.factabonos.confirmcomprob') }}",
+				resumenDetallado: "{{ path_for('ctasctes.verresumendetallado') }}",
+				clientesGuiaRep:  "{{ path_for('ctasctes.factabonos.clientesguiarep') }}",
+				pathFechaPeriodo: "{{ path_for('ctasctes.factabonos.fechaperiodo') }}",
+				pathClientesAbono: "{{ path_for('ctasctes.factabonos.clientesabono') }}",
+				fechaDesde:       "{{ fechaDesde }}",
+				fechaHasta:       "{{ fechaHasta }}",
+				periodoFac:       "{{  periodo }}",
+				fechaActual:      "{{  fechaActual }}",
+			};
+
+		</script>
+
+		<script src="{{ base_url() }}/js/factabonos.js?ver=1.2.6"></script>
+
+	{% endblock %}
+
+{% endblock %}

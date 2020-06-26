@@ -1,0 +1,105 @@
+{% extends 'base.twig' %}
+
+	{% block head %}
+		{{ parent() }}
+
+		<script src="{{ base_url() }}/css/jquery-confirm.min.css"></script>
+	{% endblock %}	
+
+	{% block title %}{{ titulo }}{% endblock %} 
+
+	{% block navigation %}
+	    {% include 'productos/nav_tipoproducto.twig' %}
+	{% endblock %}
+
+	{% block breadcrumbs %}
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<nav aria-label="breadcrumb">
+					    <ol class="breadcrumb">
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Productos</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('productos.tipodispenser') }}">Tipo dispenser</a></li>
+						    <li class="breadcrumb-item active" aria-current="page" id="accion">{{ accion }}</li>
+					    </ol>
+					</nav>
+				</div>
+			</div>
+			{% include 'partes/flash.twig' %}
+		</div>
+	{% endblock %}
+
+	{% block content %}
+
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-8" id="registrar">
+					<h2 class="text-right">Tipo de dispenser</h2>
+
+					{# Recibe los errores de ValidationErrorsMiddleware #}
+					{# {{ errors | json_encode }} #}
+
+					<form class="needs-validation" action="{{ path_for('productos.tipodispenser') }}" method="post" autocomplete="nope" novalidate>
+
+						<input type="hidden" id="idtipo" name="idtipo" value="">
+
+					    <div class="form-group">
+					        <label for="descripcion">Descripción</label>
+					        <input type="text" class="form-control form-control-sm" id="descripcion" name="descripcion" placeholder="" value="">
+					    </div>
+
+					  	<button id="btnConfirma" type="submit" class="btn btn-primary">Confirma</button>
+					  	<a id="btnCancela" class="btn btn-outline-light" href="{{ path_for('productos.tipodispenser') }}" style="margin-left: 15px;" role="button">Cancela</a>
+
+						{# Para CSRF control #}
+						{{ csrf.field | raw }}
+					</form>
+
+					{% include 'partes/enviando.twig' %}
+
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal -->
+		<div class="modal fade" id="modalBuscar" tabindex="-1" role="dialog" aria-labelledby="modalBuscarTitle" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		        <div class="modal-header">
+		        	<h5 class="modal-title" id="exampleModalCenterTitle"><strong>Buscar Tipo de dispenser</strong></h5>
+		        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          		<span aria-hidden="true">&times;</span>
+		        	</button>
+		        </div>
+		        <div class="modal-body">
+		        	<p>Lista Tipos de dispensers</p>
+					<div>
+		        		<select id="selectTipo" name="selectTipo" class="col-sm-6 form-control form-control-sm">
+							{% for tipo in tipoDispenser %}
+								<option value="{{ tipo.Id }}">{{ tipo.Descripcion }}</option>
+							{% endfor %}
+						</select>
+						<button type="button" id="btnSelecTipo" class="btn btn-primary" style="position: absolute; right: 18px; bottom: 15px;">Selecciona</button>
+			    	</div>
+			    </div>
+		        <div class="modal-footer">
+		        	<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
+		        </div>
+		      </div>
+		    </div>
+		</div>
+
+	{% endblock %}
+
+	{% block javascript %}
+		{{ parent() }}
+
+		<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+		<script>
+			var global_eliminarTipoDisp = "{{ path_for('productos.tipodispenser.elimina') }}";
+			var global_dataTipoDisp = "{{ path_for('productos.datatipodispenser') }}";
+		</script>
+		<script src="{{ base_url() }}/js/tipodispenser.js"></script>
+
+	{% endblock %}

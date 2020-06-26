@@ -1,0 +1,36 @@
+
+					<div class="row">  {# div para acordion domicilios #}
+						<div class="col">
+							<br>
+							<div class="accordion" id="accordionDomicilios">
+
+								{% for dom in otrosDom %}
+
+									<div class="card text-white bg-dark mb-1">
+										<div class="card-header" id="heading{{ loop.index + 1 }}">
+										<h5 class="mb-0">
+											<button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapse{{ loop.index + 1 }}" aria-expanded="false" aria-controls="collapse{{ loop.index + 1 }}">Datos domicilio #{{ loop.index + 1 }}</button>
+										</h5>
+										</div>
+										<div id="collapse{{ loop.index + 1 }}" class="collapse" aria-labelledby="heading{{ loop.index + 1 }}" data-parent="#accordionDomicilios">
+										<div class="card-body">
+											<ul>
+												<li>Id: {{ dom.Id }}</li>
+												<li>Dirección: {{ dom.Direccion }}</li>
+												<li>Localidad: {{ dom.Localidad }}  -  Provincia: {{ dom.Provincia }} ({{ dom.CodPostal }})</li>
+												<li>Teléfono: {{ dom.Telefono }}  -  Celular: {{ dom.Celular }}</li>
+												<li>Contacto: {{ dom.Contacto }}</li>
+											</ul>
+
+										  	<button id="btnEditarDom{{ loop.index + 1 }}" class="btn btn-success btn-sm" data-id="{{ dom.Id }}" data-nro="{{ loop.index + 1 }}">Editar</button>
+										  	<a class="btn btn-danger btn-sm" href="#" style="margin-left: 15px;" role="button" data-id="{{ dom.Id }}" data-nro="{{ loop.index + 1 }}">Eliminar</a>
+										</div>
+										</div>
+									</div>
+
+								{% endfor %}
+
+							</div>  {# /.acordion  #}
+
+						</div>  {# /col/row 2 #}
+				    </div>  {# /row 2 #}

@@ -1,0 +1,155 @@
+{% extends 'base.twig' %}
+
+	{% block head %}
+		{{ parent() }}
+
+		<link rel="stylesheet" href="{{ base_url() }}/css/all.css">
+		<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+
+	{% endblock %}	
+
+	{% block title %}{{ titulo }}{% endblock %} 
+
+	{% block navigation %}
+		<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+	        <a class="navbar-brand" href="#">
+	          <img src="{{ base_url() }}/img/logo-cesarini.png" width="80" height="40" alt="">
+	        </a>
+
+	        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	          <span class="navbar-toggler-icon"></span>
+	        </button>
+
+        	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+            	<ul class="navbar-nav mr-auto">
+				    <li class="nav-item active">
+				        <a class="nav-link" href="{{ path_for('repartos.guiareparto') ~ '?idguia=' ~ idGuia }}">Volver</a>
+				    </li>
+            	</ul>
+            </div>
+        </nav>
+	{% endblock %}
+
+	{% block breadcrumbs %}
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<nav aria-label="breadcrumb">
+					    <ol class="breadcrumb">
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Repartos</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('repartos.guiareparto') ~ '?idguia=' ~ idGuia }}">Guía de reparto</a></li>
+						    <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+					    </ol>
+					</nav>
+				</div>
+			</div>
+		</div>
+	{% endblock %}
+
+	{% block content %}
+		<div class="container" id="guiaReparto">
+			<div class="row align-items-end">
+    			<div class="col-md-12">
+    				<h4>Ver/Agregar productos a: <strong>{{ cliente }}</strong></h4>
+    			</div>
+    		</div>
+
+			<div class="row">
+				<div class="shadow bg-white rounded" id="colProducts">
+
+						<form class="form-inline" id="formProds" action="{{ path_for('repartos.productosacliente') }}" method="post"  autocomplete="off">
+
+							<input type="hidden" id="idclie"  name="idclie"  value="{{ idclie }}">
+							<input type="hidden" id="id"      name="id"      value="{{ id }}">
+							<input type="hidden" id="iddom"   name="iddom"   value="{{ iddom }}">
+							<input type="hidden" id="nomclie" name="nomclie" value="{{ cliente }}">
+							<input type="hidden" id="idGuia"  name="idGuia"  value="{{ idGuia }}">
+
+							<label for="selectProductos" class="col-sm-1 col-form-label col-form-label-sm">Productos:</label>
+
+					        <select id="selectProducto" name="selectProducto" class="col-sm-4 form-control form-control-sm">
+					            <option value='0' selected>Seleccione un producto...</option>
+					            {% for key, producto in productos %}
+
+					            	{# <option value="{{ loop.index }}">{{ producto }}</option> #}
+									<option value="{{ key }}">{{ producto }}</option>
+
+								{% endfor %}
+					        </select>
+
+							<label for="cantProduct" class="col-sm-2 col-form-label col-form-label-sm justify-content-end">Cantidad:</label>
+  								<input name="cantProduct" type="text" class="form-control form-control-sm col-sm-1 text-right" id="cantProduct">
+
+							<button id="btnAgregarProd" type="submit" class="btn btn-primary sm-4" disabled><i class="fas fa-plus"></i>&nbsp; Agregar</button>
+
+							{# Para CSRF control #}
+							{{ csrf.field | raw }}
+
+						</form>
+				</div>
+			</div>
+
+		{# Lista con productos del cliente #}
+
+			<div class="row tablaDetalleVisitas">
+				<div class="col-md-2"></div>
+				<div class="col-md-8">
+					<h5 class="text-left text-dark"><strong>Productos del cliente</strong></h5>
+
+					<table class="table table-sm table-hover" id="tableCantProdClie">
+					    <thead class="thead-dark">
+						    <tr>
+						    	<th>#</th>
+						        <th class="text-center">Código Producto</th>
+						        <th>Descripción</th>
+						        <th class="text-right">Cantidad</th>
+						    </tr>
+					    </thead>
+					    <tbody>
+					    	{% if productosCli %}
+
+					    		{# loop por cada linea del total reparto - id="tablaId" #}
+								{% for producto in productosCli %}
+								    <tr>
+										<td>{{ producto.codprod1 }}</td>
+								        <td class="text-center">{{ producto.codprod2 }}</td>
+								        <td>{{ producto.descrip }}</td>
+								        <td class="text-right">{{ producto.cantidad }}</td>
+								    </tr>
+					    		{% endfor %}
+
+
+					    	{% endif %}
+					  </tbody>
+					</table>
+				</div>  {# end col-md-8 #}
+				<div class="col-md-2"></div>
+			</div>	{# end row #}
+
+			<div class="row">
+				<div class="col-sm-2 offset-sm-10">
+					<br>
+					<button id="btnVolverProd" type="button" class="btn btn-success sm-4">&nbsp; Volver &nbsp;<i class="fas fa-level-up-alt"></i>&nbsp;</button>
+				</div>
+			</div>
+
+
+    	</div>  {# Final container #}
+
+	{% endblock %}
+
+	{% block javascript %}
+		{{ parent() }}
+
+		<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+
+		<script type="text/javascript">
+			var _pathModCantProd = "{{ path_for('repartos.modifcantproducto') }}";
+			var _pathGuiaReparto = "{{ path_for('repartos.guiareparto') }}";
+
+		</script>
+		<script src="{{ base_url() }}/js/enterXtab.js"></script>
+		<script src="{{ base_url() }}/js/productosacliente.js"></script>
+
+	{% endblock %}

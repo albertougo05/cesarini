@@ -1,0 +1,29 @@
+{# Modal empleados - Común para Empleados y MovimientoDispenser #}
+
+		<!-- Modal -->
+		<div class="modal fade" id="modalEmpleados" tabindex="-1" role="dialog" aria-labelledby="modalEmpleadosTitle" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		        <div class="modal-header">
+		        	<h5 class="modal-title" id="exampleModalCenterTitle"><strong>Buscar Empleado</strong></h5>
+		        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          		<span aria-hidden="true">&times;</span>
+		        	</button>
+		        </div>
+		        <div class="modal-body">
+		        	<p>Lista de Empleados</p>
+					<div>
+		        		<select id="selectEmpleado" name="selectEmpleado" class="col-sm-6 form-control form-control-sm">
+							{% for empleado in empleados %}
+								<option value="{{ empleado.Id }}">{{ empleado.ApellidoNombre }}</option>
+							{% endfor %}
+						</select>
+						<button type="button" id="btnSelecEmp" class="btn btn-primary" style="position: absolute; right: 18px; bottom: 15px;">Selecciona</button>
+			    	</div>
+			    </div>
+		        <div class="modal-footer">
+		        	<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
+		        </div>
+		      </div>
+		    </div>
+		</div>

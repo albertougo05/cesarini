@@ -1,0 +1,50 @@
+{# Modal buscar cliente #}
+
+		<!-- Modal -->
+		<div class="modal fade" id="modalBuscaClie" tabindex="-1" role="dialog" aria-labelledby="modalBuscaClie" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		    <div class="modal-content">
+		        <div class="modal-header">
+		        	<h5 class="modal-title" id="exampleModalCenterTitle"><strong>Buscar Cliente</strong></h5>
+		        	<button id="btnXxModBusCli" type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          		<span aria-hidden="true">&times;</span>
+		        	</button>
+		        </div>
+		        <div class="modal-body" id="filter-container">
+		    		<div class="row">
+		    			<div class="col-md-6 offset-md-3">
+		    				<input id="filter" class="form-control form-control-sm" type="text" placeholder="Buscar apellido..." autofocus>
+		  				</div>
+					</div>
+					<br />
+					<div class="row">
+						<div class="col-md-10 offset-md-1">
+							<table class="table table-sm table-hover" id="tablaBuscarCli">
+				                <thead class="thead-dark">
+				                  <tr>
+				                    <th scope="col">#</th>
+				                    <th scope="col">Apellido Nombre</th>
+				                    <th scope="col">Dirección</th>
+				                    <th scope="col">Localidad</th>
+				                  </tr>
+				                </thead>
+				                <tbody>
+				                    {% for cliente in clientes %}
+				    					<tr>
+				        				    <td>{{ cliente.Id }}</td>
+				      					    <td class="filter-cell">{{ cliente.ApellidoNombre }}</td>
+				      					    <td>{{ cliente.Direccion }}</td>
+				                            <td>{{ cliente.Localidad }}</td>
+				                        </tr>
+				                    {% endfor %}
+				                </tbody>
+				            </table>
+						</div>    {# /col #}
+					</div>    {# /row #}
+			    </div>
+		        <div class="modal-footer">
+		        	<button id="btnCerrModBusCli" type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
+		        </div>
+		      </div>
+		    </div>
+		</div>

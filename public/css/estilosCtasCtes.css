@@ -1,0 +1,103 @@
+
+/* Estilos páginas de Cuentas Corrientes */
+
+.lblFecha {
+	padding-top: 3px;
+	margin-right: 10px;
+}
+.bkgFiltroFecha {
+	margin: 20px 0px 13px;
+	padding: 20px 0px 15px;
+	background: #E7E8E9;
+	border-radius: 5px; 
+}
+.bkgFechaActual {
+	margin: 20px 0px 13px;
+	padding: 20px 0px 10px;
+	background: #E7E8E9;
+	border-radius: 5px; 
+}
+.pFiltros {
+	display: inline;
+	margin-right: 10px;
+	padding-top: 8px;
+	padding-left: 20px;
+}
+.bkgBuscarCli {
+	margin-top: 25px;
+}
+#btnGenList {
+	color: white;
+	margin-top: 10px;
+}
+#btnCliPorCodigo {
+	width: 100px;
+}
+#selectEmpleado {
+	margin-left: 10px;
+}
+.selectFact {
+	width:auto !important;
+}
+.rowFechaComp {
+	margin-bottom: 5px;
+	margin-top: 25px;
+}
+#mensComprobGen {
+	display: none;
+	width: 400px;
+	position: absolute;
+	left: 20%;
+	right: 20%;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #007BFF;
+	color: white;
+	z-index: 10; 
+}
+.celInputAbono {
+	width: 100px; 
+	float: right;
+	height: 23px; 
+}
+#alertSuccess {
+	display: none;
+	width: 400px;
+	position: absolute;
+	left: 30%;
+	right: 30%;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #218838 ;
+	color: white;
+	z-index: 10; 
+}
+#divSpinner {
+	margin-top: 20px;
+	/*display: none;*/
+}
+table#tabClientes {
+  table-layout: auto;
+  width: 100%;
+}
+
+th {   /* Crea el sticky para titulos de tabla clientes con abono */
+  position: sticky;
+  top: 68px;
+}
+
+.anchoAb {
+	width: 10%;
+}
+
+.anchoDisp {
+	width: 10%;
+}
+
+tbody#tabBody {
+	font-size: 0.9em;
+}
+
+.pFiltroFecha {
+	margin-left: 16px;
+}

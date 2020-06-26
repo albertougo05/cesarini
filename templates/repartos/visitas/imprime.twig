@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <!-- Required meta tags -->
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="icon" type="image/png" href="{{ base_url() }}/img/favicon.ico">
+
+	   <!-- Bootstrap CSS -->
+	   <link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/bootstrap.min.css">
+
+		<!-- Mis estilos css -->
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/estilosPrint.css">
+		<title>{{ titulo }}</title>
+		<style type="text/css">
+			.cardVisitas {
+			  background: rgba(236, 236, 236, 0.95);
+			  border-radius: 3px;
+			  padding: 10px;
+			  margin: 20px 20px auto;
+			}
+			hr.hrMovDisp {
+			  border: 0.5px solid black;
+			  margin-top: 10px;
+			}
+			.dataMovDisp {
+			  color: black;
+			  background: rgba(236, 236, 236, 0.95);
+			  border-radius: 3px;
+			  padding-top: 1%;
+			  padding-left: 20px;
+			  position: relative;
+			  right: 10px;
+			}
+			.cellRight {
+			  text-align: right;
+			}
+			body {
+				font-size: 100%;
+			}
+			#tabClies {
+				font-size: 0.875em;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<div class="container-fluid">
+				<div class="row justify-content-end">
+					<div class="col-xs-3">
+						<button id="btnImprimir" type="button" class="btn btn-primary">Imprimir</button>
+						<button id="btnVolver" type="button" class="btn btn-light mr-1">Volver</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<hr>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col pr-5 mb-0 mr-5 mt-3">
+					<p class="text-right mb-0">Fecha emisión: {{ fecha }}</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col mb-4">
+					<h3 class="text-center" id="titImpGuia"><strong>Visita a clientes</strong></h3>
+				</div>
+			</div> {# end row #}
+
+			<div class="row">
+				<div class="col-1"></div>
+				<div class="col">
+					<table class="table table-sm mb-0">
+						<caption>Observaciones: {{ dataGuia.observac }}</caption>
+					  	<thead class="thead-dark">
+						    <tr>
+						      	<th class="cellRight">ID</th>
+						      	<th class="text-center">Fecha</th>
+						      	<th>Dia semana / Turno</th>
+						      	<th>Salida</th>
+						      	<th>Retorno</th>
+						      	<th>Repartidor</th>
+						    </tr>
+					  	</thead>
+					 	<tbody>
+						    <tr>
+							    <th class="cellRight">{{ dataGuia.idvisita }}</th>
+							    <td class="text-center">{{ dataGuia.fechavisita|date('d/m/Y', timezone="America/Buenos_Aires") }}</td>
+							    <th>{{ dataGuia.dia }} / {{ dataGuia.turno }}</th>
+							    <td>{{ dataGuia.salida[:5] }}</td>
+							    <td>{{ dataGuia.retorno[:5] }}</td>
+							    <td><strong>{{ dataGuia.idempl }} - {{ dataGuia.nombreempl }}</strong></td>
+						    </tr>
+						    <tr>
+						    	<td></td>
+						    	<td></td>
+						    	<td></td>
+						    	<td></td>
+						    	<td></td>
+						    	<td></td>
+						    </tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="col-1"></div>
+			</div>
+
+			<div class="row">
+				<div class="col-1"></div>
+				<div class="col text-right">
+					<hr>
+					<p class="font-weight-bold pr-4">Total entregas: $ {{ dataGuia.entregas|number_format(2, ',', '.') }}</p>
+					<hr>
+				</div>
+				<div class="col-1"></div>
+			</div>
+
+			<div class="row ml-4 mr-4">
+				<div class="col-2"></div>
+				<div class="col mt-2">
+					<h5>Detalle movimiento productos</h5>
+				</div>
+			</div>
+			<div class="row ml-4 mr-4">
+				<div class="col-2"></div>
+				<div class="col">
+					<table class="table table-sm">
+					  	<thead class="thead-light">
+					    	<tr>
+						      <th class="cellRight">Id</th>
+						      <th scope="col">Producto</th>
+						      <th class="cellRight">Retira</th>
+						      <th class="cellRight">Devuelve</th>
+						      <th class="cellRight">Venta</th>
+						      <th class="cellRight">Envases</th>
+					    	</tr>
+					  	</thead>
+					  	<tbody>
+							{% for producto in productos %}
+								<tr>
+									<td class="cellRight">{{ producto.idprod }}</td>
+									<td>{{ producto.producto }}</td>
+									<td class="cellRight">{{ producto.prodretira }}</td>
+									<td class="cellRight">{{ producto.proddevuelve }}</td>
+									<td class="cellRight">{{ producto.proddejado }}</td>
+									<td class="cellRight">{{ producto.prodrecupera }}</td>
+								</tr>
+							{% endfor %}
+						    <tr>
+						    	<td></td>
+						    	<td></td>
+						    	<td></td>
+						    	<td></td>
+						    	<td></td>
+						    </tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="col-2"></div>
+			</div>
+
+			<div class="row">
+				<div class="col-1"></div>
+				<div class="col">
+					<br>
+					<h5>Detalle clientes a visitar</h5>
+				</div>
+			</div>
+
+			{# TABLA CLIENTES #}
+			<div class="row">
+				<div class="col-1"></div>
+				<div class="col">
+					<table id="tabClies" class="table table-striped table-bordered table-sm">
+						<caption><small>Productos dejados/recuperados en clientes. Cobranzas</small></caption>
+						<thead class="thead-dark">
+							<tr>
+						        <!-- <th scope="col">Id</th> -->
+						        <th scope="col">Cliente</th>
+						        <!-- <th class="text-center">Orden</th> -->
+						        <th scope="col" style="width: 140px;">Producto</th>
+						        <th scope="col" class="cellRight" style="width: 60px;">Stk.Env</th>
+						        <th scope="col" class="cellRight" style="width: 65px;">Venta</th>
+						        <th scope="col" class="cellRight" style="width: 65px;">Envases</th>
+						        <th scope="col" class="cellRight" style="width: 65px;">FacVenc</th>
+								<th scope="col" class="cellRight">Saldo CtaCte</th>
+								<th scope="col" class="cellRight">Entrega</th>
+					    	</tr>
+						</thead>
+						<tbody>
+							{% for datcli in dataClie %}
+								<tr>
+									<!-- <td>{{ datcli.idclie }}</td> -->
+									<td>{{ datcli.cliente }} <small>{{ datcli.domicilio }}</small></td>
+									<!-- <td class="text-center">{{ datcli.orden }}</td> -->
+									<td>{{ datcli.producto }}</td>
+									<td class="cellRight">
+										{% if datcli.idprod != 0 %}
+											{{ (datcli.stockenv == 0) ? '' : datcli.stockenv }}
+										{% endif %}
+									</td>									
+									<td class="cellRight">
+										{% if datcli.idprod != 0 %}
+											{{ datcli.cantidad }}
+										{% endif %}
+									</td>
+									<td class="cellRight">
+										{% if datcli.idprod != 0 %}
+											{{ datcli.retira }}
+										{% endif %}
+									</td>
+									<td></td>
+									<td class="cellRight">
+										{{ (datcli.saldo == 0) ? '' : datcli.saldo | number_format(2, ',', '.') }}
+									</td>
+									<td class="cellRight">
+										{{ (datcli.entrega == 0) ? '' : datcli.entrega | number_format(2, ',', '.') }}
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				<div class="col-1"></div>
+			</div>
+
+			<div class="row">
+				<div class="col-1"></div>
+				<div class="col">
+					<h5>Detalle movimiento dispenser</h5>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-1"></div>
+				<div class="col">
+					<table id="tabDispenser" class="table table-sm table-striped table-bordered">
+						<caption><small>Dispensers dejados a cliente</small></caption>
+							<thead class="thead-dark">
+						    <tr>
+						      	<th scope="col">#</th>
+						      	<th scope="col">Nro. Int.</th>
+						      	<th scope="col">Modelo</th>
+						      	<th scope="col">Cliente</th>
+						      	<th scope="col">Dirección</th>
+						      	<th></th> {# Para boton Borrar #}
+						    </tr>
+						</thead>
+						<tbody>
+							{% for disp in dataDisp %}
+								<tr>
+									<td class="text-right">{{ loop.index }}</td>
+									<td>{{ disp.nroint }}</td>
+									<td>{{ disp.modelo }}</td>
+									<td>{{ disp.client }}</td>
+									<td>{{ disp.direcc }}</td>
+								</tr>
+							{% endfor %}
+							{# Podría borrar un movimiento si lo ha ingresado nuevo. NO uno ya cargado #}
+						</tbody>
+					</table>
+				</div>
+				<div class="col-1"></div>
+			</div>
+
+		</div>  {# end container #}
+
+		<script src="{{ base_url() }}/js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript">
+			// Codigo jQuery
+			$(document).ready(function(){
+
+				// Para boton volver
+				$('#btnVolver').click( function() {
+			    	window.close();
+			    });
+
+				// Boton Imprimir
+				$('#btnImprimir').click( function() {
+                    window.print();
+				});
+			});
+		</script>
+	</body>
+</html>

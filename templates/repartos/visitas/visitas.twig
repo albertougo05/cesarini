@@ -1,0 +1,481 @@
+{% extends 'base.twig' %}
+
+	{% block head %}
+		{{ parent() }}
+
+		<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+		<link rel="stylesheet" href="{{ base_url() }}/css/visitas.css">
+		<link rel="stylesheet" href="{{ base_url() }}/css/typeahead.css">
+		<link rel="stylesheet" href="{{ base_url() }}/css/table-scroll.css">
+
+	{% endblock %}	
+
+	{% block title %}{{ titulo }}{% endblock %} 
+
+	{% block navigation %}
+		{% include 'repartos/visitas/nav_visitas.twig' %}
+	{% endblock %}
+
+	{% block breadcrumbs %}
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<nav aria-label="breadcrumb">
+					    <ol class="breadcrumb">
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Repartos</a></li>
+						    <li class="breadcrumb-item"><a href="#">Visitas</a></li>
+						    <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+					    </ol>
+					</nav>
+				</div>
+			</div>
+			{% include 'partes/flash.twig' %}
+		</div>
+	{% endblock %}
+
+	{% block content %}
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col" id="guiaReparto">
+					<h2 class="text-right" style="margin-bottom: 18px;"><strong>Visita a clientes</strong></h2>
+
+					<div class="row">
+
+				    	{# GUIA REPARTO #}						
+						<div class="col cardVisitas ml-3">
+							<h5 style="display: inline;">Guía Reparto</h5>
+							<button type="button" class="d-inline float-right btn btn-success btn-sm" id="btnBuscarGuiaRep" style="margin-bottom: 10px;"{{ (editable) ? ' disabled' : '' }}>Buscar Guía Reparto</button>
+							<hr class="hrMovDisp">
+							{% if dataGuia.idguia > 0 %}
+								<p class="dataGuiaRep" id="idGuiaRep" data-idGuiaRep= "{{ dataGuia.idguia }}"><strong>{{ dataGuia.idguia }} - {{ dataGuia.dia }} ({{ dataGuia.turno }}) | {{ dataGuia.actividad }}</strong></p>
+								<p class="mt-0 pl-2">Sale: {{ dataGuia.salida|date('H:i', timezone="America/Buenos_Aires") }} - Retorna: {{ dataGuia.retorno|date('H:i', timezone="America/Buenos_Aires") }}</p>
+						    {% endif %}							
+						</div>
+						<div class="col-1"></div>
+
+						{# EMPLEADO #}						
+						<div class="col cardVisitas mr-3">
+							<h5 style="display: inline;">Repartidor</h5>
+							<button type="button" class="d-inline float-right btn btn-success btn-sm" id="btnBuscarEmp" style="margin-bottom: 10px;"{{ ( editable and dataGuia.pendiente ) ? '' : ' disabled' }}>Buscar empleado</button>
+							<hr class="hrMovDisp">
+							<p class="nomEmpleado" id="nombreEmpleado" data-idEmpl= "{{ dataGuia.idempl }}"><strong>{{ dataGuia.idempl }} - {{ dataGuia.nombreempl }}</strong></p>
+						</div>
+					</div> 
+
+					<div class="row">
+						<div class="col">
+							<hr>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col">
+
+						{# FORM VISITA + PRODUCTOS #}
+							<form id="dataVisita" action="{{ path_for('repartos.visitas.guardar') }}" method="POST">
+
+								<input type="hidden" id="idvisita"  name="idvisita"  value="{{ dataGuia.idvisita }}">
+								<input type="hidden" id="idguiarep" name="idguiarep" value="{{ dataGuia.idguia }}">
+								<input type="hidden" id="idemplead" name="idemplead" value="{{ dataGuia.idempl }}">
+
+								<div class="form-row">
+									<div class="form-group col-1"></div>
+									<div class="form-group col-1">
+											<label for="id" >&nbsp;&nbsp; ID</label>
+	  										<input type="text" class="form-control form-control-sm text-center text-white bg-dark" id="id" name="id" value="{{ dataGuia.idvisita }}" disabled>
+									</div>									
+									<div class="form-group col-3">
+									   	<label class="float-right" for="fechavisita">Fecha &nbsp;</label>
+									   	<input type="date" class="form-control form-control-sm" id="fechavisita" name="fechavisita" value="{{ dataGuia.fechavisita }}">
+									</div>
+									<div class="form-group col-2">
+										<label class="float-right" for="horaSalida">Salida &nbsp;</label>
+	  									<input type="text" class="form-control form-control-sm" id="horaSalida" name="horaSalida" value="{{ dataGuia.salida[:5] }}">
+									</div>
+									<div class="form-group col-2">
+										<label class="float-right" for="horaRetorno">Retorno &nbsp;</label>
+	  									<input type="text" class="form-control form-control-sm" id="horaRetorno" name="horaRetorno" value="{{ dataGuia.retorno[:5] }}">
+									</div>
+									<div class="form-group col-2 pt-4 pl-5">
+										<div class="custom-control custom-checkbox">
+  											<input type="hidden" id="pendiente" name="pendiente" value="{{ dataGuia.pendiente }}">
+  											<input type="checkbox" class="custom-control-input" id="chkPend" name="chkPend"{{ (dataGuia.pendiente) ? ' checked' : '' }}>
+  											<label class="custom-control-label" for="chkPend">Pendiente</label>
+										</div>
+									</div>
+									{# Para CSRF control #}
+									{# {{ csrf.field | raw }} #}
+								</div>
+	                       		{# <button type="button" class="d-inline btn btn-info btn-sm" id="btnData">Guardar datos</button> #}
+
+							</form> {# Final de form visitas #}
+						</div>
+					</div>
+
+				{# OBSERVACIONES #}
+					<div class="row">
+						<div class="col mt-1">
+							<form id="dataObserv">
+  								<div class="form-group row mb-0">
+    								<label for="observ" class="col-2 col-form-label text-right">Observaciones</label>
+    								<div class="col-md-9">
+    									<input type="text" id="observ" name="observ" class="form-control form-control-sm" value="{{ dataGuia.observac }}">
+    								</div>
+    							</div>
+							</form>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col">
+							<hr>
+						</div>
+					</div>
+
+					<div class="row mb-1">
+						<div class="col float-right">
+							<button type="button" class="d-inline btn btn-outline-secondary btn-sm" id="btnCancelarVisita">Cancelar</button>
+							<button type="button" class="d-inline btn btn-primary btn-sm" id="btnGuardarVisita"{{ ( productos and dataGuia.pendiente ) ? '' : ' disabled' }}>Guardar visita</button>
+							<button type="button" class="d-inline btn btn-info btn-sm" id="btnImprimirVisita"{{ (accion == 'Nueva') ? ' disabled' : '' }}>Imprimir</button>
+						</div>
+					</div>
+
+					<div class="row">
+						<div id="alertGuardar" class="alert col-12 text-center" role="alert">
+						  	<strong>Hecho !!</strong>&nbsp;&nbsp; Visita guardada con éxito.
+						</div>
+
+						{% include 'partes/enviando.twig' %}
+					</div>
+
+				{# MOVIMIENTOS DE PRODUCTOS #}
+					<div class="cardMovDisp">
+						<div class="row">
+							<div class="col">
+								<h5 style="display: inline;">Detalle movimiento productos</h5>
+								<hr class="hrMovDisp mt-1">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col ml-4 mr-4">
+								<form id="dataProds">
+									<table id="divProductos" class="table table-sm">
+	  									<thead class="thead-light">
+										    <tr>
+										      	<th style="width: 10%"></th>
+										      	<th style="width: 50%"></th>
+										      	<th class="text-right" style="width: 10%">Retirado</th>
+										      	<th class="text-right" style="width: 10%">Devuelto</th>
+										      	<th class="text-right" style="width: 10%">Venta</th>
+										      	<th class="text-right" style="width: 10%">Envases</th>
+										    </tr>
+										</thead>
+										<tbody>
+											{% for producto in productos %}
+												<tr>
+													<td class="text-center">{{ producto.idprod }}</td>
+													<td class="font-weight-bold">{{ producto.producto }}</td>
+													<td>
+														<input onkeyup="VISITAS._onKeyUpRetira(this);" type="text" class="form-control form-control-sm cellRight numero inputCantsProds" name="reti-{{ producto.idprod }}" value="{{ producto.prodretira }}"{{ (dataGuia.pendiente) ? '' : 'disabled' }}>
+
+														<input type="hidden" name="prodRet-{{ producto.idprod }}" value="{{ producto.prodretira }}">
+													</td>
+													<td>
+		  												<input type="text" class="form-control form-control-sm cellRight numero inputCantsProds" name="devu-{{ producto.idprod }}" value="{{ producto.proddevuelve }}" disabled="true">
+
+		  												<input type="hidden" name="prodDev-{{ producto.idprod }}" value="{{ producto.proddevuelve }}">
+													</td>
+													<td>
+		  												<input type="text" class="form-control form-control-sm cellRight numero inputCantsProds" name="dejado-{{ producto.idprod }}" value="{{ producto.proddejado }}" disabled="true">
+													</td>
+													<td>
+		  												<input type="text" class="form-control form-control-sm cellRight numero inputCantsProds" name="recu-{{ producto.idprod }}" value="{{ producto.prodrecupera }}" disabled="true">
+
+		  												<input type="hidden" name="prodRecu-{{ producto.idprod }}" value="{{ producto.prodrecupera }}">
+													</td>
+												</tr>
+											{% endfor %}
+										</tbody>
+									</table>
+									<input type="hidden" id="idvisita2" name="idvisita2" value="{{ dataGuia.idvisita }}">
+								</form>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-6 ml-4">
+								<button type="button" class="btn btn-success btn-sm" id="btnRecalSumsProds"{{ ( editable and dataGuia.pendiente ) ? '' : ' disabled' }}>Recalcular sumas</button>
+							</div>
+							<div class="col-6"></div>
+						</div>
+
+						<div class="row">
+							<div class="col">
+								<div id="alertRecalcula" class="alert col-12 text-center" role="alert">
+								  	&nbsp;&nbsp;Sumas actualizadas !!&nbsp;&nbsp;
+								</div>								
+							</div>
+						</div>
+
+					</div>
+
+					{# SUMA DE ENTREGAS #}
+					<div class="row">
+						<div class="col">
+							<div id="divSumaEntr" class="text-right mt-3">
+								<p class="font-weight-bold pr-2" id="sumaEntregas">Suma de entregas: $ {{ dataGuia.entregas|number_format(2, ',', '.') }}</p>
+							</div>
+							<hr>
+						</div>
+					</div>
+
+					{# PRODUCTOS DE CLIENTES #}
+					<div class="row">
+						<div class="col mb-2">
+							<h5 style="display: inline;">Detalle productos a clientes</h5>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col">
+							{# FORM CANTIDADES CLIENTES #}
+			  				<form id="formProdClie">								
+
+								<table id="tabClientes" class="table table-striped table-sm">
+									<caption>Productos a dejar en cliente</caption>
+									<thead class="thead-dark">
+		    							<tr>
+									        <th scope="col">Id</th>
+									        <th scope="col">Cliente (Domicilio)</th>
+									        <th scope="col text-center">Ord.</th>
+									        <th scope="col">Producto</th>
+									         <th scope="col">Stk.Env</th>
+									        {% if accion == 'Nueva' %}
+									        	<th scope="col" class="cellRight">Suger.</th>
+									        {% endif %}
+									        <th scope="col" class="cellRight">Venta</th>
+									        <th scope="col" class="cellRight">Envas</th>
+									        <th scope="col" class="cellRight">Saldo CC</th>
+									        <th scope="col" class="cellRight">Entrega</th>
+									        <th scope="col" class="cellRight">Débito</th>
+								    	</tr>
+									</thead>
+									<tbody>
+		  								{% for datcli in dataClie %}
+				    						<tr>
+
+												<td>{{ datcli.idclie }}
+
+												{# INPUT HIDDEN PARA 'idereg' #}
+												<input type="hidden" name="idreg_{{ datcli.idclie }}x{{ datcli.iddomic }}_{{ datcli.idprod }}o{{ datcli.orden }}" value="{{ datcli.idreg }}">
+
+												</td>
+
+												<td class="celClieDom">{{ datcli.cliente }} <small>{{ datcli.domicilio }}</small></td>
+												<td class="celOrden">{{ datcli.orden }}</td>
+												<td class="celProducto">{{ datcli.producto }}</td>
+
+												<td class="cellRight">{{ (datcli.stockenv == 0) ? '' : datcli.stockenv }}</td>
+												{% if datcli.idprod != 0 %}
+													<input type="hidden" name="stock_{{ datcli.idclie }}x{{ datcli.iddomic }}_{{ datcli.idprod }}o{{ datcli.orden }}" value="{{ datcli.stockenv }}">
+												{% endif %}
+
+												{% if accion == 'Nueva' %}
+													<td class="cellRight">{{ datcli.cantsuge }}</td>
+												{% endif %}
+
+												<td>
+													{% if datcli.idprod != 0 %}
+														<input onkeyup="VISITAS._onkeyupDeja(this);" name="deja_{{ datcli.idclie }}x{{ datcli.iddomic }}_{{ datcli.idprod }}o{{ datcli.orden }}" class="form-control form-control-sm cellRight numero celInputCant" type="text" value="{{ datcli.cantidad }}"{{ (dataGuia.pendiente) ? '' : 'disabled' }}>
+													{% endif %}
+												</td>
+												<td>
+													{% if datcli.idprod != 0 %}
+														<input onkeyup="VISITAS._onKeyUpEnv(this);" name="ret_{{ datcli.idclie }}x{{ datcli.iddomic }}_{{ datcli.idprod }}o{{ datcli.orden }}" class="form-control form-control-sm cellRight numero celInputCant" type="text" value="{{ datcli.retira }}"{{ (dataGuia.pendiente) ? '' : 'disabled' }}>
+													{% endif %}
+												</td>
+												<td>
+													<input onfocusout="VISITAS._onFocusOut(this, 'sald');" name="saldo_{{ datcli.idclie }}x{{ datcli.iddomic }}_{{ datcli.idprod }}o{{ datcli.orden }}" class="form-control form-control-sm celInputSaldo nroFloat" type="text" value="{{ datcli.saldo }}"{{ (dataGuia.pendiente) ? '' : 'disabled' }}>
+												</td>
+												<td>
+													<input onfocusout="VISITAS._onFocusOut(this, 'entr');" name="entr_{{ datcli.idclie }}x{{ datcli.iddomic }}_{{ datcli.idprod }}o{{ datcli.orden }}" class="form-control form-control-sm celInputEntr nroFloat" type="text" value="{{ datcli.entrega }}"{{ (dataGuia.pendiente) ? '' : 'disabled' }}>
+												</td>
+												<td>
+													<input onfocusout="VISITAS._onFocusOut(this, 'debi');" name="debi_{{ datcli.idclie }}x{{ datcli.iddomic }}_{{ datcli.idprod }}o{{ datcli.orden }}" class="form-control form-control-sm celInputEntr nroFloat" type="text" value="{{ datcli.debito }}"{{ (dataGuia.pendiente) ? '' : 'disabled' }}>
+												</td>
+
+{# Usar css font-awesome.min.css
+												<td class="text-center pl-0 pr-0">
+													<button type="button" id="btnElimCli" data-idcli="{{ datcli.idclie }}" data-nomcli="{{ datcli.cliente }}" data-iddom="{{ datcli.iddomic }}" data-idprod="{{ datcli.idprod }}" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="right" title="Borrar"><i class="fa fa-trash" aria-hidden="true"></i></button>
+										        </td>
+#}
+		    								</tr>
+				    					{% endfor %}
+		    						</tbody>
+								</table>
+
+		    					<input type="hidden" id="idvisita3" name="idvisita3" value="{{ dataGuia.idvisita }}">
+						    	{# Para CSRF control #}
+						    	{{ csrf.field | raw }} 
+						    	{# <button type="submit" class="d-inline btn btn-primary btn-sm" id="btnGuardarClies"{{ (dataClie) ? '' : "disabled='true'" }}>Guardar Clientes</button> #}
+							</form>
+
+						</div>
+					</div>
+					<div class="row">
+						<div class="col">  {# {{ (dataGuia.pendiente) ? '' : 'disabled' }} #}
+							<button type="button" class="btn btn-success btn-sm" id="btnAgregarCli"{{ ( editable and dataGuia.pendiente ) ? '' : ' disabled' }}>Agregar cliente</button>
+							<hr class="mt-1">
+						</div>
+					</div>
+
+					{# MOVIMIENTO DE DISPENSERS #}
+					<div class="cardMovDisp">
+						<div class="row">
+							<div class="col">
+								<h5 style="display: inline;">Detalle movimiento dispenser</h5>
+								<hr class="hrMovDisp mt-1">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col ml-4 mr-4">
+
+								<table id="tabDispenser" class="table table-sm">
+									<caption>Movimiento dispenser a cliente</caption>
+  									<thead class="thead-dark">
+									    <tr>
+									      	<th scope="col">#</th>
+									      	<th scope="col">Nro. Int.</th>
+									      	<th scope="col">Modelo</th>
+									      	<th scope="col">Cliente</th>
+									      	<th scope="col">Dirección</th>
+									      	<th scope="col">Estado</th>
+									      	<th></th> {# Para boton Borrar #}
+									    </tr>
+									</thead>
+									<tbody>
+										{% for disp in dataDisp %}
+											<tr>
+												<td>{{ loop.index }}</td>
+												<td>{{ disp.nroint }}</td>
+												<td>{{ disp.modelo }}</td>
+												<td>{{ disp.client }}</td>
+												<td>{{ disp.direcc }}</td>
+												<td>{{ disp.estado }}</td>
+												<td></td>
+											</tr>
+										{% endfor %}
+										{# Podría borrar un movimiento si lo ha ingresado nuevo. NO uno ya cargado #}
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col"> 
+								<button type="button" class="btn btn-success btn-sm" id="btnAgregaDisp" style="margin-bottom: 10px;"{{ ( editable and dataGuia.pendiente ) ? '' : ' disabled' }}>Agregar mov. dispenser</button>
+							</div>
+						</div>
+					</div>
+
+				</div> {# /div id="guiaReparto" #}
+			</div>  {# /row justify-content-center #}
+		</div>  {# /container #}
+
+		{% include 'partes/modalEmpleados.twig' %}
+		{% include 'repartos/visitas/modalBuscarVisita.twig' %}
+		{% include 'repartos/visitas/modalAgregarClieVisita.twig' %}
+		{% include 'repartos/visitas/modalAgregaMovDispVisita.twig' %}
+
+	{% endblock %}
+
+	{% block javascript %}
+		{{ parent() }}
+
+		<script src="{{ base_url() }}/js/typeahead.bundle.min.js"></script>
+		<script src="{{ base_url() }}/js/jquery.inputmask.bundle.min.js"></script>
+		<script src="{{ base_url() }}/js/jquery.tableFilter.js"></script>
+		<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+
+		<script type="text/javascript">
+			// Variable globales, contiene variables y funciones
+			var VISITAS = {
+				nivelUsuario:      "{{ nivelUser  }}",
+				pathVisitas:       "{{ path_for('repartos.visitas') }}",
+				pathVisitaConId:   "{{ path_for('repartos.visitas.conidvisita') }}",
+				pathBuscarGuiaRep: "{{ path_for('repartos.buscarguiarep') }}",
+				pathEliminar:      "{{ path_for('repartos.visitas.eliminar') }}",
+				pathImprimir:      "{{ path_for('repartos.visitas.imprimir') }}",
+				pathCliente:       "{{ path_for('repartos.visitas.cliente') }}",
+				pathListaVisitas:  "{{ path_for('repartos.visitas.listado') }}",
+				pathSaldoActual:   "{{ path_for('ctasctes.saldoactual') }}",
+				pathDispEnStock:   "{{ path_for('productos.dispenser.enstock') }}",
+				pathDispsDeClie:   "{{ path_for('productos.dispenser.decliente') }}",
+				pathStockEnvases:  "{{ path_for('productos.stockenvases') }}",
+				hayClientes:       "{{ (dataClie) ? 1 : 0 }}",
+				ultimOrden:        parseInt("{{ ultimOrd }}") || 0,
+				accion:            "{{ accion }}",
+				prodsDeClies:      [],
+				productos:         [],
+				movimdisp:         [],
+				// Para envio de form Visitas completa
+				salvaForm:         false,
+			};
+
+			// Array de clientes con productos. Cargo cantidades
+			var obj = {};
+			{% for datcli in dataClie %}
+				obj.idreg = "{{ datcli.idreg }}";
+				obj.idpro = "{{ datcli.idprod }}";
+				obj.produ = "{{ datcli.producto }}";
+				obj.idcli = "{{ datcli.idclie }}";
+				obj.iddom = "{{ datcli.iddomic }}";
+				obj.clien = "{{ datcli.cliente }}";
+				obj.orden = parseFloat( "{{ datcli.orden }}" ) || 0;
+				obj.stock = parseFloat( "{{ datcli.stockenv }}" ) || 0;
+				obj.suger = parseInt( "{{ datcli.cantsuge }}" ) || 0;
+				obj.deja  = parseInt( "{{ datcli.cantidad }}" ) || 0;
+				obj.recu  = parseInt( "{{ datcli.retira }}" ) || 0;
+				obj.saldo = parseFloat( "{{ datcli.saldo }}" ) || 0;
+				obj.entr  = parseFloat( "{{ datcli.entrega }}" ) || 0;
+				obj.debit = parseFloat( "{{ datcli.debito }}" ) || 0;
+				VISITAS.prodsDeClies.push( obj );
+				obj = {};
+			{% endfor %}
+
+			// Array de productos (para controlar retirado y devuelto)
+			obj = {};
+			{% for prod in productos %}
+				obj.id = "{{ prod.idprod }}";
+				obj.retira = parseInt( "{{ prod.prodretira }}" ) || 0;
+				obj.devuel = parseInt( "{{ prod.proddevuelve }}" ) || 0;
+				obj.dejado = parseInt( "{{ prod.proddejado }}" ) || 0;
+				obj.envase = parseInt( "{{ prod.prodrecupera }}" ) || 0;
+				VISITAS.productos.push( obj );
+				obj = {};
+			{% endfor %}
+
+			// Array de Movimientos dispensers
+			obj = {};
+			{% for movim in dataDisp %}
+				obj.idmov  = parseInt("{{ movim.idmov }}");
+				obj.iddisp = parseInt("{{ movim.iddisp }}");
+				obj.nroint = "{{ movim.nroint }}";
+				obj.modelo = "{{ movim.modelo }}";
+				obj.idclie = parseInt("{{ movim.idclie }}");
+				obj.iddomi = parseInt("{{ movim.iddomi }}");
+				obj.client = "{{ movim.client }}";
+				obj.direcc = "{{ movim.direcc }}";
+				obj.observ = "{{ movim.observ }}";
+				obj.estado = "{{ movim.estado }}";
+				VISITAS.movimdisp.push( obj );
+				obj = {};
+			{% endfor %}
+
+		</script>
+
+		<script src="{{ base_url() }}/js/enterXtab.js"></script>
+		<script src="{{ base_url() }}/js/visitas.js"></script>
+		<script src="{{ base_url() }}/js/modalVisitasBuscarVis.js"></script>
+		<script src="{{ base_url() }}/js/modalVisitasClieProd.js"></script>
+		<script src="{{ base_url() }}/js/modalVisitasDispenser.js"></script>
+
+	{% endblock %}

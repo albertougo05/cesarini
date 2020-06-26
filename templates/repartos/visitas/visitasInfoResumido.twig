@@ -1,0 +1,101 @@
+{% extends 'base.twig' %}
+
+{% block head %}
+	{{ parent() }}
+
+	<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+	<link rel="stylesheet" href="{{ base_url() }}/css/estilosCtasCtes.css">
+
+{% endblock %}	
+
+{% block title %}{{ titulo }}{% endblock %} 
+
+{% block navigation %}
+	{% include 'partes/nav_simple_salir.twig' %}
+{% endblock %}
+
+{% block breadcrumbs %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<nav aria-label="breadcrumb">
+				    <ol class="breadcrumb">
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Repartos</a></li>
+					    <li class="breadcrumb-item active" aria-current="page">Visitas Informe resumido</li>
+				    </ol>
+				</nav>
+			</div>
+		</div>
+		{% include 'partes/flash.twig' %}
+	</div>
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-11" id="guiaReparto">
+				<h2><strong>Informe resumido de Visitas</strong></h2>
+
+				<div class="bkgFiltroFecha">
+            		<div class="row">
+                		<div class="col-2">
+                    		<p class="pFiltroFecha"><u>Filtro fecha</u>:</p>
+                		</div>
+						<div class="col-4 d-md-inline-flex">
+						    <label class="lblFecha" for="fechaDesde">Desde</label>
+						    <input type="date" class="form-control form-control-sm" id="fechaDesde" name="fechaDesde" value="{{ fechaDesde }}">
+						</div>
+						<div class="col-4 d-md-inline-flex">
+						    <label class="lblFecha" for="fechaHasta">Hasta</label>
+						    <input type="date" class="form-control form-control-sm" id="fechaHasta" name="fechaHasta" value="{{ fechaHasta }}">
+						</div>
+					</div>
+				</div>
+
+				<div class="bkgBuscarCli">
+            		<div class="row">
+                		<div class="col-3">
+                    		<p class="pFiltroFecha"><u>Filtro repartidor</u>:</p>
+                		</div>
+						<div class="col-6">
+			        		<select id="selectEmpleado" name="selectEmpleado" class="col-md-10 col-sm-6 form-control form-control-sm">
+			        			<option value="0">Seleccione repartidor...</option>
+								{% for empleado in empleados %}
+									<option value="{{ empleado.Id }}">{{ empleado.ApellidoNombre }}</option>
+								{% endfor %}
+							</select>
+						</div>
+						<div class="col-3"></div>
+					</div>
+				</div>
+
+		        <div class="row">
+		            <div class="col-6 offset-3">
+		                <a type="button" class="btn btn-success btn-block" id="btnGenList" target="_blank">
+		                    <strong>Generar listado</strong>
+		                </a>
+		            </div>
+		        </div>  {# /.row #}
+
+			</div>	{# /col-11 id="guiaReparto" #}
+		</div>	{# /row #}
+	</div>    {# /container #}
+{% endblock %}
+
+{% block javascript %}
+	{{ parent() }}
+
+	<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+
+    <script type="text/javascript">
+    	// Paths
+    	var _pathCodcliente = "{{ path_for('repartos.visitaslistado.clieporcod') }}",
+    		_pathInforme    = "{{ path_for('ctasctes.infocobranzas.armainfocobranzas') }}",
+    		_pathCliente    = "{{ path_for('repartos.visitas.cliente') }}";
+
+	</script>
+
+	{# <script src="{{ base_url() }}/js/infocobranzas.js"></script> #}
+
+{% endblock %}

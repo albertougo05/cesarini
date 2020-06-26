@@ -1,0 +1,210 @@
+{% extends 'base.twig' %}
+
+	{% block head %}
+		{{ parent() }}
+
+	{% endblock %}	
+
+	{% block title %}{{ titulo }}{% endblock %} 
+
+	{% block navigation %}
+		<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+	        <a class="navbar-brand" href="#">
+	          <img src="{{ base_url() }}/img/logo-cesarini.png" width="80" height="40" alt="">
+	        </a>
+
+	        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	          <span class="navbar-toggler-icon"></span>
+	        </button>
+
+        	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+            	<ul class="navbar-nav mr-auto">
+				    <li class="nav-item active">
+				    	{% if vienede == 'visitas' %}
+							<a class="nav-link" href="{{ path_for('repartos.visitas') }}">Cancelar</a>
+				    	{% else %}
+				        	<a class="nav-link" href="{{ path_for('repartos.guiareparto') }}">Cancelar</a>
+				        {% endif %}
+				    </li>
+            	</ul>
+            </div>
+        </nav>
+	{% endblock %}
+
+	{% block breadcrumbs %}
+		<div class="container">
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb">
+					{% if vienede == 'visitas' %}
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Repartos</a></li>
+					    <li class="breadcrumb-item"><a href="{{ path_for('repartos.visitas') }}">Visitas</a></li>
+					    <li class="breadcrumb-item active" aria-current="page">Buscar Guía de Reparto</li>
+					{% else %}
+					    <li class="breadcrumb-item"><a href="#">Menú</a></li>
+					    <li class="breadcrumb-item"><a href="#">Repartos</a></li>
+					    <li class="breadcrumb-item"><a href="#">Guía de reparto</a></li>
+					    <li class="breadcrumb-item active" aria-current="page">Buscar Guía de Reparto</li>
+					{% endif %}
+				</ol>
+			</nav>
+		</div>
+	{% endblock %}
+
+	{% block content %}
+		<div class="container" id="guiaReparto">
+			<div class="row align-items-end">
+    			<div class="col-md-12">
+    				<h3 class="bg-warning p-3 mb-3"><strong>Buscar Guía de Reparto</strong></h3>
+    			</div>
+    		</div>
+
+    		<div class="row">
+    			<div class="col-md-4 offset-md-1">
+    				<input id="filter" class="form-control" type="text" placeholder="Filtrar..." autofocus>
+  				</div>
+  				<div class="col-md-7">
+					<div class="form-check form-check-inline">
+					    <input class="form-check-input" name="filtros" type="radio" id="radDiaSemana" value="dia" checked>
+					    <label class="form-check-label" for="radDiaSemana">Día semana</label>
+					</div>
+					<div class="form-check form-check-inline">
+					    <input class="form-check-input" name="filtros" type="radio" id="radTurno" value="turno">
+					    <label class="form-check-label" for="radTurno">Turno</label>
+					</div>
+					<div class="form-check form-check-inline">
+					    <input class="form-check-input" name="filtros" type="radio" id="radEmpleado" value="empleado">
+					    <label class="form-check-label" for="radEmpleado">Empleado</label>
+					</div>
+					<div class="form-check form-check-inline">
+					    <input class="form-check-input" name="filtros" type="radio" id="radActividad" value="actividad">
+					    <label class="form-check-label" for="radActividad">Actividad</label>
+					</div>
+					<div class="form-check form-check-inline">
+					    <input class="form-check-input" name="filtros" type="radio" id="radEstado" value="estado">
+					    <label class="form-check-label" for="radEstado">Estado</label>
+					</div>
+    			</div>
+			</div>
+
+			<br />
+
+			<div class="row">
+				<div class="col-md-10 offset-md-1">
+					<table class="table table-sm table-hover" id="tablaBuscarGuia">
+		                <thead class="thead-dark">
+		                  <tr>
+		                    <th scope="col">Id</th>
+		                    <th scope="col">Día semana</th>
+		                    <th scope="col">Turno</th>
+		                    <th scope="col">Empleado</th>
+		                    <th scope="col">Actividad</th>
+		                    <th scope="col">Salida</th>
+		                    <th scope="col">Retorno</th>
+							<th scope="col">Estado</th>
+		                  </tr>
+		                </thead>
+		                <tbody>
+		                    {% for guia in guiaReparto %}
+		    					<tr>
+		        				    <td>{{ guia.id }}</td>
+		      					    <td class="cellDia filter-cell">{{ guia.dia }}</td>
+		      					    <td class="cellTurno">{{ guia.turno }}</td>
+		                            <td class="cellEmpleado">{{ guia.empleado }}</td>
+		                            <td class="cellActividad">{{ guia.actividad }}</td>
+		                            <td>{{ guia.salida[:5] }}</td>
+		                            <td>{{ guia.retorno[:5] }}</td>
+		                            <td>{{ guia.estado }}</td>
+		                        </tr>
+		                    {% endfor %}
+		                </tbody>
+		            </table>
+				</div>
+			</div>
+
+    	</div>
+	{% endblock %}
+
+	{% block javascript %}
+		{{ parent() }}
+		<script src="{{ base_url() }}/js/jquery.tableFilter.js"></script>
+		<script>
+			// Javascript
+			// 
+			var _vieneDe = "{{ vienede }}";
+
+
+			// jQuery
+			// 
+			$(document).ready(function(){
+
+				// Boton de ir arriba
+			    $('#scrollUp').click( function(){
+			    	$('body, html').animate({
+		    			scrollTop: '0px'
+		    		}, 300);
+			    });
+			    // Para chequear scroll para boton ir arriba
+			    $(window).scroll(function(){
+			    	if( $(this).scrollTop() > 0 ) {
+			    		$('#scrollUp').show();
+			    	} else {
+			    		$('#scrollUp').hide();
+			    	}
+			    });
+
+			    // Radio buttons click radDiaSemana
+			    $('input#radDiaSemana').click(function () {
+			    	cambiarCeldaBusq('cellDia');
+			    });
+			    $('input#radTurno').click(function () {
+			    	cambiarCeldaBusq('cellTurno');
+			    });
+			    $('input#radEmpleado').click(function () {
+			    	cambiarCeldaBusq('cellEmpleado');
+			    });
+			    $('input#radActividad').click(function () {
+			    	cambiarCeldaBusq('cellActividad');
+			    });
+			    $('input#radEstado').click(function () {
+			    	cambiarCeldaBusq('cellEstado');
+			    });
+
+			    // Funcion para cambiar celda de busqueda
+			    function cambiarCeldaBusq(celda) {
+			    	$('input#filter').val('');   // Vacio el input
+			    	var celdaSel = ['cellDia', 'cellTurno', 'cellEmpleado', 'cellActividad', 'celEstado'];
+			    	// Remuevo clase filter-cell de todos los td
+			    	for (var i = 0; i < celdaSel.length; i++) {
+			    		if ($("td." + celdaSel[i]).hasClass("filter-cell")) {
+			    			$("td." + celdaSel[i]).toggleClass("filter-cell");
+			    		}
+			    	}
+			    	// Busco el indice
+			    	var index = celdaSel.findIndex(function (data) {
+			    		return data == celda;
+			    	});
+			    	$("td." + celdaSel[index]).toggleClass("filter-cell");
+			    	$("input#filter").focus();
+			    	$("input#filter").change();
+			    };
+
+				// Filtrado de tabla Clientes	
+				$('#guiaReparto').tableFilter({ tableID: '#tablaBuscarGuia', 
+	                                           filterID: '#filter',
+	                                           filterCell: '.filter-cell',
+					                           autofocus: true});
+				// Evento click para seleccionar y redireccionar 
+				$('#tablaBuscarGuia tr').on('click', function(){
+	  				var guia = $(this).find('td:first').html();
+	  				if (_vieneDe == 'visitas') {
+	  					location.assign("{{ path_for('repartos.visitas.conguia') }}" + "?idguia=" + guia);
+	  				} else {
+	  					location.assign("{{ path_for('repartos.guiareparto') }}" + "?idguia=" + guia);
+	  					// location.assign("{{ path_for('repartos.guiareparto') }}" + "?idguia=" + guia + '&action=buscar');
+	  				}
+				});
+
+			});
+		</script>
+	{% endblock %}

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <!-- Required meta tags -->
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="icon" type="image/png" href="{{ base_url() }}/img/favicon.ico">
+
+	   <!-- Bootstrap CSS -->
+	    <link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/bootstrap.min.css">
+		<!-- Mis estilos css -->
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/estilosPrint.css">
+		<title>{{ titulo }}</title>
+	</head>
+	<body>
+		<header>
+			<div class="container-fluid">
+				<div class="row justify-content-end">
+					<div class="col-md-2">
+						<button id="btnImprimir" type="button" class="btn btn-primary">Imprimir</button>
+						<button id="btnVolver" type="button" class="btn btn-link">Volver</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<hr>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col">
+					<br>
+					<h3 id="titImpGuia"><strong>Guía de Reparto Nro.: {{ idguia }}</strong></h3>
+					<br>
+					<hr>
+				</div>
+			</div>
+			<div class="row">
+					<div class="col">
+						<p><strong>Empleado:</strong> {{ data.IdEmpleado }} - {{ nomEmpleado }}</p>
+						<p><strong>Hora salida:</strong> {{ data.HoraSalida[:5] }}</p>
+					</div>
+					<div class="col">
+						<p><strong>Día semana:</strong> {{ data.DiaSemana }}</p>
+						<p><strong>Hora retorno:</strong> {{ data.HoraRetorno[:5] }}</p>
+					</div>
+					<div class="col">
+						<p><strong>Turno:</strong> {{ data.Turno }}</p>
+						<p><strong>Actividad:</strong> {{ actividad }}</p>
+					</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<hr>
+				</div>
+			</div>
+
+			<div class="row tablaDetalleVisitas">
+				<div class="col">
+					<h5><strong>Detalle clientes a visitar</strong></h5>
+
+					<table class="table table-sm">
+			    		<thead>
+				    		<tr>
+						        <th>Cuenta</th>
+						        <th>Apellido y Nombre</th>
+						        <th>Dirección</th>
+						        <th>Localidad</th>
+						        <th>Celular</th>
+						    </tr>
+			    		</thead>
+			    		<tbody>
+						    {% if visitasCliente %}
+						    	{# Va un for each visitasCliente    idguiarep #}
+						    	{% for visitas in visitasCliente %}
+								    <tr>
+								        <td id="tablaId">{{ visitas.idCliente }}</td>
+								        <td>{{ visitas.apellidoNom }}</td>
+								        <td>{{ visitas.domicilio }}</td>
+								        <td>{{ visitas.localidad }}</td>
+								        <td>{{ visitas.celular }}</td>
+								    </tr>
+								{% endfor %}
+					    	{% endif %}
+			    		</tbody>
+					</table>
+				</div>
+			</div>    {# end row #}
+
+			<div class="row tablaTotalReparto">
+				<div class="col">
+					<h5 class="text-left text-dark"><strong>Total del reparto</strong></h5>
+
+				<table class="table table-sm">
+				    <thead>
+					    <tr>
+					        <th class="text-center">Código Producto</th>
+					        <th>Descripción</th>
+					        <th class="text-right">Cantidad</th>
+					    </tr>
+				    </thead>
+				    <tbody>
+				    	{% if totalReparto %}
+				    		{# loop por cada linea del total reparto - id="tablaId" #}
+							{% for totrep in totalReparto %}
+							    <tr>
+							        <td class="text-center">{{ totrep.codprod }}</td>
+							        <td>{{ totrep.descrip }}</td>
+							        <td class="text-right">{{ totrep.cantid }}</td>
+							    </tr>
+				    		{% endfor %}
+
+
+				    	{% endif %}
+				    </tbody>
+				</table>
+
+
+				</div>
+			</div>
+
+		</div>  {# end container #}
+
+		<script src="{{ base_url() }}/js/jquery-3.3.1.min.js"></script>
+
+		<script type="text/javascript">
+
+			// Codigo jQuery
+			$(document).ready(function(){
+
+				// Para boton volver
+				$('#btnVolver').click( function() {
+
+					window.close();
+			    });
+
+				// Boton Imprimir
+				$('#btnImprimir').click( function() {
+                    window.print();
+				});
+
+			});
+		</script>
+
+	</body>
+</html>

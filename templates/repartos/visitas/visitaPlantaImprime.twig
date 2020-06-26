@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <!-- Required meta tags -->
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="icon" type="image/png" href="{{ base_url() }}/img/favicon.ico">
+
+	    <!-- Bootstrap CSS -->
+	    <link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/bootstrap.min.css">
+		<!-- Mis estilos css -->
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/estilosPrint.css">
+
+		<title>{{ titulo }}</title>
+		<style type="text/css">
+			.cardVisitas {
+			  background: rgba(236, 236, 236, 0.95);
+			  border-radius: 3px;
+			  padding: 10px;
+			  margin: 20px 20px auto;
+			}
+			hr.hrMovDisp {
+			  border: 0.5px solid black;
+			  margin-top: 10px;
+			}
+			.dataMovDisp {
+			  color: black;
+			  background: rgba(236, 236, 236, 0.95);
+			  border-radius: 3px;
+			  padding-top: 1%;
+			  padding-left: 20px;
+			  position: relative;
+			  right: 10px;
+			}
+			.cellRight {
+			  text-align: right;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<div class="container-fluid">
+				<div class="row justify-content-end">
+					<div class="col-md-2">
+						<button id="btnImprimir" type="button" class="btn btn-primary">Imprimir</button>
+						<button id="btnVolver" type="button" class="btn btn-link">Volver</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<hr>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col pr-5 mb-0 mr-5 mt-3">
+					<p class="text-right mb-0">Fecha emisión: {{ fecha }}</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col">
+					<h3 class="text-center" id="titImpGuia"><strong>Visita a planta de cliente</strong></h3>
+				</div>
+			</div> {# end row #}
+
+			<div class="row mt-2">
+				<div class="col-3"></div>
+				<div class="col">
+					<div class="border border-dark rounded pl-4 bg-light">
+						<h5 style="margin-bottom: 1px; margin-top: 18px;"><strong>{{ cliente.Id }} - {{ cliente.ApellidoNombre }}</strong></h5>
+						<p><small>{{ cliente.Direccion }} - {{ cliente.Localidad }}</small></p>
+					</div>
+					<br>
+				</div>
+				<div class="col-3"></div>
+			</div>
+
+
+			<div class="row ml-4 mr-4">
+				<div class="col-2"></div>
+				<div class="col">
+					<table class="table table-sm">
+					  	<thead class="thead-dark">
+						    <tr>
+						      	<th class="text-center">ID</th>
+						      	<th>Fecha</th>
+						      	<th>Hora</th>
+						      	<th class="text-center">Empleado</th>
+						    </tr>
+					  	</thead>
+					 	<tbody>
+						    <tr>
+							    <th class="text-center">{{ dataVisita.id }}</th>
+							    <td>{{ dataVisita.fecha|date('d/m/Y', timezone="America/Buenos_Aires") }}</td>
+							    <td>{{ dataVisita.hora[:5] }}</td>
+							    <td class="text-center"><strong>{{ dataVisita.idemp }} - {{ dataVisita.nombemp }}</strong></td>
+						    </tr>
+						    <tr>
+						    	<td></td>
+						    	<td></td>
+						    	<td></td>
+						    	<td></td>
+						    </tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="col-2"></div>
+			</div>
+
+			<div class="row ml-4 mr-4">
+				<div class="col-2"></div>
+				<div class="col">
+					<br>
+					<h6>Detalle movimiento de productos</h6>
+				</div>
+			</div>
+			<div class="row ml-4 mr-4">
+				<div class="col-2"></div>
+				<div class="col">
+					<table class="table table-sm">
+					  	<thead class="thead-light">
+					    	<tr>
+						      <th class="cellRight">Id</th>
+						      <th scope="col">Producto</th>
+						      <th class="cellRight">Retira</th>
+						      <th class="cellRight">Devuelve</th>
+						      <th></th>
+					    	</tr>
+					  	</thead>
+					  	<tbody>
+							{% for producto in productos %}
+								<tr>
+									<td class="cellRight">{{ producto.idprod }}</td>
+									<td>{{ producto.producto }}</td>
+									<td class="cellRight">{{ producto.prodret }}</td>
+									<td class="cellRight">{{ producto.proddev }}</td>
+									<td></td>
+								</tr>
+							{% endfor %}
+						    <tr>
+						    	<td></td>
+						    	<td></td>
+						    	<td></td>
+						    	<td></td>
+						    	<td></td>
+						    </tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="col-2"></div>
+			</div>
+
+			<div class="row">
+				<div class="col">
+					<p class=" text-center font-weight-bold">Entrega $ {{ dataVisita.entrega|number_format(2, ',', '.') }}</p>
+				</div>
+			</div>
+
+		</div>  {# end container #}
+
+		<script src="{{ base_url() }}/js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript">
+			// Codigo jQuery
+			$(document).ready(function(){
+
+				// Para boton volver
+				$('#btnVolver').click( function() {
+			    	window.close();
+			    });
+
+				// Boton Imprimir
+				$('#btnImprimir').click( function() {
+                    window.print();
+				});
+			});
+		</script>
+	</body>
+</html>

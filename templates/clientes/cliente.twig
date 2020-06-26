@@ -1,0 +1,226 @@
+{% extends 'base.twig' %}
+
+	{% block head %}
+		{{ parent() }}
+
+		<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+	{% endblock %}	
+
+	{% block title %}{{ titulo }}{% endblock %} 
+
+	{% block navigation %}
+	    {% include 'clientes/nav_cliente.twig' %}
+	{% endblock %}
+
+	{% block breadcrumbs %}
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<nav aria-label="breadcrumb">
+					    <ol class="breadcrumb">
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Clientes</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('clientes.cliente') }}">Cliente</a></li>
+						    <li class="breadcrumb-item active" aria-current="page" id="accion">{{ accion }}</li>
+					    </ol>
+					</nav>
+				</div>
+			</div>
+			<br>
+			{% include 'partes/flash.twig' %}
+		</div>
+	{% endblock %}
+
+	{% block content %}
+
+		<div class="container">
+			<div class="row justify-content-center registrar2">
+				<div class="col">
+					<h2 class="text-right">Cliente</h2>
+					<br>
+					<form id="form1" class="needs-validation" action="{{ path_for('clientes.cliente') }}" method="post" autocomplete="off" novalidate>
+
+						<input type="hidden" id="Id" name="Id" value="{{ cliente.Id }}">
+
+					    <div class="form-group">
+					        <label for="ApellidoNombre" class="sr-only">Apellido y nombre</label>
+					        <input type="text" class="form-control form-control-sm" id="ApellidoNombre" name="ApellidoNombre" placeholder="APELLIDO Nombre" value="{{ cliente.ApellidoNombre }}">
+					    </div>
+					    <div class="form-group">
+					        <label for="NombreFantasia" class="sr-only">Nombre de fantasía</label>
+					        <input type="text" class="form-control form-control-sm" id="NombreFantasia" name="NombreFantasia" placeholder="Nombre de fantasía" value="{{ cliente.NombreFantasia }}">
+					    </div>
+						<div class="form-row">
+							<div class="form-group col-6">
+						        <label for="Direccion">Dirección</label>
+						        <input type="text" class="form-control form-control-sm" id="Direccion" name="Direccion" value="{{ cliente.Direccion }}">
+							</div>
+							<div class="form-group col-3">
+						        <label for="Localidad">Localidad</label>
+						        <input type="text" class="form-control form-control-sm" id="Localidad" name="Localidad" value="{{ (cliente.Localidad) ? cliente.Localidad : 'Jesús María' }}">
+							</div>
+							<div class="form-group col-3">
+						        <label for="Provincia">Provincia</label>
+						        <input type="text" class="form-control form-control-sm" id="Provincia" name="Provincia" value="{{ (cliente.Provincia) ? cliente.Provincia : 'Córdoba' }}">
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col">
+						        <label for="CodPostal" class="sr-only">Código Postal</label>
+						        <input type="text" class="form-control form-control-sm" id="CodPostal" name="CodPostal" placeholder="Código Postal" value="{{ cliente.CodPostal }}">
+							</div>							
+							<div class="form-group col">
+						        <label for="Telefono" class="sr-only">Teléfonos</label>
+						        <input type="text" class="form-control form-control-sm" id="Telefono" name="Telefono" placeholder="Teléfonos" value="{{ cliente.Telefono }}">
+							</div>
+							<div class="form-group col">
+						        <label for="Celular" class="sr-only">Celulares</label>
+						        <input type="text" class="form-control form-control-sm" id="Celular" name="Celular" placeholder="Celulares" value="{{ cliente.Celular }}">
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col">
+						        <label for="CUIT">CUIL/D.N.I.</label>
+						        <input type="text" class="form-control form-control-sm" id="CUIT" name="CUIT" value="{{ cliente.CUIT }}">
+							</div>
+							<div class="form-group col">
+								<label for="CondicionFiscal">Condición Fiscal</label>
+								<select class="form-control form-control-sm" id="CondicionFiscal" name="CondicionFiscal">
+									{% for condic in condFiscal %}
+										<option value="{{ condic }}"{{ (cliente.CondicionFiscal == condic ) ? ' selected' : '' }}>{{ condic }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="form-group col-4">
+						        <label for="Email">Email</label>
+						        <input type="email" class="form-control form-control-sm" id="Email" name="Email" value="{{ cliente.Email }}">
+							</div>
+							<div class="form-group col">
+								<label for="Estado">Estado</label>
+								<select class="form-control form-control-sm" id="Estado" name="Estado">
+									<option value="Activo"{{ (cliente.Estado == 'Activo') ? ' selected' : '' }}>Activo</option>
+									<option value="Baja"{{ (cliente.Estado == 'Baja') ? ' selected' : '' }}>Baja</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col">
+						        <label for="FechaAltaServicio">Alta de Servicio</label>
+						        <input type="date" class="form-control form-control-sm" id="FechaAltaServicio" name="FechaAltaServicio" value="{{ cliente.FechaAltaServicio }}">
+							</div>
+							<div class="form-group col-4">
+						        <label for="NroContrato">Nro. Contrato</label>
+						        <input type="text" class="form-control form-control-sm" id="NroContrato" name="NroContrato" value="{{ cliente.NroContrato }}">
+							</div>
+							<div class="form-group col">
+						        <label for="FechaVencContrato">Vencim. Contrato</label>
+						        <input type="date" class="form-control form-control-sm" id="FechaVencContrato" name="FechaVencContrato" value="{{ cliente.FechaVencContrato }}">
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-3">
+								<label for="Actividad">Actividad</label>
+								<select class="form-control form-control-sm" id="IdActividad" name="IdActividad">
+									<option value=0>Todas</option>
+									{% for activ in actividades %}
+										<option value="{{ activ.Id }}"{{ (cliente.IdActividad == activ.Id ) ? ' selected' : '' }}>{{ activ.Descripcion }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="form-group col-3">
+						        <label for="FechaFacturacion">Fecha facturación</label>
+						        <input type="date" class="form-control form-control-sm" id="FechaFacturacion" name="FechaFacturacion" value="{{ cliente.FechaFacturacion }}">
+							</div>
+							<div class="form-group col-3">
+								<label for="Estado">Tipo Facturac.</label>
+								<select class="form-control form-control-sm" id="IdTipoFact" name="IdTipoFact">
+									<option data-importe="" value=0>Seleccione...</option>
+									{% for tipo in tiposfact %}
+										<option data-importe="{{ tipo.MontoAbono }}" value="{{ tipo.Id }}"{{ (cliente.IdTipoFact == tipo.Id ) ? ' selected' : '' }}>
+											{{ tipo.Descripcion }}
+										</option>
+									{% endfor %}
+								</select>
+							</div>
+
+							<div class="form-group col-3">
+						        <label for="CostoAbono">Costo del abono</label>
+						       {# <input type="text" class="form-control form-control-sm" id="CostoAbono" name="CostoAbono" value="{{ cliente.CostoAbono }}"> #}
+								<div class="input-group input-group-sm mb-3">
+    								<div class="input-group-prepend">
+    									<span class="input-group-text">$</span>
+    								</div>
+						        	<input type="text" class="form-control form-control-sm" id="CostoAbono" name="CostoAbono" value="{{ cliente.CostoAbono }}">
+						        </div>
+							</div>
+						</div>
+
+
+						{# Para CSRF control #}
+						{{ csrf.field | raw }}
+
+					  	<button id="btnConfirma" type="submit" class="btn btn-primary btn-sm">Confirma</button>
+					  	<a id="btnCancela" class="btn btn-outline-light btn-sm" href="{{ path_for('clientes.cliente') }}" style="margin-left: 15px;" role="button">Cancela</a>
+					</form>
+
+					{% include 'partes/enviando.twig' %}
+
+					{% if accion == 'Modifica' %}  {# Si modifica datos, muestro opcion para otros domicilios #}
+						<div class="row">
+							<div class="col">
+								<hr class="bg-white">
+								<button type="button" class="d-inline float-right btn btn-success btn-sm" id="btnAgregarDom">Agregar domicilio</button>
+							</div>
+						</div>
+
+						{# OTROS DOMICILIOS #}
+
+						{% if otrosDom %}
+							{% include 'clientes/acordion_doms.twig' %}
+						{% endif %}
+					{% endif %}
+
+				</div>     {# /col/row 1 #}
+			</div>  {# /row 1#}
+		</div>     {# /container #}
+
+		{% include 'clientes/modalOtroDom.twig' %}
+
+	{% endblock %}
+
+	{% block javascript %}
+		{{ parent() }}
+
+		<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+		{# <script src="{{ base_url() }}/js/jquery.inputmask.bundle.min.js" charset="utf-8"></script> #}
+		<script src="{{ base_url() }}/js/autoNumeric.min.js"></script>
+		<script src="{{ base_url() }}/js/enterXtab.js"></script>
+		<script>
+			var CLIENTE = {
+				patheliminarCliente:   "{{ path_for('clientes.cliente.eliminar') }}",
+				patheliminardomicilio: "{{ path_for('clientes.cliente.eliminardomicilio') }}",
+				pathcomprobarcuitdni:  "{{ path_for('clientes.comprobarcuitdni') }}",
+				pathaccion:            "{{ accion }}",
+				arrDoms: [ [], [], [], [], [], [], [], [], [], [] ]    // Pongo para 10 domicilios
+			}
+
+
+			// Armo array de domicilios
+			var _cantDoms = 0;
+			{% for dom in otrosDom %}
+				CLIENTE.arrDoms[_cantDoms][0] = '{{ dom.Id }}';
+				CLIENTE.arrDoms[_cantDoms][1] = '{{ dom.Direccion }}';
+				CLIENTE.arrDoms[_cantDoms][2] = '{{ dom.Localidad }}';
+				CLIENTE.arrDoms[_cantDoms][3] = '{{ dom.Provincia }}';
+				CLIENTE.arrDoms[_cantDoms][4] = '{{ dom.CodPostal }}';
+				CLIENTE.arrDoms[_cantDoms][5] = '{{ dom.Telefono }}';
+				CLIENTE.arrDoms[_cantDoms][6] = '{{ dom.Celular }}';
+				CLIENTE.arrDoms[_cantDoms][7] = '{{ dom.Contacto }}';
+
+			    _cantDoms += 1;
+			{% endfor %}
+
+		</script>
+		<script src="{{ base_url() }}/js/cliente.js"></script>
+
+	{% endblock %}

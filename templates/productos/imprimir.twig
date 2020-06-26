@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <!-- Required meta tags -->
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="icon" type="image/png" href="{{ base_url() }}/img/favicon.ico">
+
+	   <!-- Bootstrap CSS -->
+	   <link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/bootstrap.min.css">
+
+		<!-- Mis estilos css -->
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/estilosPrint.css">
+		<title>{{ titulo }}</title>
+	</head>
+	<body>
+		<header>
+			<div class="container-fluid">
+				<div class="row justify-content-end">
+					<div class="col-md-2">
+						<button id="btnImprimir" type="button" class="btn btn-primary">Imprimir</button>
+						<button id="btnVolver" type="button" class="btn btn-link">Volver</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<hr>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col">
+					<br>
+					<h3 id="titImpGuia"><strong>Lista de Productos - {{ accion }}</strong></h3>
+					<br>
+				</div>
+			</div>
+			<div class="row tablaDetalleVisitas">
+				<div class="col">
+					<table class="table table-sm">
+			    		<thead>
+				    		<tr>
+						        <th class="cellRight">Id</th>
+						        <th>Descripción</th>
+						        <th>Tipo producto</th>
+						        <th>Presentación</th>
+						        <th class="cellRight">Precio</th>
+						        <th class="cellRight">Pr. Excedente</th>
+						    </tr>
+			    		</thead>
+			    		<tbody>
+							{% for prod in listado %}
+								<tr>
+							        <td class="cellRight">{{ prod.Id }}</td>
+							        <td>{{ prod.Descripcion }}</td>
+							        <td>{{ prod.DescripTipoProducto.Descripcion }}</td>
+							        <td>{{ prod.Presentacion }}</td>
+							        <td class="cellRight">{{ (prod.Precio == 0) ? '' : prod.Precio|number_format(2, ',', '.')  }}</td>
+							        <td class="cellRight">{{ (prod.PrecioExcedente == 0) ? '' : prod.PrecioExcedente|number_format(2, ',', '.') }}</td>
+								</tr>
+							{% endfor %}
+			    		</tbody>
+					</table>
+				</div>
+			</div>    {# end row #}
+		</div>  {# end container #}
+
+		<script src="{{ base_url() }}/js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript">
+
+			// Codigo jQuery
+			$(document).ready(function(){
+
+				// Para boton volver
+				$('#btnVolver').click( function() {
+
+			    	location.assign("{{ path_for('productos.listados')  ~ urlParam }}");
+			    });
+
+				// Boton Imprimir
+				$('#btnImprimir').click( function() {
+                    window.print();
+				});
+
+			});
+		</script>
+
+	</body>
+</html>

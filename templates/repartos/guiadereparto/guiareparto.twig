@@ -1,0 +1,74 @@
+{% extends 'base.twig' %}
+
+	{% block head %}
+		{{ parent() }}
+
+		<link rel="stylesheet" href="{{ base_url() }}/css/all.css">
+		{# CSS para funciones de confirm.js #}
+		<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+
+		<style type="text/css">
+			table#tablaClientesGR th {   /* Crea el sticky para titulos de tabla clientes con abono */
+  				position: sticky;
+  				top: 68px;
+			}
+		</style>
+
+	{% endblock %}	
+
+	{% block title %}{{ titulo }}{% endblock %} 
+
+	{% block navigation %}
+		{% include 'repartos/guiadereparto/navigationGuiaReparto.twig' %}
+	{% endblock %}
+
+	{% block breadcrumbs %}
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<nav aria-label="breadcrumb">
+					    <ol class="breadcrumb">
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Repartos</a></li>
+						    <li class="breadcrumb-item"><a href="#">Guía de reparto</a></li>
+						    <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+					    </ol>
+					</nav>
+				</div>
+			</div>
+
+			{% if hayMensaje != '' %}
+				<div class="row mensaje">
+					<div class="col">
+						<div class="alert alert-success" role="alert">
+							<strong>{{ hayMensaje }}</strong>
+                        </div>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+	{% endblock %}
+
+	{% block content %}
+		{% include 'repartos/guiadereparto/contentGuiaReparto.twig' %}
+	{% endblock %}
+
+	{% block javascript %}
+		{{ parent() }}
+
+		<script src="https://unpkg.com/imask"></script>
+		<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+
+		<script type="text/javascript">
+			// Variables globales de path
+			var global_productosacliente = "{{ path_for('repartos.productosacliente') }}";
+			var global_borrarcliente     = "{{ path_for('repartos.guiareparto.borrarcliente') }}";
+			var global_buscarcliente     = "{{ path_for('repartos.buscarcliente') }}";
+			var global_eliminarguia      = "{{ path_for('repartos.guiareparto.eliminarguia') }}";
+			var _pathReordenarVisitas    = "{{ path_for('repartos.guiareparto.reordenarvisitas') }}";
+
+		</script>
+
+		<script src="{{ base_url() }}/js/guiareparto.js"></script>
+
+	{% endblock %}

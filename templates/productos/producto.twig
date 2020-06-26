@@ -1,0 +1,151 @@
+{% extends 'base.twig' %}
+
+	{% block head %}
+		{{ parent() }}
+
+		<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+
+	{% endblock %}	
+
+	{% block title %}{{ titulo }}{% endblock %} 
+
+	{% block navigation %}
+	    {% include 'productos/nav_tipoproducto.twig' %}
+	{% endblock %}
+
+	{% block breadcrumbs %}
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<nav aria-label="breadcrumb">
+					    <ol class="breadcrumb">
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Productos</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('productos.producto') }}">Producto</a></li>
+						    <li class="breadcrumb-item active" aria-current="page" id="accion">{{ accion }}</li>
+					    </ol>
+					</nav>
+				</div>
+			</div>
+			{% include 'partes/flash.twig' %}
+		</div>
+	{% endblock %}
+
+	{% block content %}
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-8" id="registrar">
+					<h2 class="text-right">Producto</h2>
+
+					<form class="needs-validation" action="{{ path_for('productos.producto') }}" method="post" autocomplete="nope" novalidate>
+
+						<input type="hidden" id="idprod" name="idprod" value="">
+
+					    <div class="form-row">
+					    	<div class="form-group col">
+						        <label for="descripcion">Descripción</label>
+						        <input type="text" class="form-control form-control-sm" id="descripcion" name="descripcion" placeholder="" value="">
+						    </div>
+					    </div>
+						<div class="form-row">
+							<div class="form-group col">
+						        <label for="presentacion">Presentación</label>
+						        <input type="text" class="form-control form-control-sm" id="presentacion" name="presentacion" placeholder="" value="">
+							</div>
+							<div class="form-group col">
+								<label for="precio">Precio</label>
+								<div class="input-group input-group-sm mb-3">
+									<div class="input-group-prepend">
+										<span class="input-group-text">$</span>
+									</div>
+									<input type="text" class="form-control form-control-sm" id="precio" name="precio">
+								</div>
+							</div>
+							<div class="form-group col">
+								<label for="selectTipoProd">Tipo de producto</label>
+								<select id="selectTipoProd" name="selectTipoProd" class="form-control form-control-sm">
+									<option value="0">Seleccione...</option>
+									{% for tipo in tipoProducto %}
+										<option value="{{ tipo.Id }}">{{ tipo.Descripcion }}</option>
+									{% endfor %}
+								</select>
+							</div>
+						</div>
+
+						<div class="form-row">
+							<div class="form-group col-4">
+								<label for="precio">Precio excedente</label>
+								<div class="input-group input-group-sm mb-3">
+									<div class="input-group-prepend">
+										<span class="input-group-text">$</span>
+									</div>
+									<input type="text" class="form-control form-control-sm" id="precioExced" name="precioExced">
+								</div>
+							</div>
+						</div>
+
+						<div class="form-row">
+							<div class="form-group col">
+								<div class="custom-control custom-checkbox">
+								  <input type="checkbox" class="custom-control-input" name="constock" id="constock" value="1">
+								  <label class="custom-control-label" for="constock">Mantener stock envases</label>
+								</div>
+							</div>
+						</div>
+						<br>
+					  	<button id="btnConfirma" type="submit" class="btn btn-primary">Confirma</button>
+					  	<a id="btnCancela" class="btn btn-outline-light" href="{{ path_for('productos.producto') }}" style="margin-left: 15px;" role="button">Cancela</a>
+
+						{# Para CSRF control #}
+						{{ csrf.field | raw }}
+					</form>
+
+					{% include 'partes/enviando.twig' %}
+
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal -->
+		<div class="modal fade" id="modalBuscar" tabindex="-1" role="dialog" aria-labelledby="modalBuscarTitle" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		        <div class="modal-header">
+		        	<h5 class="modal-title" id="exampleModalCenterTitle"><strong>Buscar producto</strong></h5>
+		        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          		<span aria-hidden="true">&times;</span>
+		        	</button>
+		        </div>
+		        <div class="modal-body">
+		        	<p>Lista productos</p>
+					<div>
+		        		<select id="selectProducto" name="selectProducto" class="col-sm-6 form-control form-control-sm">
+							{% for prod in productos %}
+								<option value="{{ prod.Id }}">{{ prod.Descripcion }}</option>
+							{% endfor %}
+						</select>
+						<button type="button" id="btnSelecProd" class="btn btn-primary" style="position: absolute; right: 18px; bottom: 15px;">Selecciona</button>
+			    	</div>
+			    </div>
+		        <div class="modal-footer">
+		        	<button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
+		        </div>
+		      </div>
+		    </div>
+		</div>
+	{% endblock %}
+
+	{% block javascript %}
+		{{ parent() }}
+
+		<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+		{# <script src="{{ base_url() }}/js/jquery.inputmask.bundle.min.js" charset="utf-8"></script> #}
+		<script src="{{ base_url() }}/js/autoNumeric.min.js"></script>
+		<script src="{{ base_url() }}/js/enterXtab.js"></script>
+		<script>
+			var global_eliminaProd = "{{ path_for('productos.producto.elimina') }}";
+			var global_dataProducto = "{{ path_for('productos.dataproducto') }}";
+		</script>
+		<script src="{{ base_url() }}/js/producto.js?ver=1.0.1"></script>
+
+	{% endblock %}

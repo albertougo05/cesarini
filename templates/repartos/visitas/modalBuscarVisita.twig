@@ -1,0 +1,66 @@
+{# Modal buscar Visitas #}
+
+		<!-- Modal -->
+		<div class="modal fade" id="modalBuscaVisita" tabindex="-1" role="dialog" aria-labelledby="modalBuscaVisita" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		    <div class="modal-content">
+		        <div class="modal-header">
+		        	<h5 class="modal-title" id="exampleModalCenterTitle"><strong>Buscar Visita</strong></h5>
+		        	<button id="btnModBusVisita" type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          		<span aria-hidden="true">&times;</span>
+		        	</button>
+		        </div>
+
+		        <div class="modal-body" id="filter-2-container">
+
+		        	<div class="row">
+		        		<div class="col-1"></div>
+						<div class="col-md-4 col-xs-3 d-md-inline-flex">
+						    <label class="lblFecha pr-2 pt-1" for="fechaDesde">Desde</label>
+						    <input type="date" class="form-control form-control-sm" id="fechaDesde" name="fechaDesde" value="{{ fechaDesde }}">
+						</div>
+						<div class="col-md-4 col-xs-3 d-md-inline-flex">
+						    <label class="lblFecha pr-2 pt-1" for="fechaHasta">Hasta</label>
+						    <input type="date" class="form-control form-control-sm" id="fechaHasta" name="fechaHasta" value="{{ fechaHasta }}">
+						</div>
+						<div class="col d-md-inline-flex">
+							<button id="btnActualizar" type="button" class="btn btn-success btn-sm btnModal">Actualizar</button>
+						</div>
+		        	</div>
+
+		    		<div class="row">
+		    			<div class="col-md-6 offset-md-3 mb-0 mt-3">
+		    				<input id="filter" class="form-control form-control-sm" type="text" placeholder="Buscar empleado..." autofocus>
+		  				</div>
+					</div>
+					<br />
+					<div class="row">
+						<div class="col-md-12 col-sm-12 table-responsive-sm mb-0">
+							<table class="table table-sm table-hover table-scroll small-first-col" id="tablaBuscarVisita">
+				                <thead class="thead-dark">
+				                    <tr>
+					                    <th scope="col" class="cellRight">ID</th>
+					                    <th scope="col">Fecha</th>
+					                    <th scope="col">Día Sem.</th>
+					                    <th scope="col">Turno</th>
+					                    <th scope="col">Empleado</th>
+					                    <th scope="col" class="cellRight">Salida</th>
+					                    <th scope="col" class="cellRight">Retorno</th>
+					                    <th scope="col">Pendiente</th>
+				                    </tr>
+				                </thead>
+				                <tbody id="bodyTablaModalVisitas" class="body-half-screen">
+				                	{# Esto es devuelto por ajax !! #}
+				                </tbody>
+				            </table>
+						</div>    {# /col #}
+					</div>    {# /row #}
+
+			    </div>
+
+		        <div class="modal-footer">
+		        	<button id="btnCerModBusVis" type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
+		        </div>
+		      </div>
+		    </div>
+		</div>

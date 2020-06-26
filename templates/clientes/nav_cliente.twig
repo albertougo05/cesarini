@@ -1,0 +1,29 @@
+        <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+
+	        <a class="navbar-brand" href="{{ path_for('home') }}">
+	          <img src="{{ base_url() }}/img/logo-cesarini.png" width="80" height="40" alt="">
+	        </a>
+
+	        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	          <span class="navbar-toggler-icon"></span>
+	        </button>
+
+        	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+            	<ul class="navbar-nav mr-auto">
+            		{% if accion != 'Nuevo' %}
+						<li class="nav-item active">
+			        		<a class="nav-link" href="{{ path_for('clientes.cliente') }}">Nuevo</a>
+			      		</li>
+		      		{% endif %}
+				    <li id="linkBorrar" class="nav-item  {{ ( accion == 'Nuevo') ? 'disabled' : 'active' }}">
+				        <a id="linkBorrar" class="nav-link" href="#"{{ ( accion == 'Nuevo') ? ' disabled' : '' }}>Eliminar</a>
+				    </li>
+				    <li class="nav-item active">
+				        <a class="nav-link buscar" href="{{ path_for('clientes.buscarcliente') }}">Buscar</a>
+				    </li>				    
+				    <li class="nav-item active">
+			        	<a class="nav-link" href="{{ path_for('home') }}">Salir</a>
+				    </li>
+            	</ul>
+            </div>
+        </nav>

@@ -1,0 +1,252 @@
+{% extends 'base.twig' %}
+
+{% block head %}
+	{{ parent() }}
+
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+	<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+
+	<style type="text/css">
+		.cardVisitaPlanta {
+  		  background: rgba(236, 236, 236, 0.95);
+  		  border-radius: 3px;
+  		  padding-top: 15px;
+  		  padding-bottom: 10px;
+		}
+		.cardEntrega {
+  		  background: rgba(236, 236, 236, 0.95);
+  		  border-radius: 3px;
+  		  padding-top: 10px;
+  		  padding-bottom: 10px;
+		}
+		.anchoSelect {
+    	  max-width: 350px;
+    	  min-width: 150px;
+    	  width: 350px !important;
+		}
+		.dataClieVisita {
+		  padding: 10px 20px 25px;
+		}
+		td:nth-of-type(2) {
+		  display: none;
+		}
+		th:nth-of-type(2) {
+		  display: none;
+		}
+		#alertGuardar {
+			display: none;
+			width: 400px;
+			position: absolute;
+			left: 30%;
+			right: 30%;
+			margin-left: auto;
+			margin-right: auto;
+			background-color: red;
+			color: white;
+			z-index: 10;
+		}
+	</style>
+
+{% endblock %}	
+
+{% block title %}{{ titulo }}{% endblock %} 
+
+{% block navigation %}
+	<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+
+	    <a class="navbar-brand" href="{{ path_for('home') }}">
+	      <img src="{{ base_url() }}/img/logo-cesarini.png" width="80" height="40" alt="">
+	    </a>
+
+	    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	      <span class="navbar-toggler-icon"></span>
+	    </button>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+	    	<ul class="navbar-nav mr-auto">
+			    <li class="nav-item active">
+		        	<a class="nav-link" href="{{ path_for('repartos.visitaplanta') }}">Cancelar</a>
+			    </li>
+			    <li class="nav-item active">
+		        	<a class="nav-link" href="{{ path_for('home') }}">Salir</a>
+			    </li>
+	    	</ul>
+	    </div>
+</nav>
+{% endblock %}
+
+{% block breadcrumbs %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<nav aria-label="breadcrumb">
+				    <ol class="breadcrumb">
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Repartos</a></li>
+					    <li class="breadcrumb-item"><a href="#">Visita a planta</a></li>
+					    <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+				    </ol>
+				</nav>
+			</div>
+		</div>
+
+		<div id="alertGuardar" class="alert col-12 text-center" role="alert">
+			<strong>Hecho !!</strong>&nbsp;&nbsp; Visita guardada con éxito.
+		</div>
+
+	</div>
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-10" id="guiaReparto">
+				<h2 class="text-right" style="margin-bottom: 18px;"><strong>Visita en planta</strong></h2>
+
+				<div class="row">
+					{# EMPLEADO #}						
+					<div class="col cardVisitaPlanta">
+						<form class="form-inline">
+							<label class="ml-1 my-2 mr-3 h5" for="selectEmpleado">Empleado</label>
+			        		<select id="selectEmpleado" name="selectEmpleado" class="custom-select custom-select-sm my-1 mr-sm-2 anchoSelect">
+			        			<option value="0"{{ (idempleado == 0) ? ' selected' : '' }}>Seleccionar empleado...</option>
+								{% for empleado in empleados %}
+									<option value="{{ empleado.Id }}"{{ (idempleado == empleado.Id) ? ' selected' : '' }}>{{ empleado.ApellidoNombre }}</option>
+								{% endfor %}
+							</select>
+						</form>
+
+					</div>
+				</div>  {# /.row  #}
+
+				<div><br /></div>
+
+			    {# CLIENTE #}
+				<div class="row">
+					<div class="col">
+						<h5 class="ml-1 mb-0" style="display: inline;">Cliente</h5>
+						<button type="button" class="d-inline float-right btn btn-success btn-sm btnsBuscarDisp" id="btnBuscarCli">Buscar cliente</button>
+						<hr class="hrMovDisp">
+						{% if cliente.Id != 0 %}						
+							<h5 class="dataClieVisita" id="nombreCliente" data-idClie="{{ cliente.Id }}"><strong>{{ cliente.Id }} - {{ cliente.ApellidoNombre }}</strong> - <small>{{ cliente.Direccion }} - {{ cliente.Localidad }} - 
+							Teléfono: {{ cliente.Telefono }} - Celular: {{ cliente.Celular }}</small></h5>
+					    {% endif %}
+					</div>
+				</div>
+
+				<div class="row">
+					{# PRODUCTOS #}						
+					<div class="col cardVisitaPlanta">
+						<form id="visita">
+							<div class="form-row">
+								<div class="form-group col-md-4">
+									<label class="ml-1 mt-1 mb-1 h5" for="selectProducto">Producto</label>
+					        		<select id="selectProducto" name="selectProducto" class="form-control form-control-sm">
+					        			<option value="0" selected="true">Seleccionar producto...</option>
+										{% for producto in productos %}
+											<option value="{{ producto.id }}">{{ producto.descripcion }}</option>
+										{% endfor %}
+									</select>
+								</div>
+								<div class="form-group col-md-2 mt-2 text-right">
+									<label class="mb-0" for="retira">Retira</label>
+      								<input type="text" class="form-control form-control-sm cellRight numero" id="retira">
+								</div>
+								<div class="form-group col-md-2 mt-2 text-right">
+									<label class="mb-0" for="devuelve">Devuelve</label>
+      								<input type="text" class="form-control form-control-sm cellRight numero" id="devuelve">
+								</div>
+
+								<input type="hidden" id="idcliente" name="idcliente" value="{{ idcliente }}">
+								<input type="hidden" id="iddomicil" name="iddomicil" value="{{ cliente.IdDomicilio }}">
+								<input type="hidden" id="idvisita" name="idvisita">
+
+								<div class="form-group col-md-4 d-inline d-flex align-items-end justify-content-end">
+									<button type="button" class="float-right btn btn-success btn-sm" id="btnIngresaProd">Ingresar producto</button>
+								</div>
+							</div>
+						</form>
+
+					</div>
+				</div>  {# /.row  #}
+
+				<div class="row">
+					{# TABLA PRODUCTOS #}
+					<div class="col-10 offset-md-1">
+						<br>
+						<h5 class="ml-1 mb-2">Productos ingresados:</h5>
+						<table class="table table-sm table-hover" id="tablaProds">
+    						<thead class="thead-dark">
+							    <tr>
+							        <th class="cellRight">ID</th>
+							        <th>CodProd</th>
+							        <th scope="col">Producto</th>
+							        <th class="cellRight">Retira</th>
+							        <th class="cellRight">Devuelve</th>
+							        <th></th>
+							        <th class="text-center">Acción</th>
+							    </tr>
+							</thead>
+						    <tbody>
+								{# cuerpo vacio lo lleno con js #}
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div class="row">
+					{# ENTREGA #}						
+					<div class="col-6 offset-md-3 cardEntrega d-flex justify-content-center">
+						<form class="form-inline">
+
+							<label class="ml-1 my-2 mr-4 h5" for="entrega">Entrega</label>
+							<div class="input-group input-group-sm mb-1 mt-1">
+							  	<div class="input-group-prepend">
+							    	<span class="input-group-text">$</span>
+							  	</div>
+							  	<input type="text" class="form-control form-control-sm cellRight" id="entrega" name="entrega">
+							</div>
+
+						</form>
+
+					</div>
+				</div>  {# /.row  #}
+
+				<div class="row">
+					{# BOTONES #}
+					<div class="col">
+						<hr class="hrMovDisp">
+						<button type="button" class="btn btn-success btn-sm" id="btnImprimir" disabled>Imprimir</button>
+						<button type="button" class="btn btn-primary btn-sm ml-2 mr-2" id="btnConfirma">Confirma</button>
+						<button type="button" class="btn btn-light btn-sm" id="btnCancela">Cancela</button>
+
+						{% include 'partes/enviando.twig' %}
+
+					</div>
+				</div>
+
+			</div> {# /id=guiaReparto #}
+		</div> {# /.row #}
+	</div>   {# /.container #}
+{% endblock %}
+
+{% block javascript %}
+	{{ parent() }}
+
+	<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+	<script src="{{ base_url() }}/js/jquery.inputmask.bundle.min.js" charset="utf-8"></script>
+
+	<script type="text/javascript">
+		// Variables globales de path
+		var _pathBuscarcliente = "{{ path_for('repartos.movimientodispenser.buscarcliente') }}";
+		var _pathGuardaIdEmpl  = "{{ path_for('repartos.visitaplanta.guardaidempleado') }}";
+		var _pathVisitaPlanta  = "{{ path_for('repartos.visitaplanta') }}";
+		var _pathGuardaVisita  = "{{ path_for('repartos.visitaplanta.guardavisita') }}";
+		var _pathImprimir      = "{{ path_for('repartos.visitaplanta.imprimir') }}";
+
+	</script>
+	<script src="{{ base_url() }}/js/enterXtab.js"></script>
+	<script src="{{ base_url() }}/js/visitaplanta.js"></script>
+
+{% endblock %}

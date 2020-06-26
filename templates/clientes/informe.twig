@@ -1,0 +1,201 @@
+{% extends 'base.twig' %}
+
+{% block head %}
+	{{ parent() }}
+
+    <style type="text/css">
+        table th {   /* Crea el sticky para titulos de tabla */
+            position: sticky;
+            top: 68px;
+        }
+    </style>
+
+{% endblock %}
+
+{% block title %}{{ titulo }}{% endblock %} 
+
+{% block navigation %}
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+
+        <a class="navbar-brand" href="{{ path_for('home') }}">
+          <img src="{{ base_url() }}/img/logo-cesarini.png" width="80" height="40" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+        	<ul class="navbar-nav mr-auto">
+			    <li class="nav-item active">
+			        <a id="linkAlfa" class="nav-link" href="{{ path_for('clientes.informe') ~ '?list=1' }}">Alfabético</a>
+			    </li>
+			    <li class="nav-item active">
+			        <a class="nav-link active" href="{{ path_for('clientes.informe') ~ '?list=2' }}">Por localidad</a>
+			    </li>
+			    <li class="nav-item active">
+			        <a class="nav-link active" href="{{ path_for('clientes.informe') ~ '?list=3' }}">Con dispenser</a>
+			    </li>
+			    <li class="nav-item active">
+			        <a class="nav-link active" href="{{ path_for('clientes.informe') ~ '?list=4' }}">Con abono</a>
+			    </li>
+			    <li class="nav-item active">
+		        	<a class="nav-link" href="{{ path_for('clientes.informe') ~ urlParam  ~ '&print=true' }}" target="_blank">Imprimir</a>
+			    </li>
+			    <li class="nav-item active">
+		        	<a class="nav-link" href="{{ path_for('home') }}">Salir</a>
+			    </li>
+        	</ul>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block breadcrumbs %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<nav aria-label="breadcrumb">
+				    <ol class="breadcrumb">
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Clientes</a></li>
+					    <li class="breadcrumb-item"><a href="#">Informe</a></li>
+					    <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+				    </ol>
+				</nav>
+			</div>
+		</div>
+{% endblock %}	
+
+{% block content %}
+	<div class="container" id="guiaReparto">
+		<div class="row tablaListados">
+	    	<div class="col-md-12">
+				<h5 class="text-left text-dark titulo-listado"><strong>Lista de Clientes - {{ accion }}</strong></h5>
+				<br><br>
+
+				{% if tipoList == 3 %}    {# CON DISPENSERS #}
+					<table class="table table-sm table-hover">
+				    	<thead class="thead-dark">
+						    <tr class="small">
+						        <th class="cellRight">Id</th>
+						        <th>Apellido Nombre</th>
+						        <th>Fantasia</th>
+						        <th>Dirección</th>
+						        <th>Localidad</th>
+						        <th class="cellRight">Cod. Postal</th>
+						        <th class="cellRight">Id Disp.</th>
+						        <th>N.I.-Modelo</th>
+						        <th>Fecha desde</th>
+						    </tr>
+				    	</thead>
+				    	<tbody>
+							{% for clie in listado %}
+								<tr class="small">
+							        <td class="cellRight">{{ clie.IdCliente }}</td>
+							        <td>{{ clie.ApellidoNombre }}</td>
+							        <td>{{ clie.Fantasia }}</td>
+							        <td>{{ clie.Direccion }}</td>
+							        <td>{{ clie.Localidad }}</td>
+							        <td class="cellRight">{{ clie.CodPostal }}</td>
+							        <td class="cellRight">{{ clie.IdDispenser }}</td>
+							        <td>{{ clie.Modelo }}</td>
+							        <td>{{ clie.Fecha|date('d/m/Y', timezone="America/Buenos_Aires") }}</td>
+								</tr>
+							{% endfor %}
+				    	</tbody>
+				    </table>
+				
+				{% elseif tipoList == 4 %}   {# CON ABONO #}
+
+					<table class="table table-sm table-hover">
+				    	<thead class="thead-dark" style="height: 50px;">
+						    <tr class="small">
+						        <th class="cellRight">Id</th>
+						        <th>Apellido Nombre</th>
+						        <th>Fantasia</th>
+						        <th>Dirección</th>
+						        <th>Localidad</th>
+						        <th class="cellRight">Cod.Postal</th>
+						        <th class="cellRight">Dispensers</th>
+						        <th class="cellRight">Costo Abono</th>
+						    </tr>
+				    	</thead>
+				    	<tbody>
+							{% for clie in listado %}
+								<tr class="small">
+							        <td class="cellRight">{{ clie.Id }}</td>
+							        <td>{{ clie.ApellidoNombre }}</td>
+							        <td>{{ clie.NombreFantasia }}</td>
+							        <td>{{ clie.Direccion }}</td>
+							        <td>{{ clie.Localidad }}</td>
+							        <td class="cellRight">{{ clie.CodPostal }}</td>
+							        <td class="cellRight">{{ clie.Dispensers }}</td>
+							        <td class="cellRight">$ {{ clie.CostoAbono|number_format(2, ',', '.') }}</td>
+								</tr>
+							{% endfor %}
+				    	</tbody>
+				    </table>
+
+				{% else %}
+
+					<table class="table table-sm table-hover">
+				    	<thead class="thead-dark">
+						    <tr class="small">
+						        <th class="cellRight">Id</th>
+						        <th>Apellido Nombre</th>
+						        <th>Fantasía</th>
+						        <th>Dirección</th>
+						        <th>Localidad</th>
+						        <th>Provincia</th>
+						        <th class="cellRight">Cod. Postal</th>
+						        <th>Cuil/D.N.I.</th>
+						        <th>Condic. Fiscal</th>
+						    </tr>
+				    	</thead>
+				    	<tbody>
+							{% for clie in listado %}
+								<tr class="small">
+							        <td class="cellRight">{{ clie.Id }}</td>
+							        <td>{{ clie.ApellidoNombre }}</td>
+							        <td>{{ clie.NombreFantasia }}</td>
+							        <td>{{ clie.Direccion }}</td>
+							        <td>{{ clie.Localidad }}</td>
+							        <td>{{ clie.Provincia }}</td>
+							        <td class="cellRight">{{ clie.CodPostal }}</td>
+							        <td class="cellRight">{{ clie.CUIT }}</td>
+							        <td class="cellRight">{{ clie.CondicionFiscal }}</td>
+								</tr>
+							{% endfor %}
+				    	</tbody>
+				    </table>
+				{% endif %}
+
+				<hr>
+			</div>  {## /.row}
+		</div>  {#  /.row #}
+	</div>  {# /.container #}
+
+	{% block javascript %}
+		{{ parent() }}
+
+		<script>
+			// Codigo jQuery:
+			$(document).ready( function () {
+			    // Boton de ir arriba
+			    $('#scrollUp').click( function () {
+			        $('body, html').animate({
+			            scrollTop: '0px'
+			        }, 300);
+			    });
+
+			    // Para chequear scroll para boton ir arriba
+			    $(window).scroll( function () {
+			        if( $(this).scrollTop() > 0 ) {
+			            $('#scrollUp').show();
+			        } else {
+			            $('#scrollUp').hide();
+			        }
+			    });
+			});
+		</script>
+
+	{% endblock %}
+{% endblock %}

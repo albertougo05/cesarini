@@ -1,0 +1,261 @@
+{% extends 'base.twig' %}
+
+{% block head %}
+	{{ parent() }}
+
+	<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+	<link rel="stylesheet" href="{{ base_url() }}/css/table-scroll.css">
+
+	<style type="text/css">
+		.lblFecha {
+			padding-top: 3px;
+			margin-right: 10px;
+		}
+		.bkgFiltroFecha {
+  			margin: 20px 0px 13px;
+  			padding: 20px 0px 15px;
+  			background: #E7E8E9;
+  			border-radius: 5px; 
+		}
+		.pFiltroFecha {
+  			display: inline;
+  			margin-right: 10px;
+			padding-top: 5px;
+  			padding-left: 20px;
+		}
+		#btnGenList {
+			color: white;
+			margin-top: 20px;
+		}
+		body {
+			font-size: 100%;
+		}
+		table {
+			font-size: 0.875em;
+		}
+	</style>
+
+{% endblock %}	
+
+{% block title %}{{ titulo }}{% endblock %} 
+
+{% block navigation %}
+	<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+
+	    <a class="navbar-brand" href="{{ path_for('home') }}">
+	      <img src="{{ base_url() }}/img/logo-cesarini.png" width="80" height="40" alt="">
+	    </a>
+
+	    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	      <span class="navbar-toggler-icon"></span>
+	    </button>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+	    	<ul class="navbar-nav mr-auto">
+			    <li class="nav-item active">
+		        	<a class="nav-link" href="{{ path_for('home') }}">Salir</a>
+			    </li>
+	    	</ul>
+	    </div>
+	</nav>	
+{% endblock %}
+
+{% block breadcrumbs %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<nav aria-label="breadcrumb">
+				    <ol class="breadcrumb">
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Repartos</a></li>
+					    <li class="breadcrumb-item active" aria-current="page">Visitas según Guía Reparto</li>
+				    </ol>
+				</nav>
+			</div>
+		</div>
+		{% include 'partes/flash.twig' %}
+	</div>
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-10" id="guiaReparto">
+				<h3><strong>Visitas según Guía de Reparto</strong></h3>
+
+				<div class="bkgFiltroFecha">
+            		<div class="row">
+                		<div class="col-2">
+                    		<p class="pFiltroFecha"><u>Filtro fecha</u>:</p>
+                		</div>
+						<div class="col-4 d-md-inline-flex">
+						    <label class="lblFecha" for="fechaDesde">Desde</label>
+						    <input type="date" class="form-control form-control-sm" id="fechaDesde" name="fechaDesde" value="{{ fechaDesde }}">
+						</div>
+						<div class="col-4 d-md-inline-flex">
+						    <label class="lblFecha" for="fechaHasta">Hasta</label>
+						    <input type="date" class="form-control form-control-sm" id="fechaHasta" name="fechaHasta" value="{{ fechaHasta }}">
+						</div>
+					</div>
+				</div>
+
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col mt-3 mb-0">
+							<p>Seleccione una guía de reparto:</p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col mt-0">
+							<table class="table table-sm table-hover table-scroll small-first-col" id="tablaBuscarGuia">
+				                <thead class="thead-dark">
+				                  	<tr>
+					                    <th scope="col">Id</th>
+					                    <th scope="col" class="col-sm-1">Día</th>
+					                    <th scope="col" class="col-sm-1">Turno</th>
+					                    <th scope="col" class="col-sm-3">Empleado</th>
+					                    <th scope="col" class="col-sm-2">Actividad</th>
+					                    <th scope="col" class="col-sm-1 cellRight">Salida</th>
+					                    <th scope="col" class="col-sm-1 cellRight">Retorno</th>
+										<th scope="col" class="col-sm-2 cellRight">Estado</th>
+				                  	</tr>
+				                </thead>
+				                <tbody class="datos body-cuarenta-screen">
+				                    {% for guia in guiaReparto %}
+				    					<tr>
+				        				    <td>{{ guia.id }}</td>
+				      					    <td class="col-sm-1 cellDia">{{ guia.dia }}</td>
+				      					    <td class="col-sm-1 cellTurno">{{ guia.turno }}</td>
+				                            <td class="col-sm-3 cellEmpleado">{{ guia.empleado }}</td>
+				                            <td class="col-sm-2 cellActividad">{{ guia.actividad }}</td>
+				                            <td class="col-sm-1 cellRight">{{ guia.salida[:5] }}</td>
+				                            <td class="col-sm-1 cellRight">{{ guia.retorno[:5] }}</td>
+				                            <td class="col-sm-2 cellRight">{{ guia.estado }}</td>
+				                        </tr>
+				                    {% endfor %}
+				                </tbody>
+				            </table>
+				        </div>
+					</div>
+				</div>
+
+				<div class="bkgFiltroFecha">
+		            <div class="row">
+		                <div class="col-2">
+		                    <p class="pFiltroFecha"><u>Ordena por</u>:</p>
+		                </div>
+		                <div class="col-3">
+		                    <div class="custom-control custom-radio custom-control-inline">
+		                        <input class="custom-control-input" name="radOrden" type="radio" id="fechaVis" value="fechaVis" checked="true">
+		                        <label class="custom-control-label" for="fechaVis">Fecha visita</label>
+		                    </div>
+		                </div>
+		                <div class="col-3">
+		                    <div class="custom-control custom-radio custom-control-inline">
+		                        <input class="custom-control-input" name="radOrden" type="radio" id="cliente" value="cliente">
+		                        <label class="custom-control-label" for="cliente">Cliente</label>
+		                    </div>
+		                </div>
+		            </div>  {# /row #}
+				</div>
+
+		        <div class="row">
+		            <div class="col-6 offset-3">
+		                <a type="button" class="btn btn-success btn-block" id="btnGenList" target="_blank">
+		                    <strong>Generar listado</strong>
+		                </a>
+		            </div>
+		        </div>  {# /.row #}
+
+			</div>	{# /col-11 id="guiaReparto" #}
+		</div>	{# /row #}
+	</div>    {# /container #}
+{% endblock %}
+
+{% block javascript %}
+	{{ parent() }}
+
+	<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+
+    <script type="text/javascript">
+    	// Paths
+    	const VISITAS = { 
+    			pathImprime: "{{ path_for('repartos.visitassegunguia.imprime') }}",
+    	    	guiaSelecionada: 0,
+
+    	    	//
+    	    	// Funciones
+    	    	// 
+    	    	alerta: function (mensaje, elem) {
+    	    		// Mensajes de alerta luego pone foco en elemento
+				    $.alert( {
+				        title: '<strong>Atención !!</strong>',
+				        content: '<p><strong>' + mensaje + '</strong></p>',
+				        type: 'red',
+						typeAnimated: true,
+						buttons: {
+							ok: {
+									text: 'Entendido',
+									btnClass: 'btn-red',
+									action: function() {
+										// Pone el foco en el elemento con error
+										elem.focus();
+	            					}
+						        }
+					    }
+				    } );
+    	    	},
+
+
+    	};  // end VISITAS
+
+		// jQuery
+		// 
+		$(document).ready(function(){
+
+			// Click en linea buscar guia de reparto
+			$('#tablaBuscarGuia tr').on('click', function(){
+
+				// Remover la clase de verde por si está...
+				$('.datos').children().removeClass('bg-info text-white font-weight-bold');
+				// Poner en verde las linea seleccionada (cliente)
+				$(this).addClass('bg-info text-white font-weight-bold');
+
+	  			//console.log('Id de guia: ' + $(this).find('td:first').html() );
+	  			VISITAS.guiaSelecionada = parseInt( $(this).find('td:first').html() );
+	  		});
+
+			// Boton Generar Listado
+			$('#btnGenList').click(function (event) {
+
+				console.log('Id de guia: ' + VISITAS.guiaSelecionada );
+				if (VISITAS.guiaSelecionada === 0) {
+					VISITAS.alerta('Seleccione una guía de reparto !', $('#tablaBuscarGuia'));
+				}
+
+				if ($('#fechaDesde').val() === '') {
+					VISITAS.alerta('Indique fecha desde !', $('#fechaDesde'));
+				}
+
+				if ($('#fechaHasta').val() === '') {
+					VISITAS.alerta('Indique fecha hasta !', $('#fechaHasta'));
+				}
+
+				let paramString = '?';
+				paramString += 'desde=' + $('#fechaDesde').val();
+				paramString += '&hasta=' + $('#fechaHasta').val();
+				paramString += '&idguia=' + VISITAS.guiaSelecionada;
+				paramString += '&orden=' + $("input:radio[name='radOrden']:checked").prop('id');
+
+				//console.log('Params: ' + paramString);
+				// Envio de datos a controller por get...
+				window.open(VISITAS.pathImprime + paramString, '_blank');
+
+			});
+
+
+		});  // End document.ready()
+
+	</script>
+
+{% endblock %}

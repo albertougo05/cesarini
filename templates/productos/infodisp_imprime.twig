@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <!-- Required meta tags -->
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="icon" type="image/png" href="{{ base_url() }}/img/favicon.ico">
+
+	   <!-- Bootstrap CSS -->
+	    <link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/bootstrap.min.css">
+
+		<!-- Mis estilos css -->
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/estilosPrint.css">
+		<title>{{ titulo }}</title>
+	</head>
+	<body>
+		<header>
+			<div class="container-fluid">
+				<div class="row justify-content-end">
+					<div class="col-md-2">
+						<button id="btnImprimir" type="button" class="btn btn-primary">Imprimir</button>
+						<button id="btnVolver" type="button" class="btn btn-link">Volver</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<hr>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col pr-5 mb-0 mr-5 mt-3">
+					<p class="text-right mb-0">{{ fecha }}</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col ">
+					<h3 class="text-center" id="titImpGuia"><strong>Informe de Dispenser</strong></h3>
+					<p class="text-center mb-0">{{ accion }}</p>
+				</div>
+			</div> {# end row #}
+
+			<div class="row tablaDetalleVisitas">
+				<div class="col">
+					<table class="table table-sm table-borderless">
+			    		<thead class="thead-dark">
+				    		<tr>
+	                            <th>Fecha Alta</th>
+	                            <th>Nro. Interno</th>
+	                            <th>Nro. Serie</th>
+	                            <th>Modelo</th>
+	                            <th>Tipo Disp.</th>
+	                            <th>Fecha Ult.Serv.</th>
+	                            <th>Estado</th>
+	                            <th>Fecha Baja</th>
+						    </tr>
+			    		</thead>
+			    		<tbody>
+							{% for disp in listado %}
+								<tr class="{{ (conmovim or conclien ) ? 'table-active font-weight-bold' : '' }}">
+                                    <td>{{ disp.FechaAlta }}</td>
+                                    <td>{{ disp.NroInterno }}</td>
+                                    <td>{{ disp.NroSerie }}</td>
+                                    <td>{{ disp.Modelo }}</td>
+                                    <td>{{ disp.Descripcion }}</td>
+                                    <td>{{ disp.FechaUltService }}</td>
+                                    <td>{{ disp.Estado }}</td>
+                                    <td>{{ disp.FechaBaja }}</td>
+								</tr>
+								{% if conmovim %}
+									<tr>
+										<td></td><td></td><td></td>
+										<td colspan="5" class="font-italic"><small>Ultimo mov: {{ disp.UltMov }} - Empleado: {{ disp.Empleado }} - Observac.: {{ disp.Observaciones }}</small></td>
+									</tr>
+								{% endif %}
+								{% if conclien and disp.Estado == 'Cliente' %}
+									<tr>
+										<td></td><td></td><td></td>
+										<td colspan="5" class="font-italic"><small>Cliente: {{ disp.Cliente }}, {{ disp.Direccion }} - {{ disp.Localidad }} / Te. {{ disp.Telefono }} / Cel.: {{ disp.Celular }}</small></td>
+									</tr>
+								{% endif %}
+
+							{% endfor %}
+			    		</tbody>
+					</table>
+				</div>
+			</div>    {# end row #}
+		</div>  {# end container #}
+
+		<script src="{{ base_url() }}/js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript">
+			// Codigo jQuery
+			$(document).ready(function(){
+
+				// Para boton volver
+				$('#btnVolver').click( function() {
+			    	window.close();
+			    });
+
+				// Boton Imprimir
+				$('#btnImprimir').click( function() {
+                    window.print();
+				});
+			});
+		</script>
+	</body>
+</html>

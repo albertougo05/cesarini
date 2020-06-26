@@ -1,0 +1,131 @@
+{% extends 'base.twig' %}
+
+	{% block head %}
+		{{ parent() }}
+
+		<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+	{% endblock %}	
+
+	{% block title %}{{ titulo }}{% endblock %} 
+
+	{% block navigation %}
+	    {% include 'tablas/nav_usuarios.twig' %}
+	{% endblock %}
+
+	{% block breadcrumbs %}
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<nav aria-label="breadcrumb">
+					    <ol class="breadcrumb">
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Tablas</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('tablas.usuarios') }}">Usuario</a></li>
+						    <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+					    </ol>
+					</nav>
+				</div>
+			</div>
+
+			{% include 'partes/flash.twig' %}
+
+		</div>
+	{% endblock %}
+
+	{% block content %}
+
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-8" id="registrar">
+					<h2 class="text-right">Usuarios</h2>
+
+					{# Recibe los errores de ValidationErrorsMiddleware #}
+					{# {{ errors | json_encode }} #}
+
+					<form id="userForm" class="needs-validation" action="{{ path_for('tablas.usuarios') }}" method="post" autocomplete="nope" novalidate>
+
+						<input type="hidden" id="iduser" name="iduser" value="{{ old.id }}">
+
+					    <div class="form-group">
+					        <label for="usuario">Nombre usuario</label>
+					        <input type="text" class="form-control form-control-sm" id="usuario" name="usuario" placeholder="Nombre" value="{{ old.usuario }}" autocomplete="off">
+					    </div>
+					    <div class="form-row">
+					    	<div class="form-group col-md-6">
+						        <label for="contrasena">Contraseña</label>
+						        <input type="password" class="form-control form-control-sm" id="contrasena" name="contrasena" placeholder="Contraseña" value="{{ old.contrasena }}" autocomplete="off">
+							</div>
+							<div class="form-group col-md-6">
+						        <label for="confirma">Confirma contraseña</label>
+						        <input type="password" class="form-control form-control-sm" id="confirma" name="confirma" value="{{ old.contrasena }}" autocomplete="off">
+							</div>
+					    </div>
+					    <div class="form-row">
+					    	<div class="form-group col-md-6">
+	                            <label for="nivel">Seleccione nivel de acceso</label>
+							    <select class="form-control form-control-sm" id="nivel" name="nivel">
+							        <option value="admin"{{ (old.nivel == 'admin') ? ' selected' : '' }}>Administrador</option>
+							        <option value="user1"{{ (old.nivel == 'user1') ? ' selected' : '' }}>Usuario 1</option>
+							        <option value="user2"{{ (old.nivel == 'user2') ? ' selected' : '' }}>Usuario 2</option>
+							    </select>
+							</div>
+						</div>
+					  	<button id="btnConfirma" type="submit" class="btn btn-primary">Confirma</button>
+					  	<a id="btnCancela" class="btn btn-outline-light" href="{{ path_for('tablas.usuarios') }}" style="margin-left: 15px;" role="button">Cancela</a>
+
+						{# Para CSRF control #}
+						{{ csrf.field | raw }}
+
+					</form>
+
+					{% include 'partes/enviando.twig' %}
+
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal -->
+		<div class="modal fade" id="modalUsers" tabindex="-1" role="dialog" aria-labelledby="modalUsersTitle" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="exampleModalCenterTitle"><strong>Buscar usuario</strong></h5>
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+		        <p>Lista de Usuarios</p>
+
+			<div>
+		        <select id="selectUser" name="selectUser" class="col-sm-6 form-control form-control-sm">
+					{% for user in usuarios %}
+						<option value="{{ user.Id }}">{{ user.Usuario }}</option>
+					{% endfor %}
+				</select>
+				<button type="button" id="btnSelecUser" class="btn btn-primary" style="position: absolute; right: 20px; bottom: 15px;">Selecciona</button>
+			</div>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
+	{% endblock %}
+
+	{% block javascript %}
+		{{ parent() }}
+
+		<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+		<script src="{{ base_url() }}/js/jquery.validate.min.js"></script>
+		<script>
+			var global_datausuario = "{{ path_for('tablas.datausuario') }}";
+			var global_eliminar = "{{ path_for('tablas.usuarios.eliminar') }}";
+			var global_usuariodisponible = "{{ path_for('tablas.usuariodisponible') }}";
+			var global_accion = "{{ accion }}";
+		</script>
+		<script src="{{ base_url() }}/js/usuarios.js"></script>
+
+	{% endblock %}

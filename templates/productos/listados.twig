@@ -1,0 +1,124 @@
+{% extends 'base.twig' %}
+
+{% block head %}
+	{{ parent() }}
+
+    <style type="text/css">
+        table th {   /* Crea el sticky para titulos de tabla */
+            position: sticky;
+            top: 68px;
+        }
+        thead {
+        	height: 50px;
+        }
+    </style>
+
+{% endblock %}
+
+{% block title %}{{ titulo }}{% endblock %} 
+
+{% block navigation %}
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+
+        <a class="navbar-brand" href="{{ path_for('home') }}">
+          <img src="{{ base_url() }}/img/logo-cesarini.png" width="80" height="40" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+        	<ul class="navbar-nav mr-auto">
+			    <li class="nav-item active">
+			        <a id="linkAlfa" class="nav-link" href="{{ path_for('productos.listados') ~ '?list=1' }}">Alfabético</a>
+			    </li>
+			    <li class="nav-item active">
+			        <a class="nav-link active" href="{{ path_for('productos.listados') ~ '?list=2' }}">Tipo de producto</a>
+			    </li>				    
+			    <li class="nav-item active">
+		        	<a class="nav-link" href="{{ path_for('productos.imprimir') ~ urlParam }}">Imprimir</a>
+			    </li>
+			    <li class="nav-item active">
+		        	<a class="nav-link" href="{{ path_for('home') }}">Salir</a>
+			    </li>
+        	</ul>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block breadcrumbs %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<nav aria-label="breadcrumb">
+				    <ol class="breadcrumb">
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Productos</a></li>
+					    <li class="breadcrumb-item"><a href="#">Listados</a></li>
+					    <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+				    </ol>
+				</nav>
+			</div>
+		</div>
+{% endblock %}	
+
+{% block content %}
+	<div class="container" id="guiaReparto">
+		<div class="row tablaListados">
+	    	<div class="col-md-12">
+				<h5 class="text-left text-dark titulo-tabla"><strong>Lista de Productos - {{ accion }}</strong></h5>
+				<br><br>
+				<table class="table table-sm table-hover">
+			    	<thead class="thead-dark">
+					    <tr>
+					        <th class="cellRight">Id</th>
+					        <th>Descripción</th>
+					        <th>Tipo producto</th>
+					        <th>Presentación</th>
+					        <th class="cellRight">Precio</th>
+					        <th class="cellRight">Precio Exced.</th>
+					    </tr>
+			    	</thead>
+			    	<tbody>
+						{% for prod in listado %}
+							<tr>
+						        <td class="cellRight">{{ prod.Id }}</td>
+						        <td>{{ prod.Descripcion }}</td>
+						        <td>{{ prod.DescripTipoProducto.Descripcion }}</td>
+						        <td>{{ prod.Presentacion }}</td>
+						        <td class="cellRight">{{ (prod.Precio == 0) ? '' : prod.Precio|number_format(2, ',', '.') }}</td>
+						        <td class="cellRight">{{ (prod.PrecioExcedente == 0) ? '' : prod.PrecioExcedente|number_format(2, ',', '.') }}</td>
+							</tr>
+						{% endfor %}
+			    	</tbody>
+			    </table>
+				<hr>
+			</div>  {## /.row}
+		</div>  {#  /.row #}
+	</div>  {# /.container #}
+
+	{% block javascript %}
+		{{ parent() }}
+
+		<script>
+			// Codigo jQuery:
+			$(document).ready( function () {
+			    // Boton de ir arriba
+			    $('#scrollUp').click( function () {
+			        $('body, html').animate({
+			            scrollTop: '0px'
+			        }, 300);
+			    });
+
+			    // Para chequear scroll para boton ir arriba
+			    $(window).scroll( function () {
+			        if( $(this).scrollTop() > 0 ) {
+			            $('#scrollUp').show();
+			        } else {
+			            $('#scrollUp').hide();
+			        }
+			    });
+			});
+		</script>
+
+	{% endblock %}
+{% endblock %}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		{% block head %}
+		    <!-- Para evitar el cache del navegador -->
+			<meta http-equiv="Expires" content="0">
+			<meta http-equiv="Last-Modified" content="0">
+			<meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
+			<meta http-equiv="Pragma" content="no-cache">
+
+		    <!-- Required meta tags -->
+		    <meta charset="utf-8">
+		    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+			<link rel="icon" type="image/png" href="{{ base_url() }}/img/favicon.ico">
+
+		   <!-- Bootstrap CSS -->
+		    <link rel="stylesheet" href="{{ base_url() }}/css/bootstrap.min.css">
+
+			<!-- Mis estilos css -->
+			<link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/misEstilos.css">
+		{% endblock %}
+
+		<title>{% block title %}{% endblock %}</title>
+
+	</head>
+	<body>
+		<div id="scrollUp"></div>
+
+	    {% block navigation %}{% endblock %}
+
+	    {% block breadcrumbs %}{% endblock %}
+
+	    {% block content %}{% endblock %}
+
+		<!-- Para separar 20px el fondo -->
+		<div style="margin-bottom: 20px;"></div>
+
+		{% block javascript %}
+		    <!-- Optional JavaScript -->
+		    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		    <script src="{{ base_url() }}/js/jquery-3.3.1.min.js"></script>
+			<!-- Libreria popper, usada por Bootstrap -->
+			<script src="{{ base_url() }}/js/popper.min.js"></script>
+		    <script src="{{ base_url() }}/js/bootstrap.min.js"></script>
+		{% endblock %}
+	</body>
+</html>

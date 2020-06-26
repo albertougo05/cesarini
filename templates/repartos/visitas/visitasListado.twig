@@ -1,0 +1,175 @@
+{% extends 'base.twig' %}
+
+{% block head %}
+	{{ parent() }}
+
+	<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+	<link rel="stylesheet" href="{{ base_url() }}/css/typeahead.css">
+
+	<style type="text/css">
+		.lblFecha {
+			padding-top: 3px;
+			margin-right: 10px;
+		}
+		.bkgFiltroFecha {
+  			margin: 20px 0px 13px;
+  			padding: 20px 0px 15px;
+  			background: #E7E8E9;
+  			border-radius: 5px; 
+		}
+		.bkgBuscarCli {
+			margin-top: 25px;
+		}
+		#btnGenList {
+			color: white;
+			margin-top: 20px;
+		}
+		#btnCliPorCodigo {
+			width: 100px;
+		} 
+	</style>
+
+{% endblock %}	
+
+{% block title %}
+	{{ titulo }}
+{% endblock %} 
+
+{% block navigation %}
+	{% include 'repartos/visitas/nav_listado.twig' %}
+{% endblock %}
+
+{% block breadcrumbs %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<nav aria-label="breadcrumb">
+				    <ol class="breadcrumb">
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Repartos</a></li>
+					    <li class="breadcrumb-item active" aria-current="page">Listado Visitas</li>
+				    </ol>
+				</nav>
+			</div>
+		</div>
+		{% include 'partes/flash.twig' %}
+	</div>
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-10" id="guiaReparto">
+				<h3 class="text-left text-dark titulo-tabla"><strong>Listado de visitas</strong></h3>
+
+				<div class="bkgFiltroFecha">
+            		<div class="row">
+                		<div class="col-md-2 col-xs-2">
+                    		<p class="pl-4"><u>Filtro fecha</u>:</p>
+                		</div>
+						<div class="col-md-4 col-xs-3 d-md-inline-flex">
+						    <label class="lblFecha" for="fechaDesde">Desde</label>
+						    <input type="date" class="form-control form-control-sm" id="fechaDesde" name="fechaDesde" value="{{ fechaDesde }}">
+						</div>
+						<div class="col-md-4 col-xs-3 d-md-inline-flex">
+						    <label class="lblFecha" for="fechaHasta">Hasta</label>
+						    <input type="date" class="form-control form-control-sm" id="fechaHasta" name="fechaHasta" value="{{ fechaHasta }}">
+						</div>
+					</div>
+				</div>
+
+        		<div class="row bkgBuscarCli">
+            		<div class="col-2">
+                		<p class="pl-4"><u>Filtro cliente</u>:</p>
+            		</div>
+             		<div class="col-8 mb-1">
+ 	    				<label class="sr-only" for="inputBuscarCli">Cliente</label>
+	    				<input id="inputBuscarCli" name="inputBuscarCli" class="typeahead form-control form-control-sm" type="text" placeholder="Buscar cliente (3 letras min.)" autofocus autocomplete="off" spellcheck="false" size="380px;">
+            		</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-2 col-xs-1"></div>
+					<div class="col-md-10 col-xs-10 mt-3 mb-2">
+						<form class="form-inline">
+							<div class="input-group input-group-sm">
+								<label for="inputCliPorCod">Buscar por: </label>
+								<input class="form-control form-control-sm ml-3 mt-0 cellRight numero" type="text" id="inputCliPorCod" autocomplete="off" spellcheck="false" placeholder="Código cliente...">
+							</div>
+							<button type="button" class="btn btn-primary btn-sm ml-3" id="btnCliPorCodigo">Buscar</button>
+						</form>
+					</div>
+				</div>
+
+        		<div class="row mt-2">
+        			<div class="col-2"></div>
+        			<div class="col-6">
+		                <div class="custom-control custom-checkbox">
+		                    <input type="checkbox" class="custom-control-input" id="chkTodosDom" checked="true">
+		                    <label class="custom-control-label" for="chkTodosDom">Todos los domicilios</label>
+		                </div>
+        			</div>
+        		</div>
+
+        		<div class="row mt-2">
+        			<div class="col-2"></div>
+        			<div class="col-4">
+		                <div class="custom-control custom-checkbox">
+		                    <input type="checkbox" class="custom-control-input" id="chkVerEnPlanta">
+		                    <label class="custom-control-label" for="chkVerEnPlanta">Ver solo visitas en planta</label>
+		                </div>
+        			</div>
+        			<div class="col-4">
+		                <div class="custom-control custom-checkbox">
+		                    <input type="checkbox" class="custom-control-input" id="chkVerDejaCero">
+		                    <label class="custom-control-label" for="chkVerDejaCero">Ver visita sin dejar producto</label>
+		                </div>
+        			</div>
+        		</div>
+
+				<div class="bkgFiltroFecha">
+            		<div class="row">
+                		<div class="col-2">
+                    		<p class="pl-4"><u>Agrupar por</u>:</p>
+                		</div>
+						<div class="col-10 mb-1">
+			                <div class="custom-control custom-checkbox custom-control-inline">
+			                    <input type="checkbox" class="custom-control-input" id="chkProd">
+			                    <label class="custom-control-label" for="chkProd">Producto</label>
+			                </div>
+		            	</div>
+		            </div>
+		        </div>
+
+		        <div class="row">
+		            <div class="col-6 offset-3">
+		                <a type="button" class="btn btn-success btn-block" id="btnGenList" target="_blank">
+		                    <strong>Generar listado</strong>
+		                </a>
+		            </div>
+		        </div>  {# /.row #}
+
+			</div> {# /col #}
+		</div> {# /row #}
+	</div>
+
+{% endblock %}
+
+{% block javascript %}
+	{{ parent() }}
+
+	<script src="{{ base_url() }}/js/typeahead.bundle.min.js"></script>
+	<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+
+	<script type="text/javascript">
+		// Javascript
+		// 
+		var _pathCliente = "{{ path_for('repartos.visitas.cliente') }}";
+		var _pathArmarList = "{{ path_for('repartos.visitaslistado.armarlista') }}";
+		var _pathCodcliente = "{{ path_for('repartos.visitaslistado.clieporcod') }}";
+
+	</script>
+
+	<script src="{{ base_url() }}/js/visitasListado.js"></script>
+
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends 'base.twig' %}
+
+{% block head %}
+	{{ parent() }}
+
+	<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+{% endblock %}	
+
+{% block title %}{{ titulo }}{% endblock %} 
+
+{% block navigation %}
+    {% include 'productos/nav_dispenser.twig' %}
+{% endblock %}
+
+{% block breadcrumbs %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<nav aria-label="breadcrumb">
+				    <ol class="breadcrumb">
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Productos</a></li>
+					    <li class="breadcrumb-item"><a href="{{ path_for('productos.producto') }}">Dispenser</a></li>
+					    <li class="breadcrumb-item active" aria-current="page" id="accion">{{ accion }}</li>
+				    </ol>
+				</nav>
+			</div>
+		</div>
+		{% include 'partes/flash.twig' %}
+	</div>
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-8" id="registrar">
+				<h2 class="text-right">Dispenser</h2>
+
+				<form class="needs-validation" action="{{ path_for('productos.dispenser') }}" method="post" autocomplete="nope" novalidate>
+
+					<input type="hidden" id="id" name="id" value="{{ data.Id }}">
+
+				    <div class="form-row">
+				    	<div class="form-group col">
+					        <label for="nroSerie">Número de Serie</label>
+					        <input type="text" class="form-control form-control-sm inputRight" id="nroSerie" name="nroSerie" placeholder="" value="{{ data.NroSerie }}">
+					    </div>
+						<div class="form-group col">
+							<label for="nroInterno">Número Interno</label>
+					        <input type="text" class="form-control form-control-sm inputRight" id="nroInterno" name="nroInterno" placeholder="" value="{{ data.NroInterno }}">
+						</div>
+						<div class="form-group col">
+							<label for="selectTipo">Tipo de dispenser</label>
+							<select id="selectTipo" name="selectTipo" class="form-control form-control-sm">
+								<option value="0">Seleccione...</option>
+								{% for tipo in tiposDisp %}
+									<option value="{{ tipo.Id }}"{{ (data.IdTipo == tipo.Id) ? ' selected' : '' }}>{{ tipo.Descripcion }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+				    <div class="form-row">
+						<div class="form-group col">
+					        <label for="modelo">Modelo</label>
+					        <input type="text" class="form-control form-control-sm" id="modelo" name="modelo" placeholder="" value="{{ data.Modelo }}">
+						</div>
+					</div>
+				    <div class="form-row">
+						<div class="form-group col">
+					        <label for="fechaAlta">Fecha alta</label>
+					        <input type="date" class="form-control form-control-sm" id="fechaAlta" name="fechaAlta" value="{{ data.FechaAlta }}"{{ (accion == 'Modifica') ? ' disabled' : '' }}>
+						</div>
+						<div class="form-group col">
+					        <label for="ultService">Último service </label>
+					        <input type="date" class="form-control form-control-sm" id="ultService" name="ultService" placeholder="" value="{{ data.FechaUltService }}" disabled>
+						</div>
+						<div class="form-group col">
+					        <label for="fechaBaja">Fecha baja</label>
+					        <input type="date" class="form-control form-control-sm" id="fechaBaja" name="fechaBaja" placeholder="" value="{{ data.FechaBaja }}" disabled>
+						</div>
+						<div class="form-group col">
+							<label for="estado">Estado</label>
+							<select id="estado" name="estado" class="form-control form-control-sm"{{ (accion == 'Modifica') ? ' disabled' : '' }}>
+								{% for estado in estados %}
+									<option value="{{ estado }}"{{ (data.Estado == estado) ? ' selected' : '' }}>{{ estado }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+				  	<button id="btnConfirma" type="submit" class="btn btn-primary">Confirma</button>
+				  	<a id="btnCancela" class="btn btn-outline-light" href="{{ path_for('productos.dispenser') }}" style="margin-left: 15px;" role="button">Cancela</a>
+
+					{# Para CSRF control #}
+					{{ csrf.field | raw }}
+
+				</form>
+
+				{% include 'partes/enviando.twig' %}
+
+				{% if accion == 'Modifica' %}
+					<div class="row mt-0 mb-0">
+						<div class="col-6"></div>
+						<div class="col-6 dataMovDisp">
+							<ul class="mb-2">
+								<li><small>Último movimiento: {{ movimDisp.Fecha }}</small></li>
+								<li><small>Empleado: {{ movimDisp.Empleado }}</small></li>
+								<li><small>Observac.: {{ movimDisp.Observac }}</small></li>
+							</ul>
+						</div>
+					</div>
+				{% endif %}
+			</div> {# /col-8 #}
+		</div>  {# /row #}
+
+		{% if dataClie %}
+			<div class="row justify-content-center">
+				<div class="col-8" id="datosCliDisp">
+					<h4 class="text-right">Datos cliente</h4>
+					<ul>
+						<li><strong>{{ dataClie.ApellidoNombre }}</strong></li>
+						<li>{{ dataClie.Direccion }}, {{ dataClie.Localidad }} - ({{ dataClie.CodPostal }}) {{ dataClie.Provincia }}</li>
+						<li>Teléfono: {{ dataClie.Telefono }} - Celular: {{ dataClie.Celular }}</li>
+						<li>Contacto: {{ dataClie.Contacto }}</li>
+						<li>Email: {{ dataClie.Email }}</li>
+					</ul>
+				</div>
+			</div>
+		{% endif %}
+	</div>  {# /container #}
+
+{% endblock %}
+
+{% block javascript %}
+	{{ parent() }}
+
+	<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+	<script src="{{ base_url() }}/js/enterXtab.js"></script>
+	<script>
+		var global_eliminaDisp = "{{ path_for('productos.dispenser.elimina') }}";
+		var global_validaSerie = "{{ path_for('productos.dispenser.validaserie') }}";
+		var global_nroInterno  = "{{ path_for('productos.dispenser.validainterno') }}";
+	</script>
+	<script src="{{ base_url() }}/js/dispenser.js"></script>
+
+{% endblock %}

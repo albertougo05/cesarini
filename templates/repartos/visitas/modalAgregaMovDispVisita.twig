@@ -1,0 +1,100 @@
+{# Modal Movimiento de dispenser en Visitas #}
+
+<!-- Modal -->
+<div class="modal fade" id="modalAgregaMovDisp" tabindex="-1" role="dialog" aria-labelledby="modalAgregaMovDisp" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        	<h5 class="modal-title" id="modalAgrMovDispTitle"><strong>Agrega movimiento de dispenser</strong></h5>
+        	<button id="btnModAgrMovDisp" type="button" class="close" data-dismiss="modal" aria-label="Close">
+          		<span aria-hidden="true">&times;</span>
+        	</button>
+        </div>
+        <div class="modal-body">
+
+            <!-- OPCIONES DE MOVIMIENTO -->
+            <div class="row">
+                <div class="col-md-8 offset-md-2 divColOpcionesModal">
+                    <div class="row mb-0">
+                        <div class="col">
+                            <p class="mb-1">Tipo de movimiento</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col d-flex justify-content-center">
+                            <div class="custom-control custom-radio custom-control-inline">
+                              <input type="radio" id="opcStockClie" name="radOpcMovim" class="custom-control-input" value="Cliente" checked="true">
+                              <label class="custom-control-label" for="opcStockClie">De Stock a Cliente</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                              <input type="radio" id="opcClieStock" name="radOpcMovim" class="custom-control-input" value="Service">
+                              <label class="custom-control-label" for="opcClieStock">De Cliente a Service</label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>                
+            </div>
+
+            <!-- SELECT CON LOS DISPENSERS -->
+			<div class="row">
+				<div class="col-md-10 offset-md-1">
+					<form id="producto">
+						<div class="form-row">
+						    <div class="form-group col-md-8 offset-md-2">
+						        <label id="lblSelDispenser" for="selDispenser">Dispensers en stock</label>
+						        <select id="selDispenser" class="form-control form-control-sm">
+						            <option value='0' selected>Seleccione dispenser...</option>
+
+						            {# {% for disp in listadisp %}
+										<option value="{{ disp.Id }}">{{ disp.NroInterno }} - {{ disp.Modelo }}</option>
+									{% endfor %} #}
+
+						        </select>
+						    </div>
+						</div>
+					</form>
+				</div>    {# /col #}
+			</div>    {# /row #}
+
+            <!-- FORM CLIENTE -->
+    		<div class="row">
+    			<div class="col-md-8 offset-md-2 divColInputModal">
+    				<form id="clidisp">
+    					<div class="form-row">
+    						<div class="form-group col-md-10 offset-md-1">
+	    						<label for="inputModBuscarCli2">Cliente</label>
+	    						<input id="inputModBuscarCli2" name="inputModBuscarCli2" class="typeahead2 form-control form-control-sm" type="text" placeholder="Buscar cliente (3 letras min.)" autofocus autocomplete="off" spellcheck="false" size="380px;">
+	    					</div>
+						</div>
+    					<input type="hidden" id="idclie2" name="idclie2">
+    					<input type="hidden" id="client2" name="client2">
+    					<input type="hidden" id="iddomi2" name="iddomi2">
+    					<input type="hidden" id="domici2" name="domici2">
+                        <input type="hidden" id="estado"  name="estado">
+    				</form>
+
+  				</div>
+			</div>
+
+            {# OBSERVACIONES #}
+            <div class="row mt-3">
+                <div class="col-md-8 offset-md-2">
+                    <form id="formObserv">
+                        <div class="form-group col-md-10 offset-md-1 pl-0 pr-0">
+                            <label for="observac">Observaciones</label>
+                            <input type="text" class="form-control form-control-sm" id="observac" name="observac">
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+	    </div>
+        <div class="modal-footer">
+        	<button type="button" id="btnConfirmMovDisp" class="btn btn-primary btn-sm">Confirma</button>
+        	<button id="btnCancelAgrMovDisp" type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Cancela</button>
+        </div>
+      </div>
+    </div>
+</div>

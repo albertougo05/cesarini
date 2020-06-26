@@ -1,0 +1,222 @@
+{% extends 'base.twig' %}
+
+	{% block head %}
+		{{ parent() }}
+
+		<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+	{% endblock %}	
+
+	{% block title %}{{ titulo }}{% endblock %} 
+
+	{% block navigation %}
+	    {% include 'tablas/nav_usuarios.twig' %}
+	{% endblock %}
+
+	{% block breadcrumbs %}
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<nav aria-label="breadcrumb">
+					    <ol class="breadcrumb">
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Tablas</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('tablas.empleado') }}">Empleados</a></li>
+						    <li class="breadcrumb-item active" aria-current="page" id="accion">{{ accion }}</li>
+					    </ol>
+					</nav>
+				</div>
+			</div>
+
+			{% include 'partes/flash.twig' %}
+
+		</div>
+	{% endblock %}
+
+	{% block content %}
+
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-8" id="registrar">
+					<h2 class="text-right">Empleado</h2>
+
+					{# Recibe los errores de ValidationErrorsMiddleware #}
+					{# {{ errors | json_encode }} #}
+
+					<form class="needs-validation" action="{{ path_for('tablas.empleado') }}" method="post" autocomplete="off" novalidate>
+
+						{% if accion == 'Nuevo' %}
+							{% set id = 0 %}
+						{% else %}
+                            {% set id = idempl %}
+						{% endif %}
+
+						<input type="hidden" id="idempl" name="idempl" value="{{ id }}">
+
+					    <div class="form-group">
+					        <label for="apellidonombre">Apellido y nombre</label>
+					        <input type="text" class="form-control form-control-sm{{ errors.apellidonombre ? ' is-invalid' : '' }}" id="apellidonombre" name="apellidonombre" placeholder="APELLIDO Nombre" value="{{ old.apellidonombre }}">
+					        {# Esto funciona con Bootstrap 4 #}
+					        {% if errors.apellidonombre %}
+								<div class="invalid-feedback">
+									{# Traduccion mensajes de validación #}
+									{% if errors.apellidonombre | first == 'Apellidonombre must not be empty' %}
+										Debe ingresar apellido y nombre.
+									{% endif %}
+								</div>
+							{% endif %}
+					    </div>
+
+						<div class="form-row">
+						    <div class="form-group col-md-4">
+	                            <label for="categoria">Categoría</label>
+							    <select class="form-control form-control-sm{{ errors.categoria ? ' is-invalid' : '' }}" id="categoria" name="categoria">
+									{% for categ in categorias %}
+									    <option value="{{ categ.Id }}"{% if old.categoria == categ.Id %}selected{% endif %}>
+									    		{{ categ.Descripcion }}
+									    </option>
+									{% endfor %}
+							    </select>
+							    {% if errors.categoria %}
+									<div class="invalid-feedback">
+							        	Seleccione categoría de empleado.
+									</div>
+								{% endif %}
+							</div>
+							<div class="form-group col-md-2"></div>
+							<div class="form-group col-md-4">
+						        <label for="cuil">CUIL</label>
+						        <input type="text" class="form-control form-control-sm{{ errors.cuil ? ' is-invalid' : '' }}" id="cuil" name="cuil" value="{{ old.cuil }}">
+						        {% if errors.cuil %}
+									<div class="invalid-feedback">
+										{# Traduccion mensajes de validación #}
+										{% if errors.cuil | first == 'Cuil must not be empty' %}
+											Debe ingresar número de Cuil.
+										{% endif %}
+									</div>
+								{% endif %}
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-md-6">
+						        <label for="domicilio">Domicilio</label>
+						        <input type="text" class="form-control form-control-sm{{ errors.domicilio ? ' is-invalid' : '' }}" id="domicilio" name="domicilio" value="{{ old.domicilio }}">
+						        {% if errors.domicilio %}
+									<div class="invalid-feedback">
+										{# Traduccion mensajes de validación #}
+										{% if errors.domicilio | first == 'Domicilio must not be empty' %}
+											Debe ingresar domicilio.
+										{% endif %}
+									</div>
+								{% endif %}
+							</div>
+							<div class="form-group col-md-6">
+						        <label for="localidad">Localidad</label>
+						        <input type="text" class="form-control form-control-sm{{ errors.localidad ? ' is-invalid' : '' }}" id="localidad" name="localidad" value="{{ old.localidad }}">
+						        {% if errors.localidad %}
+									<div class="invalid-feedback">
+										{# Traduccion mensajes de validación #}
+										{% if errors.localidad | first == 'Localidad must not be empty' %}
+											Debe ingresar localidad.
+										{% endif %}
+									</div>
+								{% endif %}
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-md-4">
+						        <label for="provincia">Provincia</label>
+						        <input type="text" class="form-control form-control-sm{{ errors.provincia ? ' is-invalid' : '' }}" id="provincia" name="provincia" value="{{ old.provincia }}">
+						        {% if errors.provincia %}
+									<div class="invalid-feedback">
+										{# Traduccion mensajes de validación #}
+										{% if errors.provincia | first == 'Provincia must not be empty' %}
+											Debe ingresar provincia.
+										{% endif %}
+									</div>
+								{% endif %}
+							</div>
+							<div class="form-group col-md-4">
+						        <label for="CodPostal">Código Postal</label>
+						        <input type="text" class="form-control form-control-sm{{ errors.CodPostal ? ' is-invalid' : '' }}" id="CodPostal" name="CodPostal" value="{{ old.CodPostal }}">
+						        {% if errors.CodPostal %}
+									<div class="invalid-feedback">
+										{# Traduccion mensajes de validación #}
+										{% if errors.CodPostal | first == 'CodPostal must not be empty' %}
+											Debe ingresar código postal.
+										{% endif %}
+									</div>
+								{% endif %}
+							</div>
+							<div class="form-group col-md-4">
+						        <label for="telefono">Teléfono</label>
+						        <input type="text" class="form-control form-control-sm{{ errors.telefono ? ' is-invalid' : '' }}" id="telefono" name="telefono" value="{{ old.telefono }}">
+								{# Telefono no tiene validación #}
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-md-4">
+						        <label for="celular">Celular</label>
+						        <input type="text" class="form-control form-control-sm{{ errors.celular ? ' is-invalid' : '' }}" id="celular" name="celular" value="{{ old.celular }}">
+								{# Celular no tiene validación #}
+							</div>
+							<div class="form-group col-md-5">
+						        <label for="mail">Email</label>
+						        <input type="text" class="form-control form-control-sm{{ errors.mail ? ' is-invalid' : '' }}" id="mail" name="mail" value="{{ old.mail }}">
+						        {% if errors.mail %}
+									<div class="invalid-feedback">
+										{# Traduccion mensajes de validación  #}
+										{% if errors.mail | first == 'Mail must be valid email' %}
+											Debe ingresar formato de email correcto.
+										{% endif %}  
+									</div>
+								{% endif %}
+							</div>
+							<div class="form-group col-md-3">
+								<label for="estado">Estado</label>
+								<select class="form-control form-control-sm{{ errors.estado ? ' is-invalid' : '' }}" id="estado" name="estado">
+									<option value="0" selected>Seleccione estado...</option>
+									<option value="Alta"{{ (old.estado == 'Alta') ? ' selected' : '' }}>Alta</option>
+									<option value="Baja"{{ (old.estado == 'Baja') ? ' selected' : '' }}>Baja</option>
+								</select>
+								{% if errors.estado %}
+									<div class="invalid-feedback">
+										{# Traduccion mensajes de validación #}
+										{% if errors.estado | first == 'Estado must not be empty' %}
+											Debe ingresar un estado.
+										{% endif %}
+									</div>
+								{% endif %}
+							</div>
+						</div>
+
+					  	<button id="btnConfirma" type="submit" class="btn btn-primary">Confirma</button>
+					  	<a id="btnCancela" class="btn btn-outline-light" href="{{ path_for('tablas.empleado') }}" style="margin-left: 15px;" role="button">Cancela</a>
+
+						{# Para CSRF control #}
+						{{ csrf.field | raw }}
+
+					</form>
+
+					{% include 'partes/enviando.twig' %}
+
+				</div>
+			</div>
+		</div>
+
+		{% include 'partes/modalEmpleados.twig' %}
+
+	{% endblock %}
+
+	{% block javascript %}
+		{{ parent() }}
+
+		<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+		<script src="https://unpkg.com/imask"></script>
+		<script src="{{ base_url() }}/js/enterXtab.js"></script>
+		<script>
+			var global_eliminarEmpleado = "{{ path_for('tablas.empleado.eliminar') }}";
+			var global_dataempleado = "{{ path_for('tablas.dataempleado') }}";
+		</script>
+		<script src="{{ base_url() }}/js/empleados.js"></script>
+
+	{% endblock %}

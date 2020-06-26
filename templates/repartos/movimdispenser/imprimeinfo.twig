@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <!-- Required meta tags -->
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="icon" type="image/png" href="{{ base_url() }}/img/favicon.ico">
+
+	   <!-- Bootstrap CSS -->
+	   <link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/bootstrap.min.css">
+
+		<!-- Mis estilos css -->
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/estilosPrint.css">
+		<title>{{ titulo }}</title>
+	</head>
+	<body>
+		<header>
+			<div class="container-fluid">
+				<div class="row justify-content-end">
+					<div class="col-md-2">
+						<button id="btnImprimir" type="button" class="btn btn-primary">Imprimir</button>
+						<button id="btnVolver" type="button" class="btn btn-link">Volver</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<hr>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col pr-5 mb-0 mr-5 mt-3">
+					<p class="text-right mb-0">{{ fecha }}</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col ">
+					<h3 class="text-center" id="titImpGuia"><strong>Informe Movimientos Dispenser</strong></h3>
+					<p class="text-center mb-0">Ordenado por:{{ accion }}</p>
+				</div>
+			</div> {# end row #}
+
+			<div class="row tablaDetalleVisitas">
+				<div class="col">
+					<table class="table table-sm">
+			    		<thead>
+				    		<tr>
+	                            <th>Fecha</th>
+	                            {# <th>Nro. Serie</th> #}
+	                            <th>Nro. Interno</th>
+	                            {# <th>Modelo</th> #}
+	                            <th>Empleado</th>
+	                            <th>Cliente</th>
+	                            <th>Observaciones</th>
+	                            <th>Estado</th>
+						    </tr>
+			    		</thead>
+			    		<tbody>
+							{% for disp in listado %}
+								<tr>
+                                    <td>{{ disp.Fecha }}</td>
+                                    {# <td>{{ disp.NroSerie }}</td> #}
+                                    <td>{{ disp.NroInterno }}</td>
+                                    {# <td>{{ disp.Modelo }}</td> #}
+                                    <td>{{ disp.Empleado }}</td>
+                                    <td>{{ disp.Cliente }}</td>
+                                    <td>{{ disp.Observaciones }}</td>
+                                    <td>{{ disp.Estado }}</td>
+								</tr>
+							{% endfor %}
+			    		</tbody>
+					</table>
+				</div>
+			</div>    {# end row #}
+		</div>  {# end container #}
+
+		<script src="{{ base_url() }}/js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript">
+			// Codigo jQuery
+			$(document).ready(function(){
+
+				// Para boton volver
+				$('#btnVolver').click( function() {
+			    	window.close();
+			    });
+
+				// Boton Imprimir
+				$('#btnImprimir').click( function() {
+                    window.print();
+				});
+			});
+		</script>
+	</body>
+</html>

@@ -1,0 +1,330 @@
+{% extends 'base.twig' %}
+
+{% block head %}
+	{{ parent() }}
+
+    <style type="text/css">
+        table#tablaMovimDisp th {   /* Crea el sticky para titulos de tabla */
+            position: sticky;
+            top: 68px;
+        }
+    </style>
+
+{% endblock %}
+
+{% block title %}{{ titulo }}{% endblock %} 
+
+{% block navigation %}
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+
+        <a class="navbar-brand" href="{{ path_for('home') }}">
+          <img src="{{ base_url() }}/img/logo-cesarini.png" width="80" height="40" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+        	<ul class="navbar-nav mr-auto">
+			    <li class="nav-item active">
+                    <a id="linkImprimir" class="nav-link" href="{{ path_for('repartos.imprimeinforme') ~ paramImpr  }}" target="_blank">Imprimir</a>
+			    </li>
+			    <li class="nav-item active">
+		        	<a class="nav-link" href="{{ path_for('home') }}">Salir</a>
+			    </li>
+        	</ul>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+                        <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Repartos</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container" id="guiaReparto">
+        <div class="row">
+            <div class="col-12">
+                <h3 class="text-left text-dark titulo-tabla"><strong>Informe movimiento dispenser</strong></h3>
+                <br>
+                <p class="text-right mb-2"><strong>Ordenado por: <em>{{ txtOrdenadoPor }}</em></strong></p>
+            </div>
+        </div>
+    <div class="buscarMovDisp mt-1">
+
+        {# ORDENAR #}
+        <div class="row">
+            <div class="col-2 mb-1">
+                <p class="ordenarPor"><u>Ordenar por</u>:</p>
+            </div>
+            <div class="col-10 mb-1">
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input class="custom-control-input" name="radioOrden" type="radio" id="Fecha"{{ (urlParams.column == 'Fecha') ? ' checked' : '' }}>
+                    <label class="custom-control-label" for="Fecha">Fecha</label>
+                </div>
+{#
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input class="custom-control-input" name="radioOrden" type="radio" id="NroSerie"{{ (urlParams.column == 'NroSerie') ? ' checked' : '' }}>
+                    <label class="custom-control-label" for="NroSerie">Nro. Serie</label>
+                </div>
+#}
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input class="custom-control-input" name="radioOrden" type="radio" id="NroInterno"{{ (urlParams.column == 'NroInterno') ? ' checked' : '' }}>
+                    <label class="custom-control-label" for="NroInterno">Nro. Interno</label>
+                </div>
+{#
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input class="custom-control-input" name="radioOrden" type="radio" id="Modelo"{{ (urlParams.column == 'Modelo') ? ' checked' : '' }}>
+                    <label class="custom-control-label" for="Modelo">Modelo</label>
+                </div>
+#}
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input class="custom-control-input" name="radioOrden" type="radio" id="Empleado"{{ (urlParams.column == 'Empleado') ? ' checked' : '' }}>
+                    <label class="custom-control-label" for="Empleado">Empleado</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input class="custom-control-input" name="radioOrden" type="radio" id="Cliente"{{ (urlParams.column == 'Cliente') ? ' checked' : '' }}>
+                    <label class="custom-control-label" for="Cliente">Cliente</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input class="custom-control-input" name="radioOrden" type="radio" id="Estado"{{ (urlParams.column == 'Estado') ? ' checked' : '' }}>
+                    <label class="custom-control-label" for="Estado">Estado</label>
+                </div>
+            </div>
+        </div>
+
+            <div class="row">
+                <div class="col-2">
+                    <p class="ordenarPor">Orden:</p>
+                </div>
+                <div class="col-8">
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input class="custom-control-input" name="radOrden" type="radio" id="asc" value="asc"{{ (urlParams.orden == 'asc') ? ' checked' : '' }}>
+                        <label class="custom-control-label" for="asc">Ascendente</label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input class="custom-control-input" name="radOrden" type="radio" id="desc" value="desc"{{ (urlParams.orden == 'desc') ? ' checked' : '' }}>
+                        <label class="custom-control-label" for="desc">Descendente</label>
+                    </div>
+                </div>
+            </div>  {# /row #}
+
+        </div>
+
+        {# FILTROS #}
+        <div class="row ordenInfoDisp">
+            <div class="col-2">
+                <p class="filtroInfo"><u>Filtrar por</u>:</p>
+            </div>
+            <div class="col-2 pl-1">
+                <div class="custom-control custom-checkbox d-inline">
+                    <input type="checkbox" class="custom-control-input" id="btnFiltroFecha"{{ (urlParams.ordFecha != '') ? ' checked' : ''}}>
+                    <label class="custom-control-label" for="btnFiltroFecha">Fecha movimiento</label>
+                </div>
+            </div>
+            <div class="col-2 pl-4">
+                <div class="custom-control custom-checkbox d-inline">
+                    <input type="checkbox" class="custom-control-input" id="btnFiltroDisp"{{ (urlParams.idDisp != '') ? ' checked' : ''}}>
+                    <label class="custom-control-label" for="btnFiltroDisp">Dispenser</label>
+                </div>
+            </div>
+            <div class="col-2 pl-4">
+                <div class="custom-control custom-checkbox d-inline">
+                    <input type="checkbox" class="custom-control-input" id="btnFiltroClie"{{ (urlParams.idClie != '') ? ' checked' : ''}}>
+                    <label class="custom-control-label" for="btnFiltroClie">Cliente</label>
+                </div>
+            </div>
+            <div class="col-2 pl-4">
+                <div class="custom-control custom-checkbox d-inline">
+                    <input type="checkbox" class="custom-control-input" id="btnFiltroEsta"{{ (urlParams.estado != '') ? ' checked' : ''}}>
+                    <label class="custom-control-label" for="btnFiltroEsta">Estado</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row tablaDispenser">
+            <div class="col">
+                <table class="table table-sm table-hover" id="tablaMovimDisp">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="colTablaOculta">Id</th>
+                            <th scope="col">Fecha</th>
+                            {# <th scope="col">Nro. Serie</th> #}
+                            <th scope="col">Nro. Interno</th>
+                            {# <th scope="col">Modelo</th> #}
+                            <th scope="col">Empleado</th>
+                            <th scope="col">Cliente</th>
+                            <th scope="col">Observaciones</th>
+                            <th scope="col">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for disp in listado %}
+                                <tr>
+                                    <td class="colTablaOculta">{{ disp.Id }}</td>
+                                    <td>{{ disp.Fecha|date('d/m/Y', timezone="America/Buenos_Aires") }}</td>
+                                    {# <td>{{ disp.NroSerie }}</td> #}
+                                    <td>{{ disp.NroInterno }}</td>
+                                    {# <td>{{ disp.Modelo }}</td> #}
+                                    <td>{{ disp.Empleado }}</td>
+                                    <td>{{ disp.Cliente }}</td>
+                                    <td>{{ disp.Observaciones }}</td>
+                                    <td>{{ disp.Estado }}</td>
+                                </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <hr>
+            </div>  {# /div.col #}
+        </div>  {# /.row #}
+    </div>  {# /.container #}
+
+    <!-- Modal Movimiento Dispenser-->
+    <div class="modal fade" id="modalMovimDispenser" tabindex="-1" role="dialog" aria-labelledby="modalMovimDispenser" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle"><strong>Movimiento dispenser</strong></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {# Datos DISPENSER #}
+                <div class="row">
+                    <h5 style="padding-left: 20px; margin-bottom: 0px;">Dispenser</h5>
+                    <table class="table table-sm" id="tableMovDisp">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th class="text-right" scope="col">Id</th>
+                                <th class="text-right" scope="col">Nro. Serie</th>
+                                <th class="text-right" scope="col">Nro. Interno</th>
+                                <th class="text-right" scope="col">Modelo</th>
+                                {# <th class="text-right" scope="col">Observaciones</th> #}
+                                {# <th class="text-right" scope="col">Estado</th> #}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td id="idDisp" class="text-right"></td>
+                                <td id="nroSerie" class="text-right">123456</td>
+                                <td id="nroInter" class="text-right"></td>
+                                <td id="modeloDisp" class="text-right">Modelo</td>
+                                {# <td id="observac" class="text-right"></td> #}
+                                {# <td id="estadoDisp" class="text-right"></td> #}
+                            </tr>
+                            <tr>
+                                <td></td><td></td><td></td><td></td><td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                {# EMPLEADO #}
+                <div class="row">
+                    <div class="col cardMovDispModal">
+                        <h5 style="padding-left: 10px; margin-bottom: 0px;">Empleado</h5>
+                        <hr class="hrMovDisp">
+                        <p id="nombreEmpl" class="pl-2 mt-0"></p>
+                    </div>
+                {# CLIENTE #}
+                    <div class="col cardMovDispModal">
+                        <h5 style="padding-left: 10px; margin-bottom: 0px;">Cliente</h5>
+                        <hr class="hrMovDisp">
+                        <p id="nombreClie" class="pl-2 mt-0 mb-0"></p>
+                        <p id="direccClie" class="pl-2 mb-0"></p>
+                        <p id="telcelClie" class="pl-2 mb-2"></p>
+                    </div>
+                </div>
+                {# DEMAS DATOS... #}
+                <div class="form-row mt-2">
+                    <div class="form-group col-3 pl-2">
+                        <label for="Fecha">Fecha</label>
+                        <input type="text" class="form-control form-control-sm " id="Fecha" value="" disabled>
+                    </div>
+                    <div class="form-group col-3">
+                        <label for="Estado">Estado</label>
+                        <input type="text" class="form-control form-control-sm " id="Estado" value="" disabled>
+                    </div>
+                    <div class="form-group col-6 pr-2">
+                        <label for="Observaciones">Observaciones</label>
+                        <input type="text" class="form-control form-control-sm" id="Observaciones" value="" disabled>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <!-- Modal selecionar filtro estado -->
+    <div class="modal fade" id="modalEstados" tabindex="-1" role="dialog" aria-labelledby="modalEstadosTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="estadosModalCenterTitle"><strong>Filtro por Estado</strong></h5>
+                <button id="closeModalEstados" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Lista de Estados</p>
+                <div>
+                    <select id="selectEstado" name="selectEstado" class="col-sm-6 form-control form-control-sm">
+                        {% for estado in estados %}
+                            <option value="{{ estado }}">{{ estado }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="button" id="btnSelecEstado" class="btn btn-primary" style="position: absolute; right: 18px; bottom: 15px;">Selecciona</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnCerrarModalEst" type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    {% include 'partes/modalFiltroFecha.twig' %}
+
+    {% include 'partes/modalBuscaClie.twig' %}
+
+    {% block javascript %}
+        {{ parent() }}
+        <script src="{{ base_url() }}/js/jquery.tableFilter.js"></script>
+
+        <script>
+            var global_ordenainforme = "{{ path_for('repartos.ordenainforme') }}";
+            var global_datamovimdisp = "{{ path_for('repartos.datamovimdisp') }}";
+            var global_buscardisp = "{{ path_for('productos.dispenser.buscar') }}";
+            //var global_imprimeinforme = "{{ path_for('repartos.imprimeinforme') }}";
+            var global_buscarcliente 
+            // Objeto con los parametros de opciones y filtros
+            var _urlParams = {
+                    column: "{{ urlParams.column }}",
+                     orden: "{{ urlParams.orden }}",
+                  ordFecha: "{{ urlParams.ordFecha }}",
+                     desde: "{{ urlParams.desde }}",
+                     hasta: "{{ urlParams.hasta }}",
+                    idDisp: "{{ urlParams.idDisp }}",
+                    idClie: "{{ urlParams.idClie }}",
+                    estado: "{{ urlParams.estado }}"
+            };
+
+        </script>
+        <script src="{{ base_url() }}/js/informeMovDispenser.js"></script>
+    {% endblock %}
+{% endblock %}

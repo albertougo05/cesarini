@@ -1,0 +1,62 @@
+		<!-- Modal -->
+		<div class="modal fade" id="modalOtroDom" tabindex="-1" role="dialog" aria-labelledby="modalBuscarTitle" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		    <div class="modal-content">
+		        <div class="modal-header">
+		        	<h5 class="modal-title" id="tituloModalOtroDom"><strong>Nuevo domicilio:</strong></h5>
+		        	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+		          		<span aria-hidden="true">&times;</span>
+		        	</button>
+		        </div>
+		        <div class="modal-body">
+					<form class="formDom2" id="formDom2" action="{{ path_for('clientes.cliente.otrodomicilio') }}" method="post" autocomplete="off">
+						<input type="hidden" id="IdClieModal" name="Id" value="{{ cliente.Id }}">
+						{# Id del domicilo editado #}
+						<input type="hidden" id="IdDom" name="IdDom" value="{{ cliente.IdDom }}">
+
+						<div class="form-row">
+							<div class="form-group col-6">
+				        		<label for="Direccion2">Dirección</label>
+				        		<input type="text" class="form-control form-control-sm" id="Direccion2" name="Direccion2">
+							</div>
+							<div class="form-group col-3">
+						        <label for="Localidad2">Localidad</label>
+						        <input type="text" class="form-control form-control-sm" id="Localidad2" name="Localidad2" value="Jesús María">
+							</div>
+							<div class="form-group col-3">
+						        <label for="Provincia2">Provincia</label>
+						        <input type="text" class="form-control form-control-sm" id="Provincia2" name="Provincia2" value="Córdoba">
+							</div>
+						</div>  {# / form-row #}
+						<div class="form-row">
+							<div class="form-group col-2">
+						        <label for="CodPostal2">Código Postal</label>
+						        <input type="text" class="form-control form-control-sm" id="CodPostal2" name="CodPostal2" value="5220">
+							</div>
+							<div class="form-group col">
+						        <label for="Telefono2">Teléfonos</label>
+						        <input type="text" class="form-control form-control-sm" id="Telefono2" name="Telefono2">
+							</div>
+							<div class="form-group col">
+						        <label for="Celular2">Celulares</label>
+						        <input type="text" class="form-control form-control-sm" id="Celular2" name="Celular2">
+							</div>
+							<div class="form-group col">
+						        <label for="Contacto">Contacto</label>
+						        <input type="text" class="form-control form-control-sm" id="Contacto" name="Contacto">
+							</div>
+						</div>
+
+						{# Para CSRF control #}
+						{{ csrf.field | raw }}
+
+					  	<button id="btnConfirmDom" type="submit" class="btn btn-primary float-right">Confirma</button>
+					</form>
+
+			    </div>
+		        <div class="modal-footer">
+		        	<button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">Cancela</button>
+		        </div>
+		      </div>
+		    </div>
+		</div>

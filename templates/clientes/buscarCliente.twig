@@ -1,0 +1,160 @@
+{% extends 'base.twig' %}
+
+	{% block head %}
+		{{ parent() }}
+
+		<link rel="stylesheet" href="{{ base_url() }}/css/all.css">
+		<link rel="stylesheet" href="{{ base_url() }}/css/table-scroll.css">
+	{% endblock %}	
+
+	{% block title %}{{ titulo }}{% endblock %} 
+
+	{% block navigation %}
+		<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+	        <a class="navbar-brand" href="#">
+	          <img src="{{ base_url() }}/img/logo-cesarini.png" width="80" height="40" alt="">
+	        </a>
+
+	        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	          <span class="navbar-toggler-icon"></span>
+	        </button>
+
+        	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+            	<ul class="navbar-nav mr-auto">
+				    <li class="nav-item active">
+				        	<a class="nav-link" href="{{ path_for('clientes.cliente') }}">Volver</a>
+				    </li>
+            	</ul>
+            </div>
+        </nav>
+	{% endblock %}
+
+	{% block breadcrumbs %}
+		<div class="container">
+			<nav aria-label="breadcrumb">
+			    <ol class="breadcrumb">
+				    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+				    <li class="breadcrumb-item"><a href="{{ path_for('clientes.cliente') }}">Clientes</a></li>
+				    <li class="breadcrumb-item"><a href="#">Cliente</a></li>
+				    <li class="breadcrumb-item active" aria-current="page">Buscar cliente</li>
+			    </ol>
+			</nav>
+		</div>
+	{% endblock %}
+
+	{% block content %}
+		<div class="container" id="guiaReparto">
+			<div class="row align-items-end">
+    			<div class="col-md-12">
+    				<h3 class="bg-warning p-3 mb-3"><strong>Buscar Cliente</strong></h3>
+    			</div>
+    		</div>
+    		<div class="row">
+    			<div class="col-md-10 offset-md-1 d-inline-flex">
+    				<input id="filter" class="form-control form-control-sm w-50" type="text" placeholder="Buscar por..." autofocus>
+
+					<div class="custom-control custom-radio custom-control-inline ml-4">
+					  <input type="radio" id="radApel" name="radApeFant" class="custom-control-input" checked>
+					  <label class="custom-control-label" for="radApel">Apellido Nombre</label>
+					</div>
+					<div class="custom-control custom-radio custom-control-inline ml-2">
+					  <input type="radio" id="radFant" name="radApeFant" class="custom-control-input">
+					  <label class="custom-control-label" for="radFant">Nombre Fantasia</label>
+					</div>
+
+  				</div>
+			</div>
+			<br />
+			<div class="row">
+				<div class="col-md-10 offset-md-1">
+					<table class="table table-sm table-hover table-scroll small-first-col" id="tablaBuscarCli">
+		                <thead class="thead-dark">
+		                  <tr>
+		                    <th scope="col">#</th>
+		                    <th scope="col">Apellido Nombre</th>
+		                    <th scope="col">Nomb. Fantasía</th>
+		                    <th scope="col">Dirección</th>
+		                    <th scope="col">Localidad</th>
+		                  </tr>
+		                </thead>
+		                <tbody class="body-half-screen">
+		                    {% for cliente in clientes %}
+		    					<tr>
+		        				    <td>{{ cliente.Id }}</td>
+		      					    <td id="apel" class="filter-cell">{{ cliente.ApellidoNombre }}</td>
+		      					    <td id="fant">{{ cliente.NombreFantasia }}</td>
+		      					    <td>{{ cliente.Direccion }}</td>
+		                            <td>{{ cliente.Localidad }}</td>
+		                        </tr>
+		                    {% endfor %}
+		                </tbody>
+		            </table>
+				</div>    {# /col #}
+			</div>    {# /row #}
+    	</div>    {# /container #}
+	{% endblock %}
+
+	{% block javascript %}
+		{{ parent() }}
+		<script src="{{ base_url() }}/js/jquery.tableFilter.js"></script>
+		<script>
+			$(document).ready(function(){
+
+				// Boton de ir arriba
+			    $('#scrollUp').click( function(){
+			    	$('body, html').animate({
+		    			scrollTop: '0px'
+		    		}, 300);
+			    });
+			    // Para chequear scroll para boton ir arriba
+			    $(window).scroll(function(){
+			    	if( $(this).scrollTop() > 0 ) {
+			    		$('#scrollUp').show();
+			    	} else {
+			    		$('#scrollUp').hide();
+			    	}
+			    });
+
+				// Filtrado de tabla Clientes	
+				$('#guiaReparto').tableFilter({ tableID: '#tablaBuscarCli', 
+	                                           filterID: '#filter',
+	                                           filterCell: '.filter-cell',
+					                           autofocus: true});
+
+				// Evento click para seleccionar y redireccionar 
+				$('#tablaBuscarCli tr').on('click', function(){
+	  				var idClie = $(this).find('td:first').html();
+		  			// Redirecciona a cliente modificado
+		  			location.assign("{{ path_for('clientes.cliente') }}" + "?Id=" + idClie);
+				});
+
+				// Para prevenir el doble-click
+				$('#tablaBuscarCli tr').on('dblclick',function(e){
+			    	/*  Prevents default behaviour  */
+			    	e.preventDefault();
+			    	/*  Prevents event bubbling  */
+			    	e.stopPropagation();
+			     
+			    	return;
+			    });
+
+				// Click en boton Fantasia
+				$('#radFant').click(function (event) {
+						$('td#apel').removeClass('filter-cell');
+						$('td#fant').addClass('filter-cell');
+						$('input#filter').focus();
+
+				});
+
+				// Click boton Apellido
+				$('#radApel').click(function (event) {
+						$('td#fant').removeClass('filter-cell');
+						$('td#apel').addClass('filter-cell');
+						$('input#filter').focus();
+
+				});
+
+
+			});
+		</script>
+	{% endblock %}

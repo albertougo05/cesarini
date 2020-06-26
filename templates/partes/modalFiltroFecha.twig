@@ -1,0 +1,40 @@
+
+		<!-- MODAL Fechas -->
+		<div class="modal fade" id="modalFechas" tabindex="-1" role="dialog" aria-labelledby="modalFechas" aria-hidden="true">
+		  <div class="modal-dialog modal-dialog-centered" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <h5 class="modal-title" id="tituloModalFechas"><strong>Filtro por fecha</strong></h5>
+		        <button type="button" id="btnClose" class="close" data-dismiss="modal" aria-label="Close">
+		          <span aria-hidden="true">&times;</span>
+		        </button>
+		      </div>
+		      <div class="modal-body">
+				  <form id="formModalFechas" autocomplete="nope" novalidate>
+				  		<div class="form-row">
+							<div class="form-group col">
+						        <label for="fechaDesde">Fecha Desde</label>
+						        <input type="date" class="form-control form-control-sm" id="fechaDesde" name="fechaDesde">
+							</div>
+							<div class="form-group col">
+						        <label for="fechaHasta">Fecha hasta</label>
+						        <input type="date" class="form-control form-control-sm" id="fechaHasta" name="fechaHasta">
+							</div>
+						</div>
+						<div class="form-check">
+						    <input class="form-check-input" type="radio" name="optOrden" id="ordenAsc" value="asc" checked>
+						    <label class="form-check-label" for="ordenAsc">Orden ascendente</label>
+						</div>
+						<div class="form-check ">
+						    <input class="form-check-input" type="radio" name="optOrden" id="ordenDesc" value="desc">
+						    <label class="form-check-label" for="ordenDesc">Orden descendiente</label>
+						</div>
+				  </form>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-secondary" id="btnCancela" data-dismiss="modal">Cancela</button>
+		        <button type="button" class="btn btn-primary" id="btnConfFecha">Confirma</button>
+		      </div>
+		    </div>
+		  </div>
+		</div>

@@ -1,0 +1,28 @@
+<div class="container pt-4" id="guiaReparto">
+	<div class="row align-items-start">
+    	<div class="col-md-12">
+			<h2 class="text-right mt-0"><strong>Guía de Reparto</strong></h2>
+
+			{% include 'repartos/guiadereparto/formGuiaReparto.twig' %}
+
+        </div>  {# Fin div form #}
+	</div>
+
+	{# Clientes de visitas reparto #}
+	<div class="row tablaDetalleVisitas">
+		<div class="col-md-12">
+
+			{% include 'repartos/guiadereparto/tablaDetalleVisitas.twig' %}
+
+		</div>
+	</div>
+
+	{# Total de reparto #}
+	<div class="row tablaDetalleVisitas">
+		<div class="col-md-2"></div>
+
+			{% include 'repartos/guiadereparto/totalDelReparto.twig' %}
+
+		<div class="col-md-2"></div>
+	</div>
+</div>  {# End of container #}

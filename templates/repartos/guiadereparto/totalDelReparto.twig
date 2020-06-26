@@ -1,0 +1,33 @@
+		<div class="col-md-8">
+			<h5 class="text-left text-dark"><strong>Total del reparto</strong></h5>
+
+			<table class="table table-sm">
+			    <thead class="thead-dark">
+				    <tr>
+				        <th class="text-center">Código Producto</th>
+				        <th>Descripción</th>
+				        <th class="text-right">Cantidad</th>
+				    </tr>
+			    </thead>
+			    <tbody>
+			    	{% if totalReparto %}
+
+			    		{# loop por cada linea del total reparto - id="tablaId" #}
+						{% for totrep in totalReparto %}
+						    <tr>
+						        <td class="text-center">{{ totrep.codprod }}</td>
+						        <td>{{ totrep.descrip }}</td>
+						        <td class="text-right">{{ totrep.cantid }}</td>
+						    </tr>
+			    		{% endfor %}
+
+
+			    	{% endif %}
+				    <tr>
+				      <td></td>
+				      <td></td>
+				      <td></td>
+				    </tr>
+			  </tbody>
+			</table>
+		</div>

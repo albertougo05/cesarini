@@ -1,0 +1,36 @@
+        <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+
+	        <a class="navbar-brand" href="{{ path_for('home') }}">
+	          <img src="{{ base_url() }}/img/logo-cesarini.png" width="80" height="40" alt="">
+	        </a>
+
+	        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	          <span class="navbar-toggler-icon"></span>
+	        </button>
+
+        	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+            	<ul class="navbar-nav mr-auto">
+				    <li class="nav-item{{ ( accion == 'Nueva') ? ' disabled' : ' active' }}">
+				        <a id="linkSalvar" class="nav-link {{ ( accion == 'Nueva') ? 'disabled' : '' }}" href="#"{{ ( accion == 'Nueva') ? ' disabled' : '' }}>Guardar</a>
+				    </li>
+{#
+				    <li class="nav-item  {{ ( accion == 'Nueva') ? 'disabled' : 'active' }}">
+				        <a id="linkBorrar" class="nav-link {{ ( accion == 'Nueva') ? 'disabled' : '' }}" href="#"{{ ( accion == 'Nueva') ? ' disabled' : '' }}>Eliminar</a>
+				    </li>
+#}
+				    <li class="nav-item{{ ( accion == 'Nueva') ? ' disabled' : ' active' }}">
+				        <a class="nav-link{{ ( accion == 'Nueva') ? ' disabled' : '' }}" href="{{ ( accion == 'Nueva') ? '#' : path_for('repartos.guiareparto.imprimirguia') }}" target="_blank">Imprimir</a>
+				    </li>
+				    <li class="nav-item{{ ( accion == 'Nueva') ? ' active' : ' disabled' }}">
+				        <a class="nav-link{{ ( accion == 'Nueva') ? '' : ' disabled' }}" href="{{ path_for('repartos.buscarguiarep') }}">Buscar</a>
+				    </li>				    
+				    <li class="nav-item active">
+				    	{% if accion == 'Nueva' %}
+				        	<a class="nav-link" href="{{ path_for('home') }}">Salir</a>
+				        {% else %}
+				            <a class="nav-link" href="{{ path_for('repartos.guiareparto') }}">Cancelar</a>
+				        {% endif %}
+				    </li>
+            	</ul>
+            </div>
+        </nav>

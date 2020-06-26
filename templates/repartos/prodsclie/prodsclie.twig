@@ -1,0 +1,169 @@
+{% extends 'base.twig' %}
+
+{% block head %}
+	{{ parent() }}
+
+	<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+	<link rel="stylesheet" href="{{ base_url() }}/css/typeahead.css">
+
+	<style type="text/css">
+		.bkgFiltroFecha {
+  			margin: 20px 0px 13px;
+  			padding: 20px 0px 15px;
+  			background: #E7E8E9;
+  			border-radius: 5px; 
+		}
+		.pFiltroFecha {
+  			display: inline;
+  			margin-right: 10px;
+			padding-top: 5px;
+  			padding-left: 20px;
+		}
+		.bkgBuscarCli {
+			margin-top: 10px;
+		}
+		#btnGenList {
+			color: white;
+			margin-top: 20px;
+		}
+		#btnCliPorCodigo {
+			width: 100px;
+		} 
+	</style>
+
+{% endblock %}	
+
+{% block title %}
+	{{ titulo }}
+{% endblock %} 
+
+{% block navigation %}
+	{% include 'repartos/visitas/nav_listado.twig' %}
+{% endblock %}
+
+{% block breadcrumbs %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<nav aria-label="breadcrumb">
+				    <ol class="breadcrumb">
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Repartos</a></li>
+					    <li class="breadcrumb-item active" aria-current="page">Productos cliente</li>
+				    </ol>
+				</nav>
+			</div>
+		</div>
+		{% include 'partes/flash.twig' %}
+	</div>
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-10" id="guiaReparto">
+				<h3 class="text-left text-dark titulo-tabla"><strong>Productos de cliente en Guía Reparto</strong></h3>
+
+				<div class="bkgFiltroFecha">
+	        		<div class="row bkgBuscarCli">
+	            		<div class="col-2">
+	                		<p class="pFiltroFecha"><u>Filtro cliente</u>:</p>
+	            		</div>
+	             		<div class="col-8 mb-1">
+	 	    				<label class="sr-only" for="inputBuscarCli">Cliente</label>
+		    				<input id="inputBuscarCli" name="inputBuscarCli" class="typeahead form-control form-control-sm" type="text" placeholder="Buscar cliente (3 letras min.)" autofocus autocomplete="off" spellcheck="false" size="380px;">
+	            		</div>
+					</div>
+
+					<div class="row">
+						<div class="col-2"></div>
+						<div class="col-8 mt-3 mb-2">
+							<form class="form-inline">
+								<div class="input-group input-group-sm">
+									<label for="inputCliPorCod">Buscar por: </label>
+									<input class="form-control form-control-sm ml-3 mt-0 cellRight numero" type="text" id="inputCliPorCod" autocomplete="off" spellcheck="false" placeholder="Código cliente...">
+								</div>
+								<button type="button" class="btn btn-primary btn-sm ml-3" id="btnCliPorCodigo">Buscar</button>
+							</form>
+						</div>
+					</div>
+
+	        		<div class="row mt-2">
+	        			<div class="col-2"></div>
+	        			<div class="col-6">
+			                <div class="custom-control custom-checkbox">
+			                    <input type="checkbox" class="custom-control-input" id="chkTodosDom" checked="true">
+			                    <label class="custom-control-label" for="chkTodosDom">Todos los domicilios</label>
+			                </div>
+	        			</div>
+	        		</div>
+				</div>  {# /class="bkgFiltroFecha #}
+
+        		<div class="row mt-2">
+        			<div class="col-2"></div>
+        			<div class="col-8">
+		                <div class="custom-control custom-checkbox">
+		                    <input type="checkbox" class="custom-control-input" id="chkVerCliNoGR">
+		                    <label class="custom-control-label" for="chkVerCliNoGR">Ver clientes que NO están en Guías de Reparto</label>
+		                </div>
+        			</div>
+        		</div>
+
+				<div class="bkgFiltroFecha">
+            		<div class="row">
+                		<div class="col-2">
+                    		<p class="pFiltroFecha"><u>Ordenar por</u>:</p>
+                		</div>
+						<div class="col-3 mb-1">
+			                <div class="custom-control custom-checkbox custom-control-inline">
+			                    <input type="checkbox" class="custom-control-input" id="chkGuiaRep" checked>
+			                    <label class="custom-control-label" for="chkGuiaRep">Guía Reparto</label>
+			                </div>
+		            	</div>
+						<div class="col-2 mb-1">
+			                <div class="custom-control custom-checkbox custom-control-inline">
+			                    <input type="checkbox" class="custom-control-input" id="chkDia">
+			                    <label class="custom-control-label" for="chkDia">Día semana</label>
+			                </div>
+		            	</div>
+						<div class="col-2 mb-1">
+			                <div class="custom-control custom-checkbox custom-control-inline">
+			                    <input type="checkbox" class="custom-control-input" id="chkTurno">
+			                    <label class="custom-control-label" for="chkTurno">Turno</label>
+			                </div>
+		            	</div>
+		            </div>
+		        </div>
+
+		        <div class="row">
+		            <div class="col-6 offset-3">
+		                <a type="button" class="btn btn-success btn-block" id="btnGenList" target="_blank">
+		                    <strong>Generar listado</strong>
+		                </a>
+		            </div>
+		        </div>  {# /.row #}
+
+			</div> {# /col #}
+		</div> {# /row #}
+	</div>
+
+{% endblock %}
+
+{% block javascript %}
+	{{ parent() }}
+
+	<script src="{{ base_url() }}/js/typeahead.bundle.min.js"></script>
+	<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+
+	<script type="text/javascript">
+		// Javascript
+		// 
+		var _pathCliente = "{{ path_for('repartos.visitas.cliente') }}";
+		var _pathCodcliente = "{{ path_for('repartos.visitaslistado.clieporcod') }}";
+		var _pathListProdsClie = "{{ path_for('repartos.productoscliente.listado') }}";
+
+	</script>
+
+	<script src="{{ base_url() }}/js/prodsclie.js"></script>
+
+{% endblock %}

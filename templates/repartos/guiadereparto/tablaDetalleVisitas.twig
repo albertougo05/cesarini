@@ -1,0 +1,45 @@
+			<h5 class="text-left text-dark titulo-tabla"><strong>Detalle Visitas a Clientes</strong></h5>
+
+			<button id="btnAgregarClie" type="button" class="btn btn-primary mb-2 float-right"{% if accion == 'Nueva' %} disabled{% endif %} data-toggle="tooltip" data-placement="left" title="Agregar cliente"><i class="fas fa-plus"></i>&nbsp; Agregar</button>
+
+			<div class="table-responsive-md">
+				<table id="tablaClientesGR" class="table table-sm table-hover">
+				    <thead class="thead-dark">
+					    <tr>
+					        <th>Cuenta</th>
+					        <th>Apellido y Nombre</th>
+					        <th>Orden visita</th>
+					        <th>Dirección</th>
+					        <th>Localidad</th>
+					        <th>Celular</th>
+					        <th class="text-center" colspan="3">Acciones</th>
+					    </tr>
+				    </thead>
+				    <tbody>
+					    {% if visitasCliente %}
+					    	{# Va un for each visitasCliente    idguiarep #}
+					    	{% for visitas in visitasCliente %}
+								{% if not visitas.borrado %}
+								    <tr>
+								        <td id="tablaId">{{ visitas.idCliente }}</td>
+								        <td>{{ visitas.apellidoNom }}</td>
+								        <td class="text-center">{{ visitas.ordenVisita }}</td>
+								        <td>{{ visitas.domicilio }}</td>
+								        <td>{{ visitas.localidad }}</td>
+								        <td>{{ visitas.celular }}</td>
+								        <td class="text-center pl-0 pr-0">
+							        		<button type="button" id="btnAgregaProd" data-idcli="{{ visitas.idCliente }}" data-nomcli="{{ visitas.apellidoNom }}" data-iddom="{{ visitas.idDomicilio }}" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="left" title="Agregar/Ver productos"><i class="fas fa-plus-square"></i></button>
+							        	</td>
+							        	<td class="text-center pl-0 pr-0">
+											<button type="button" id="btnOrdenCli" data-idcli="{{ visitas.idCliente }}" data-orden="{{ visitas.ordenVisita }}" data-nomcli="{{ visitas.apellidoNom }}" data-iddom="{{ visitas.idDomicilio }}" class="btn btn-warning btn-sm ml-1 mr-1" data-toggle="tooltip" data-placement="top" title="Editar orden"><i class="fas fa-list-ol"></i></button>
+										</td>
+										<td class="text-center pl-0 pr-0">
+											<button type="button" id="btnBorrarCli" data-idcli="{{ visitas.idCliente }}" data-nomcli="{{ visitas.apellidoNom }}" data-iddom="{{ visitas.idDomicilio }}" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="right" title="Borrar"><i class="fas fa-trash-alt"></i></button>
+								        </td>
+								    </tr>
+								{% endif %}
+							{% endfor %}
+				    	{% endif %}
+				    </tbody>
+				</table>
+			</div>

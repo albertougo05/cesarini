@@ -1,0 +1,43 @@
+body {
+  margin: 2em;
+  color: #000;
+
+}
+
+/* override styles when printing */
+@media print {
+  body {
+    margin: 0;
+    color: #000;
+  }
+
+  /* Esconder secciones al imprimir */
+  header, footer {
+  display: none!important;
+  }
+
+}
+
+@page {
+	margin-top: 1cm;
+  margin-bottom: 1cm;
+  margin-left: 2cm;
+  margin-right: 1cm;
+}
+
+.marcoGuia {
+    padding: 10px;
+}
+
+.tablaDetalleVisitas {
+  margin: 2% 5% 1% 5%;
+}
+
+.tablaTotalReparto {
+  margin: 2% 15% 2% 15%;
+}
+
+.cellRight, #cellRight {
+  text-align: right;
+}
+  

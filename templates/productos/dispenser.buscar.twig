@@ -1,0 +1,202 @@
+{% extends 'base.twig' %}
+
+{% block head %}
+	{{ parent() }}
+
+{% endblock %}
+
+{% block title %}{{ titulo }}{% endblock %} 
+
+{% block navigation %}
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+
+        <a class="navbar-brand" href="{{ path_for('home') }}">
+          <img src="{{ base_url() }}/img/logo-cesarini.png" width="80" height="40" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+        	<ul class="navbar-nav mr-auto">
+			    <li class="nav-item active">
+		        	<a class="nav-link" href="{{ path_for('home') }}">Cancela</a>
+			    </li>
+			    <li class="nav-item active">
+			    	{% if movimDisp %}
+		        		<a class="nav-link" href="{{ path_for('repartos.movimientodispenser') }}">Volver</a>
+		        	{% elseif infoMovDisp %}
+		        		<a class="nav-link" href="{{ path_for('repartos.ordenainforme') ~ urlParam  }}">Volver</a>
+		        	{% else %}
+		        		<a class="nav-link" href="{{ path_for('productos.dispenser') }}">Volver</a>
+			    	{% endif %}
+			    </li>
+        	</ul>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block breadcrumbs %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<nav aria-label="breadcrumb">
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+						{% if infoMovDisp %}
+	                        <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Repartos</a></li>
+	                        <li class="breadcrumb-item"><a href="{{ path_for('repartos.ordenainforme') ~ urlParam }}">Informe mov. dispenser</a></li>
+	                        <li class="breadcrumb-item active" aria-current="page">Buscar dispenser</li>
+		        		{% else %}
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Productos</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('productos.dispenser') }}">Dispenser</a></li>
+						    <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+						{% endif %}
+					</ol>
+				</nav>
+			</div>
+		</div>
+{% endblock %}	
+
+{% block content %}
+	<div class="container" id="guiaReparto">
+		<div class="row">
+	    	<div class="col-md-12 mb-2">
+				<h4 class="bg-warning p-3 mb-1"><strong>Buscar dispenser</strong></h4>
+				<p id="ordenBuscarDisp"><small>Ordenado por: {{ txtOrdenadoPor }}</small></p>
+
+				<div class="custom-control custom-checkbox custom-control-inline float-right">
+				  <input type="checkbox" class="custom-control-input" id="chkVerBajas"{{ (mostrarbajas == 'true') ? ' checked' : '' }}>
+				  <label class="custom-control-label" for="chkVerBajas">Ver dados de Baja</label>
+				</div>
+			</div>
+		</div>
+    	<div class="row buscarDisp mt-2">
+			<div class="col-md-3 mb-1">
+				<input id="filter" class="form-control form-control-sm" type="text" placeholder="Buscar por =>" autofocus>
+			</div>
+			<div class="col-md-7 mb-1">
+				<div class="form-check form-check-inline">
+				    <input class="form-check-input" name="filtros" type="radio" id="radSerie" value="serie">
+				    <label class="form-check-label" for="radSerie">Nro. Serie</label>
+				</div>
+				<div class="form-check form-check-inline">
+				    <input class="form-check-input" name="filtros" type="radio" id="radInterno" value="interno" checked>
+				    <label class="form-check-label" for="radInterno">Nro. Interno</label>
+				</div>
+				<div class="form-check form-check-inline">
+				    <input class="form-check-input" name="filtros" type="radio" id="radModelo" value="modelo">
+				    <label class="form-check-label" for="radModelo">Modelo</label>
+				</div>
+				<div class="form-check form-check-inline">
+				    <input class="form-check-input" name="filtros" type="radio" id="radTipo" value="tipo">
+				    <label class="form-check-label" for="radTipo">Tipo</label>
+				</div>
+				<div class="form-check form-check-inline">
+				    <input class="form-check-input" name="filtros" type="radio" id="radAlta" value="alta">
+				    <label class="form-check-label" for="radAlta">Alta</label>
+				</div>
+				<div class="form-check form-check-inline">
+				    <input class="form-check-input" name="filtros" type="radio" id="radEstado" value="estado">
+				    <label class="form-check-label" for="radEstado">Estado</label>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col radiosOrden">
+				<p>
+					<p class="ordenarPor" style="margin-top: -5px;"><u>Ordena</u>:</p>
+					<div class="form-check form-check-inline">
+					    <input class="form-check-input" name="radioOrden" type="radio" id="NroSerie">
+					    <label class="form-check-label" for="NroSerie">Nro.Serie</label>
+					</div>
+					<div class="form-check form-check-inline">
+					    <input class="form-check-input" name="radioOrden" type="radio" id="NroInterno">
+					    <label class="form-check-label" for="NroInterno">Nro.Interno</label>
+					</div>
+					<div class="form-check form-check-inline">
+					    <input class="form-check-input" name="radioOrden" type="radio" id="Modelo">
+					    <label class="form-check-label" for="Modelo">Modelo</label>
+					</div>
+					<div class="form-check form-check-inline">
+					    <input class="form-check-input" name="radioOrden" type="radio" id="Estado">
+					    <label class="form-check-label" for="Estado">Estado</label>
+					</div>
+				</p>
+			</div>
+			<div class="col radiosOrden">  {# Fechas #}
+				<p>
+					<p class="ordenarPor" style="margin-top: -5px;"><u>Filtra/Ordena</u>:</p>
+					<div class="form-check form-check-inline">
+					    <input class="form-check-input" name="radioFechas" type="radio" id="FechaAlta">
+					    <label class="form-check-label" for="FechaAlta">Fecha Alta</label>
+					</div>
+					<div class="form-check form-check-inline">
+					    <input class="form-check-input" name="radioFechas" type="radio" id="FechaUltService">
+					    <label class="form-check-label" for="FechaUltService">Últ. service</label>
+					</div>
+					<div class="form-check form-check-inline">
+					    <input class="form-check-input" name="radioFechas" type="radio" id="FechaBaja">
+					    <label class="form-check-label" for="FechaBaja">Fecha Baja</label>
+					</div>
+				</p>
+			</div>
+		</div>
+		<div class="row tablaDispenser">
+			<div class="col">
+				<table class="table table-sm table-hover" id="tablaBuscarGuia">
+			    	<thead class="thead-dark">
+					    <tr>
+					        <th scope="col" style="display: none;">Id</th>
+					        <th scope="col">Nro. Serie</th>
+					        <th scope="col">Nro. Interno</th>
+					        <th scope="col">Modelo</th>
+					        <th scope="col">Tipo</th>
+					        <th scope="col">Alta</th>
+					        <th scope="col">Último Serv.</th>
+					        <th scope="col">Baja</th>
+					        <th scope="col">Estado</th>
+					    </tr>
+			    	</thead>
+			    	<tbody>
+						{% for disp in listado %}
+							<tr>
+						        <td style="display: none;">{{ disp.Id }}</td>
+						        <td class="cellSerie">{{ disp.NroSerie }}</td>
+						        <td class="cellInterno filter-cell">{{ disp.NroInterno }}</td>
+						        <td class="cellModelo">{{ disp.Modelo }}</td>
+						        <td class="cellTipo">{{ disp.DescTipo.Descripcion }}</td>
+						        <td class="cellAlta">{{ disp.FechaAlta|date("d/m/Y") }}</td>
+						        <td>{{ disp.FechaUltService|date("d/m/Y") }}</td>
+						        <td>{{ disp.FechaBaja }}</td>
+						        <td class="cellEstado">{{ disp.Estado }}</td>
+							</tr>
+						{% endfor %}
+			    	</tbody>
+			    </table>
+				<hr>
+			</div>  {# /div.col #}
+		</div>  {# /.row #}
+    </div>  {# /.container #}
+
+	{% include 'partes/modalFiltroFecha.twig' %}
+
+	{% block javascript %}
+		{{ parent() }}
+		<script src="{{ base_url() }}/js/jquery.tableFilter.js"></script>
+		<script>
+
+			var global_dispenser = "{{ path_for('productos.dispenser') }}";
+			var global_dispenserBuscar = "{{ path_for('productos.dispenser.buscar') }}";
+			var global_ordenaBuscar = "{{ path_for('productos.dispenser.ordenabuscar') }}";
+			var global_radioButtonCheck = "{{ radioButtonCheck }}";
+			var global_txtOrdenadoPor = "{{ txtOrdenadoPor }}";
+			var global_vieneDeMovimDisp = "{{ movimDisp }}";
+			var global_vieneDeInfoMovDisp = "{{ infoMovDisp }}";
+			var global_movimDispenser = "{{ path_for('repartos.movimientodispenser') }}";
+			var global_infoMovDisp = "{{ path_for('repartos.ordenainforme') }}";
+			var _urlParam = "{{ urlParam }}";
+
+		</script>
+		<script src="{{ base_url() }}/js/buscardispenser.js"></script>
+	{% endblock %}
+{% endblock %}

@@ -1,0 +1,27 @@
+
+	{% block breadcrumbs %}
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<nav aria-label="breadcrumb">
+					    <ol class="breadcrumb">
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Repartos</a></li>
+						    <li class="breadcrumb-item"><a href="#">Guía de reparto</a></li>
+						    <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+					    </ol>
+					</nav>
+				</div>
+			</div>
+
+			{% if hayMensaje != '' %}
+				<div class="row mensaje">
+					<div class="col-md-12">
+						<div class="alert alert-success" role="alert">
+							<strong>{{ hayMensaje }}</strong>
+                        </div>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+	{% endblock %}

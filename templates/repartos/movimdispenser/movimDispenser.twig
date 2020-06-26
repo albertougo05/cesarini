@@ -1,0 +1,172 @@
+{% extends 'base.twig' %}
+
+	{% block head %}
+		{{ parent() }}
+
+		<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+		<link rel="stylesheet" href="{{ base_url() }}/css/all.css">
+		
+	{% endblock %}	
+
+	{% block title %}{{ titulo }}{% endblock %} 
+
+	{% block navigation %}
+	    {% include 'repartos/movimdispenser/nav_movimDispenser.twig' %}
+	{% endblock %}
+
+	{% block breadcrumbs %}
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+					<nav aria-label="breadcrumb">
+					    <ol class="breadcrumb">
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+						    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Repartos</a></li>
+						    <li class="breadcrumb-item"><a href="#">Movimiento dispenser</a></li>
+						    <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+					    </ol>
+					</nav>
+				</div>
+			</div>
+
+			{% include 'partes/flash.twig' %}
+
+		</div>
+	{% endblock %}
+
+	{% block content %}
+
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-10" id="guiaReparto">
+					<h2 class="text-right" style="margin-bottom: 18px;"><strong>Movimiento dispenser</strong></h2>
+
+					{# Datos DISPENSER #}
+					<div class="row">
+						<div class="col cardMovDisp">
+							<h5 style="display: inline;">Dispenser</h5>
+							<button type="button" class="d-inline float-right btn btn-success btn-sm btnsBuscarDisp{{ (accion == 'Modifica') ? ' disabled' : '' }}" id="btnBuscarDisp"{{ (accion == 'Modifica') ? ' disabled' : '' }}>Buscar dispenser</button>
+							<table class="table table-sm" id="tableMovDisp">
+								<thead class="thead-dark">
+								    <tr>
+								      	<th class="text-right" scope="col">Id</th>
+								      	<th class="text-right" scope="col">Nro. Serie</th>
+								      	<th class="text-right" scope="col">Nro. Interno</th>
+								      	<th class="text-right" scope="col">Modelo</th>
+								      	<th class="text-right" scope="col">Estado</th>
+								    </tr>
+								</thead>
+								<tbody>
+								    <tr>
+								        <td class="text-right">{{ data.Dispenser.Id }}</td>
+								      	<th class="text-right">{{ data.Dispenser.NroSerie }}</th>
+								      	<th class="text-right">{{ data.Dispenser.NroInterno }}</th>
+								      	<th id="modeloDisp" class="text-right">{{ data.Dispenser.Modelo }}</th>
+								      	<th id="estadoDisp" class="text-right">{{ data.Dispenser.Estado }}</th>
+								    </tr>
+								    <tr>
+								    	<td></td>
+								    	<td></td>
+								    	<td></td>
+								    	<td></td>
+								    	<td></td>
+								    </tr>
+								</tbody>
+							</table>
+							{# Data de fecha ultimo movimiento del dispenser (no visible) #}
+							<p id="fechaUltMov" style="display: none;">{{ data.Dispenser.FechaUltMov }}</p>
+						</div>
+					</div>
+
+					<div class="row">
+					   {# EMPLEADO #}
+						<div class="col cardMovDisp">
+							<h5 style="display: inline;">Empleado</h5>
+							<button type="button" class="d-inline float-right btn btn-success btn-sm" id="btnBuscarEmp" style="margin-bottom: 10px;"{{ (editable) ? '' : ' disabled' }}>Buscar empleado</button>
+							<hr class="hrMovDisp">
+							<p class="dataMovDisp" id="nombreEmpleado" data-idEmpl= "{{ data.Empleado.Id }}"><strong>{{ data.Empleado.Id }} - {{ data.Empleado.ApellidoNombre }}</strong></p>
+						</div>
+
+						<div class="col-1"></div>
+
+					   {# CLIENTE #}
+						<div class="col cardMovDisp">
+							<h5 style="display: inline;">Cliente</h5>
+							<button type="button" class="d-inline float-right btn btn-success btn-sm btnsBuscarDisp" id="btnBuscarCli"{{ (editable and editableBtnClie) ? '' : ' disabled' }}>Buscar cliente</button>
+							<hr class="hrMovDisp">
+							<p class="dataMovDispNombCli" id="nombreCliente" data-idClie="{{ data.Cliente.Id }}"><strong>{{ data.Cliente.Id }} - {{ data.Cliente.ApellidoNombre }}</strong></p>
+							{% if data.Cliente.Id != 0 %}
+								<p class="pl-2 mb-0"><em>{{ data.Cliente.Direccion }} - {{ data.Cliente.Localidad }}</em></p>
+								<p class="pl-2 mb-3"><em>Teléfono: {{ data.Cliente.Telefono }} - Celular: {{ data.Cliente.Celular }}</em></p>
+						    {% endif %}
+						</div>
+					</div>
+
+					{# FORM  #}
+					<div class="row">
+						<div class="col">
+							<form id="movDisp" class="needs-validation" action="{{ path_for('repartos.movimientodispenser') }}" method="post" autocomplete="nope" novalidate>
+
+								<input type="hidden" id="Id"          name="Id"          value="{{ data.Id }}">
+								<input type="hidden" id="IdDispenser" name="IdDispenser" value="{{ data.IdDispenser }}">
+								<input type="hidden" id="IdCliente"   name="IdCliente"   value="{{ data.IdCliente }}">
+								<input type="hidden" id="IdDomicilio" name="IdDomicilio" value="{{ data.Cliente.IdDom }}">
+								<input type="hidden" id="IdEmpleado"  name="IdEmpleado"  value="{{ data.IdEmpleado }}">
+
+							    <div class="form-row">
+									<div class="form-group col-3">
+								        <label for="Fecha">Fecha</label>
+								        <input type="date" class="form-control form-control-sm" id="Fecha" name="Fecha" value="{{ data.Fecha }}"{{ (editable) ? '' : ' disabled' }}>
+									</div>
+							    	<div class="form-group col-3">
+			                            <label for="Estado">Estado</label>
+									    <select class="form-control form-control-sm" id="Estado" name="Estado"{{ (editable) ? '' : ' disabled' }}>
+											{% for estado in estados %}
+												<option value="{{ estado }}"{{ (data.Estado == estado) ? ' selected' : '' }}>{{ estado }}</option>
+											{% endfor %}
+									    </select>
+									</div>
+									<div class="form-group col-6">
+								        <label for="Observaciones">Observaciones</label>
+								        <input type="text" class="form-control form-control-sm" id="Observaciones" name="Observaciones" placeholder="" value="{{ data.Observaciones }}"{{ (editable) ? '' : ' disabled' }}>
+									</div>
+								</div>
+
+							  	<button id="btnConfirma" type="submit" class="btn btn-primary btn-sm"{{ (editable) ? '' : ' disabled' }}>Confirma</button>
+							  	<a id="btnCancela" class="btn btn-outline-dark btn-sm" href="{{ path_for('repartos.movimientodispenser') }}" style="margin-left: 15px;" role="button">Cancela</a>
+
+								{# Para CSRF control #}
+								{{ csrf.field | raw }}
+
+							</form>
+
+							{% include 'partes/enviando.twig' %}
+
+						</div>
+					</div>
+				</div>  {# /.col-8 #}
+			</div>    {# /.row #}
+		</div>     {# /.container #}
+
+		{% include 'partes/modalEmpleados.twig' %}
+
+	{% endblock %}
+
+	{% block javascript %}
+		{{ parent() }}
+
+		<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+		<script type="text/javascript">
+			// Código javascript
+			// 
+			var global_buscarDisp = "{{ path_for('productos.dispenser.buscar') }}";
+			var global_dataempleado = "{{ path_for('tablas.dataempleado') }}";
+			var global_movimDisp = "{{ path_for('repartos.movimientodispenser') }}";
+			var global_buscarCliente = "{{ path_for('repartos.movimientodispenser.buscarcliente') }}";
+			var global_eliminarMovDisp = "{{ path_for('repartos.movimientodispenser.elimina') }}";
+			var global_accion = "{{ accion }}";
+
+		</script>
+		<script src="{{ base_url() }}/js/movimientodispenser.js?30.1.0"></script>
+
+	{% endblock %}

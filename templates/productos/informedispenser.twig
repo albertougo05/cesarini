@@ -1,0 +1,227 @@
+{% extends 'base.twig' %}
+
+{% block head %}
+	{{ parent() }}
+
+{% endblock %}
+
+{% block title %}{{ titulo }}{% endblock %} 
+
+{% block navigation %}
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
+
+        <a class="navbar-brand" href="{{ path_for('home') }}">
+          <img src="{{ base_url() }}/img/logo-cesarini.png" width="80" height="40" alt="">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    	<div class="collapse navbar-collapse" id="navbarSupportedContent">
+        	<ul class="navbar-nav mr-auto">
+			    <li class="nav-item active">
+		        	<a class="nav-link" href="{{ path_for('home') }}">Salir</a>
+			    </li>
+        	</ul>
+        </div>
+    </nav>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+                        <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Productos</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container" id="guiaReparto">
+        <div class="row">
+            <div class="col-12 mb-3">
+                <h3 class="text-left text-dark titulo-tabla"><strong>Informe de dispenser</strong></h3>
+            </div>
+        </div>
+
+        <div class="row buscarMovDisp mt-1">
+            <div class="col-2 mb-1">
+                <p class="ordenarPor"><u>Agrupar por</u>:</p>
+            </div>
+            <div class="col-10 mb-1">
+                <div class="custom-control custom-checkbox custom-control-inline">
+                    <input type="checkbox" class="custom-control-input agrupar" id="chkTipo">
+                    <label class="custom-control-label" for="chkTipo">Tipo de Dispenser</label>
+                </div>
+                <div class="custom-control custom-checkbox custom-control-inline">
+                    <input type="checkbox" class="custom-control-input agrupar" id="chkModelo">
+                    <label class="custom-control-label" for="chkModelo">Modelo</label>
+                </div>
+                <div class="custom-control custom-checkbox custom-control-inline">
+                    <input type="checkbox" class="custom-control-input agrupar" id="chkEstado">
+                    <label class="custom-control-label" for="chkEstado">Estado</label>
+                </div>
+            </div>
+        </div> {# /.row #}
+
+        <div class="row buscarMovDisp mt-1">
+            <div class="col-2 mb-1">
+                <p class="ordenarPor"><u>Ordenar por</u>:</p>
+            </div>
+            <div class="col-4 mb-1">
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input class="custom-control-input" name="radioOrden" type="radio" id="NroSerie">
+                    <label class="custom-control-label" for="NroSerie">Nro. Serie</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input class="custom-control-input" name="radioOrden" type="radio" id="NroInterno" checked>
+                    <label class="custom-control-label" for="NroInterno">Nro. Interno</label>
+                </div>
+            </div>
+            <div class="col-1 mb-1">
+                <p class="ordenarPor"><u>Orden</u>:</p>
+            </div>
+            <div class="col-4 mb-1">
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input class="custom-control-input" name="radOrden" type="radio" id="asc" value="asc" checked>
+                    <label class="custom-control-label" for="asc">Ascendente</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input class="custom-control-input" name="radOrden" type="radio" id="desc" value="desc">
+                    <label class="custom-control-label" for="desc">Descendente</label>
+                </div>
+            </div>
+            <div class="col-1 mb-1"></div>
+        </div>  {# /.row #}
+
+        <div class="row ordenInfoDisp mt-1">
+            <div class="col-2 mb-1">
+                <p class="ordenarPor"><u>Filtrar por</u>:</p>
+            </div>
+            <div class="col-1 mb-1">
+                <p><strong>Estado:</strong></p>
+            </div>
+            <div class="col-9 mb-1">
+                {% for estado in estados %}
+                    <div class="custom-control custom-checkbox custom-control-inline" id="estados">
+                        <input type="checkbox" id="ckb{{ estado }}" name="ckb{{ estado }}" class="custom-control-input estado" value="{{ estado }}">
+                        <label class="custom-control-label" for="ckb{{ estado }}">{{ estado }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div> {# /.row #}
+
+        <div class="row ordenInfoDisp mt-1">
+            <div class="col-2 mb-1"></div>
+            <div class="col-3 mb-1">
+                <label class="my-1 mr-2" for="selTipo"><strong>Tipo dispenser</strong></label>
+                <select multiple id="selTipo" name="selTipo" class="custom-select my-2 mr-sm-2">
+                    <option value="0" selected>Todos</option>
+                    {% for tipo in tiposdisp %}
+                        <option value="{{ tipo.Id }}">{{ tipo.Descripcion }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-2"></div>
+             <div class="col-5 mb-1">
+                    <p><strong>Cliente</strong></p>
+                    <button class="btn btn-sm btn-primary" id="btnBuscarClie">Buscar cliente</button>
+                    <div class="form-check invisible" id="clienteSel"></div>
+            </div>
+
+        </div>
+
+        <div class="buscarMovDisp mt-1">
+            <div class="row">
+                <div class="col-2 mb-1 ml-3">
+                    <p class="ordenarPor"><u>Filtrar por fechas</u>:</p>
+                </div>
+                <div class="col-2" style="padding-left: 8px;">  
+                    {# Fechas #}
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input class="custom-control-input" name="radioFecha" type="radio" id="FechaAlta">
+                        <label class="custom-control-label" for="FechaAlta" id="FechaAlta">Fecha Alta</label>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input class="custom-control-input" name="radioFecha" type="radio" id="FechaUltService">
+                        <label class="custom-control-label" for="FechaUltService" id="FechaUltService">Ult.Service</label>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input class="custom-control-input" name="radioFecha" type="radio" id="FechaBaja">
+                        <label class="custom-control-label" for="FechaBaja" id="FechaBaja">Baja</label>
+                    </div>
+                </div>
+            </div>  {# /.row #}
+
+            <div class="row d-none" id="rowFechas">
+                <div class="col-2"></div>
+                <div class="col-3">
+                    <p id="pFechaAlta"></p>
+                </div>
+                <div class="col-3">
+                    <p id="pFechaUltService"></p>
+                </div>
+                <div class="col-3">
+                    <p id="pFechaBaja"></p>
+                </div>
+                <div class="col-1"></div>
+            </div>
+        </div>
+
+        <div class="row ordenInfoDisp mt-1">
+            <div class="col-2 mb-1">
+                <p class="ordenarPor"><u>Ver detalle de</u>:</p>
+            </div>
+            <div class="col-8 mb-1">
+                <div class="custom-control custom-checkbox custom-control-inline">
+                    <input type="checkbox" id="conMovs" name="conMovs" class="custom-control-input" value="conMovs">
+                    <label class="custom-control-label" for="conMovs">Movimiento dispenser</label>
+                </div>
+                <div class="custom-control custom-checkbox custom-control-inline">
+                    <input type="checkbox" id="conClie" name="conClie" class="custom-control-input" value="conClie">
+                    <label class="custom-control-label" for="conClie">Cliente</label>
+                </div>
+            </div>
+            <div class="col-2 pr-0">
+                    <a type="button" class="btn btn-sm btn-info float-right" id="btnLimpiar" href="{{ path_for('productos.informedispenser') }}">Limpiar selección</a>
+            </div>
+        </div> {# /.row #}
+
+        <hr>
+
+        <div class="row">
+            <div class="col-3"></div>
+            <div class="col-6">
+                <a type="button" class="btn btn-success btn-block" id="btnGenInfo" target="_blank" style="color: white;">
+                    <strong>Generar informe</strong>
+                </a>
+            </div>
+            <div class="col-3"></div>
+        </div>  {# /.row #}
+    </div>  {# /.container #}
+
+    {% include 'partes/modalFiltroFecha.twig' %}
+
+    {% include 'partes/modalBuscaClie.twig' %}    
+
+    {% block javascript %}
+        {{ parent() }}
+        <script src="{{ base_url() }}/js/jquery.tableFilter.js"></script>
+
+        <script>
+            var global_imprimeinforme = "{{ path_for('productos.infodispimprime') }}";
+        </script>
+        <script src="{{ base_url() }}/js/informedispenser.js"></script>
+
+    {% endblock %}
+{% endblock %}

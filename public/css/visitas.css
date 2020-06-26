@@ -1,0 +1,117 @@
+
+/* CSS de Visitas */
+
+#btnGuardarVisita, #btnImprimirVisita, #btnCancelarVisita {
+	margin: 2px 5px 5px 10px;
+	/* width: 120px; */
+	height: 35px;
+	float: right; 
+}
+#alertGuardar, #alertRecalcula {
+	display: none;
+	width: 400px;
+	position: absolute;
+	left: 30%;
+	right: 30%;
+	margin-left: auto;
+	margin-right: auto;
+	background-color: #218838 ;
+	color: white;
+	z-index: 10; 
+}
+.cardMovProds {
+  	background: rgba(236, 236, 236, 0.95);
+  	border-radius: 3px;
+  	padding-top: 15px;
+  	padding-bottom: 15px;
+  	margin: 5px 10px; 
+}
+.cardMovDisp {
+  	background: rgba(236, 236, 236, 0.95);
+  	border-radius: 3px;
+  	padding: 15px 15px;
+  	margin-top: 10px;
+}
+.celClieDom {
+	max-width: 300px; 
+	word-wrap: break-word; 
+}
+.celOrden {
+	text-align: center;
+	max-width: 50px; 
+}
+.celProducto {
+	max-width: 250px; 
+	word-wrap: 
+	break-word; 
+}
+.celInputCant {
+	width: 40px; 
+	float: right;
+	height: 25px; 
+}
+.celInputSaldo {
+	float: right;
+	width: 90px;
+	height: 25px; 	
+}
+.celInputEntr {
+	float: right;
+	width: 70px;
+	height: 25px;
+}
+.inputCantsProds{
+	width: 60px; 
+	height: 25px;
+	float: right;
+}
+@media screen and (max-width: 800px) {
+	.inputCantsProds{
+		width: 50px; 
+		height: 25px;
+		float: right;
+	}
+}
+.divColInputModal {
+	padding: 15px;
+	background-color: rgba(236, 236, 236, 0.95);
+}
+.divColOpcionesModal {
+	padding: 15px 10px 15px 60px;
+	margin-bottom: 15px;
+	background-color: rgba(236, 236, 236, 0.95);
+	display: block;
+}
+.lblObserv {
+	margin-left: 20px;
+	margin-right: 10px;
+}
+#btnAgregarCli {
+	margin-bottom: 10px;
+}
+.linTablaBuscaVisita {
+	line-height: 0.92;
+}
+#tablaBuscarVisita {
+	font-size: 0.875em;
+}
+.btnModal {
+	height: 30px !important;
+	width: 110px !important;
+	padding-left: 10px;
+}
+
+.nomEmpleado {
+  color: black;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 3px;
+  padding-top: 1%;
+  padding-bottom: 1%;
+  padding-left: 10px;
+  position: relative;
+}
+
+table#tabClientes th {   /* Crea el sticky para titulos de tabla clientes con abono */
+  position: sticky;
+  top: 68px;
+}

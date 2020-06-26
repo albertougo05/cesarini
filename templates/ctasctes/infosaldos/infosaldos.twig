@@ -1,0 +1,84 @@
+{% extends 'base.twig' %}
+
+{% block head %}
+	{{ parent() }}
+
+	<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+	<link rel="stylesheet" href="{{ base_url() }}/css/estilosCtasCtes.css">
+
+{% endblock %}	
+
+{% block title %}{{ titulo }}{% endblock %} 
+{% block navigation %}
+	{% include 'partes/nav_simple_salir.twig' %}
+{% endblock %}
+
+{% block breadcrumbs %}
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<nav aria-label="breadcrumb">
+				    <ol class="breadcrumb">
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Menú</a></li>
+					    <li class="breadcrumb-item"><a href="{{ path_for('home') }}">Cuentas Corrientes</a></li>
+					    <li class="breadcrumb-item active" aria-current="page">Informe saldos a fecha</li>
+				    </ol>
+				</nav>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<div class="row justify-content-center">
+			<div class="col-11" id="guiaReparto">
+				<h2><strong>Informe de saldos a fecha</strong></h2>
+
+				<div class="bkgFiltroFecha">
+            		<div class="row">
+						<div class="col-md-4 offset-md-4 d-md-inline-flex">
+						    <label class="lblFecha" for="fechaHasta">Fecha: </label>
+						    <input type="date" class="form-control" id="fechaHasta" name="fechaHasta" value="{{ fechaHasta }}">
+						</div>
+					</div>
+				</div>
+
+		        <div class="row">
+		            <div class="col-6 offset-3">
+		                <a type="button" class="btn btn-success btn-block" id="btnGenList" target="_blank">
+		                    <strong>Generar listado</strong>
+		                </a>
+		            </div>
+		        </div>  {# /.row #}
+
+			</div>	{# /col-11 id="guiaReparto" #}
+		</div>	{# /row #}
+	</div>    {# /container #}
+{% endblock %}
+
+{% block javascript %}
+	{{ parent() }}
+
+	<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+
+    <script type="text/javascript">
+    	// Paths
+    	var _pathInforme = "{{ path_for('ctasctes.infosaldosfecha.imprime') }}";
+
+		// Codigo jQuery
+		$(document).ready(function(){
+			// Click boton 'Generar listado'
+			$('#btnGenList').click(function (event) {
+				// string a pasar como parametro
+			    let paramString = '?hasta=' + $('#fechaHasta').val();
+//console.log('Params: ' + paramString);
+				// Envio de datos a controller por get...
+				window.open(_pathInforme + paramString, '_blank');
+			});
+
+		});
+
+	</script>
+
+{% endblock %}

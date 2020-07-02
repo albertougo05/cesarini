@@ -155,11 +155,13 @@ class FacturacAbonosController extends Controller
 	{
 		$clientes = [];
 		// Obtengo los registros de la tabla
-		$clieGuiaRep = ClienteReparto::where('IdReparto', $request->getParam('idguia'))
-										->orderBy('OrdenVisita')
-										->get();
+		$clieGuiaRep = ClienteReparto::select('IdCliente')
+									 ->distinct()
+									 ->where('IdReparto', $request->getParam('idguia'))
+									 //->orderBy('OrdenVisita')
+									 ->get();
 
-#echo "<pre>"; print_r($clieGuiaRep->toArray()); echo "</pre><br>";
+		#echo "<pre>"; print_r($clieGuiaRep->toArray()); echo "</pre><br>";
 
 	    foreach ($clieGuiaRep as $value) {		// Verificar si tiene el periodo facturado
 	    	// Busco el cliente que tenga abono...
@@ -170,9 +172,9 @@ class FacturacAbonosController extends Controller
 
 			if ($cliente) {			// Si el cliente existe...
 
-#echo "Cliente con abono: $cliente->Id - $cliente->ApellidoNombre <br>";
+			#echo "Cliente con abono: $cliente->Id - $cliente->ApellidoNombre <br>";
 
-				$dataDomicil = ClienteDomicilio::find($value->IdClienteDomicilio);
+				//$dataDomicil = ClienteDomicilio::find($value->IdClienteDomicilio);
 
 				// Compruebo si tiene facturado ese periodo...
 	    		$comp = Comprobante::where([ ['IdCliente', '=', $value->IdCliente], 
@@ -194,8 +196,8 @@ class FacturacAbonosController extends Controller
 		    	# Armo el registro del cliente
 		 		$clientes[] = array( 'Id' => $cliente->Id, 
 		 							 'ApellidoNombre' => $cliente->ApellidoNombre, 
-		 							 'Direccion'      => $dataDomicil->Direccion,
-		 							 'Localidad'      => $dataDomicil->Localidad, 
+		 							 'Direccion'      => $cliente->Direccion,		//$dataDomicil
+		 							 'Localidad'      => $cliente->Localidad, 	//$dataDomicil
 		 							 'Dispensers'     => $dispensers,
 	 								 'cantBx20'       => $cantBx20,
 	 								 'cantBx12'       => $cantBx12,
@@ -205,6 +207,9 @@ class FacturacAbonosController extends Controller
 		 	}
 	 	}
 #echo "<pre>"; print_r($clientes); echo "</pre><br>"; die('Ver ...');
+
+	 	// Ordeno por ApellidoNombre
+		usort($clientes, array($this,'_ordenoArray'));
 
 		return json_encode($clientes);
 	}
@@ -223,6 +228,19 @@ class FacturacAbonosController extends Controller
 		$fechasPeriodo = $this->_fechasPeriodo( $request->getParam('fecha') );
 
 		return json_encode($fechasPeriodo);
+	}
+
+	/**
+	 * Funcion para ordenar array multidimensional
+	 *
+	 * @return integer (0, 1 or -1)
+	 */
+	private function _ordenoArray($a, $b)
+	{
+		if ($a == $b)
+            return 0;
+
+        return ($a['ApellidoNombre'] < $b['ApellidoNombre']) ? -1 : 1;
 	}
 
 	/**

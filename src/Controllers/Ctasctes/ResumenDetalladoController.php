@@ -36,7 +36,7 @@ class ResumenDetalladoController extends Controller
 	}
 
 	/**
-	 * Muwestra el resumen detallado
+	 * Muestra el resumen detallado
 	 * Name: 'ctasctes.verresumendetallado'
 	 *
 	 * @param  Request  $request
@@ -195,7 +195,7 @@ class ResumenDetalladoController extends Controller
 		$sql2 = "SELECT visi.Fecha, ";
 		$sql2 = $sql2."CONCAT('Reparto/Visita - ', visi.Id) AS Comprobante, ";
 		$sql2 = $sql2."CONCAT(guia.DiaSemana, '-', guia.Turno) AS DiaTurno, ";
-		$sql2 = $sql2."empl.ApellidoNombre AS Empleado, ";
+		$sql2 = $sql2."empl.ApellidoNombre AS Empleado, domi.Direccion AS Domicilio, ";
 		$sql2 = $sql2."prod.Descripcion AS Producto, cant.CantStock AS Stock, ";
 		$sql2 = $sql2."cant.CantDejada AS Deja, cant.CantRetira AS Retira, ";
 		$sql2 = $sql2."cant.Saldo, cant.Entrega, cant.Debito ";
@@ -238,6 +238,7 @@ class ResumenDetalladoController extends Controller
 					  'Comprobante' => $value['Comprobante'],
 					  'DiaTurno'    => '', 
 					  'Empleado'    => '', 
+					  'Domicilio'   => '',
 					  'Producto'    => $value['Concepto'], 
 					  'Stock'       => '', 
 					  'Deja'        => '', 

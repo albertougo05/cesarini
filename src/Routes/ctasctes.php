@@ -26,13 +26,14 @@
 	# Cuentas Corrientes / Facturacion Abonos / Clientes con abono (GET)
 	$app->get('/ctasctes/factabonos/clientesabono', 'FacturacAbonosController:clientesAbono')->setName('ctasctes.factabonos.clientesabono');
 
-
 	# Cuentas Corrientes / Comprobante
 	$app->get('/ctasctes/comprobante', 'ComprobanteController:comprobante')->setName('ctasctes.comprobante');
 	# Cuentas Corrientes / NumeroComprobante
 	$app->get('/ctasctes/nrocomprobante', 'ComprobanteController:numeroComprobante')->setName('ctasctes.nrocomprobante');
 	# Cuentas Corrientes / Generar Comprobante
 	$app->post('/ctasctes/generacomprobante', 'ComprobanteController:generaComprobante')->setName('ctasctes.generacomprobante');
+	# Cuentas Corrientes / Genera comprobante by ajax
+	$app->get('/ctasctes/generacomprobbyajax', 'ComprobanteController:generaComprobByAjax')->setName('ctasctes.generacomprobbyajax');
 
 	# Cuentas Corrientes / Informe saldos a fecha
 	$app->get('/ctasctes/infosaldosfecha', 'InfoSaldosFechaController:infoSaldosFecha')->setName('ctasctes.infosaldosfecha');

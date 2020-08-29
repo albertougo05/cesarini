@@ -249,9 +249,9 @@ class VisitaPlantaController extends Controller
 	 * @param  integer $idcli id cliente
 	 * @return string 
 	 */
-	private function _guardoDetalleCliente($prods, $id, $idcli, $iddom)
+	private function _guardoDetalleCliente($prods, $idvis, $idcli, $iddom)
 	{
-		if ($id == 0) {
+		if ($idvis == 0) {
 			# Si el id es 0 
 			$result = 'Error no hay Id de visita (Clientes). ';
 
@@ -259,9 +259,21 @@ class VisitaPlantaController extends Controller
 
 			try {
 
-				foreach ($prods as $value) {
+				$clienteSinAbono = $this->_clienteTieneAbono($idcli);
 
-					$cants = array( 'IdVisita'    => (integer) $id,
+				foreach ($prods as $value) {
+					$debito = 0;
+					// Si el producto es Soda genera débito
+					if ((integer)$value['id'] === 15 || (integer)$value['id'] === 18) {
+
+						$debito = $this->ProductoController->precioPorCantidad( (integer) $value['id'], (integer) $value['ret'] );
+
+					} else if ($clienteSinAbono) {
+
+						$debito = $this->ProductoController->precioPorCantidad( (integer) $value['id'], (integer) $value['ret'] );
+					}
+
+					$cants = array( 'IdVisita'    => (integer) $idvis,
 									'IdCliente'   => (integer) $idcli,
 									'IdDomicilio' => (integer) $iddom,
 									'OrdenVisita' => 0,
@@ -271,7 +283,8 @@ class VisitaPlantaController extends Controller
 									'CantDejada'  => (integer) $value['ret'],
 									'CantRetira'  => (integer) $value['dev'],
 									'Saldo'       => 0,
-									'Entrega'     => (integer) $value['ent'] );
+									'Entrega'     => (float) $value['ent'],
+									'Debito'      => $debito );
 
 					$visita = VisitaDetalleCliente::create($cants);
 				}
@@ -283,6 +296,19 @@ class VisitaPlantaController extends Controller
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Devuelve bool si el cliente tiene abono
+	 * 
+	 * @param  integer $idcli
+	 * @return boolean
+	 */
+	private function _clienteTieneAbono($idcli)
+	{
+		$cliente = Cliente::find($idcli);
+
+		return !($cliente->CostoAbono > 0);
 	}
 
 	/**

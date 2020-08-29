@@ -39,7 +39,9 @@ class RepartosController extends Controller
 		// Si no hay parametro de guia, ni la session tiene id - INICIO
 		if ($idGuia == null) {
 
-			if ($request->getParam('msg') == 'guiaBorrada') {
+			if ($request->getParam('msg') == 'guardado') {
+				$showMsg = 'Guía de Reparto guardada con éxito !!';
+			}else if ($request->getParam('msg') == 'guiaBorrada') {
 				$showMsg = 'Guía de Reparto eliminada !!';
 			}
 
@@ -65,9 +67,7 @@ class RepartosController extends Controller
 
 			$accion = 'Modificar';
 
-			if ($request->getParam('msg') == 'guardado') {
-				$showMsg = 'Guía de Reparto guardada con éxito !!';
-			} elseif ($request->getParam('msg') == 'clieBorrado') {
+			if ($request->getParam('msg') == 'clieBorrado') {
 				$showMsg = 'Cliente eliminado con éxito !!';
 			}
 
@@ -154,8 +154,10 @@ class RepartosController extends Controller
 			$this->_guardarProdsClientes($idGuia);
 		}
 
-		// Redirecciono a misma Guia de Reparto para poner cartel creado con exito
-		return $response->withRedirect($this->router->pathFor('repartos.guiareparto')."?idguia=".$idGuia."&msg=guardado");
+		// (NO) Redirecciono a misma Guia de Reparto para poner cartel creado con exito
+		//return $response->withRedirect($this->router->pathFor('repartos.guiareparto')."?idguia=".$idGuia."&msg=guardado");
+		// Vuelvo a GR vacia con mensaje
+		return $response->withRedirect($this->router->pathFor('repartos.guiareparto')."?msg=guardado");
 	}
 
 	/**

@@ -108,6 +108,36 @@ class ProductoController extends Controller
 						   ]);
 	}
 
+	/**
+	 * Devuelve json con precio del producto
+	 * Name: productos.precioproducto
+	 * 
+	 * @param  $request
+	 * @param  $response
+	 * @return json
+	 */
+	public function precioProducto( $request, $response )
+	{
+		$producto = Producto::find( $request->getParam('id') );
+
+		return json_encode([ 'precio' => $producto->Precio ]);
+	}
+
+	/**
+	 * Devuelve json con precio del producto e importe por cantidad
+	 * Name: productos.precioproducto
+	 * 
+	 * @param  $idprod
+	 * @param  $cant
+	 * @return float
+	 */
+	public function precioPorCantidad( $idprod, $cant )
+	{
+		$producto = Producto::find( $idprod );
+
+		return (float) $producto->Precio * (integer) $cant;
+	}
+
 
 
 }

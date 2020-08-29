@@ -61,9 +61,9 @@ class ComprobanteController extends Controller
 	 * Genera comprobante con datos de pantalla
 	 * Name: 'ctasctes.generacomprobante'  (POST)
 	 * 
-	 * @param  [type] $request  [description]
-	 * @param  [type] $response [description]
-	 * @return [type]           [description]
+	 * @param  Request  $request
+	 * @param  Response $response
+	 * @return json
 	 */
 	public function generaComprobante($request, $response)
 	{
@@ -88,6 +88,76 @@ class ComprobanteController extends Controller
 				   'FechaHasta'     => $data['fecha'],
 				   'IdUsuario'      => $_SESSION['user'],
 				   'Total'          => $this->utils->convStrToFloat( $data['importe'] ) ];
+
+		$comp = Comprobante::insertGetId($datos);
+
+		if ($comp > 0) {
+			$status = 'OK';
+		} 
+
+		return json_encode(["status" => $status]);
+	}
+
+	/**
+	 * Genera cualquier tipo de comprobante con datos pasado by ajax 
+	 * (usado en Visitas. visitasDebitos.js )
+	 * Name: 'ctasctes.generacomprobbyajax'  (GET)
+	 * 
+	 * @param  Request  $request
+	 * @param  Response $response
+	 * @return json
+	 */
+	public function generaComprobByAjax($request, $response)
+	{
+		$status = 'Error';
+		$data = $request->getParams();
+		$whereLike = "%Visita: " . $data['idvisita'];
+
+		if ($data['delete'] == 1) {		// Elimina el registro del débito
+			// DELETE FROM `Comprobantes` WHERE `IdCliente` = 562 AND `Concepto` LIKE '%Visita: 539'
+			$comp = Comprobante::where( [[ 'IdCliente', '=', $data['idclie'] ], 
+				                         [ 'Concepto', 'like', $whereLike ] ])
+			                    ->delete();
+
+			return json_encode( ["status" => 'OK'] );
+		}
+
+		if ($data['idprod'] !== 0) {
+			// Calculamos importe por cantidad del producto
+			$data['importe'] = $this->ProductoController->precioPorCantidad( $data['idprod'], $data['cantid'] );
+		}
+
+		if ($data['modifica'] == 1) {
+			$comp = Comprobante::where( [[ 'IdCliente', '=', $data['idclie'] ], 
+				                         [ 'Concepto', 'like', $whereLike ] ])
+								->lockForUpdate()
+								->update( [ 'Concepto' => $data['concept'] ],
+										  [ 'Total'    => $data['importe'] ] );
+			return json_encode( ["status" => 'OK'] );
+		}
+
+		$nroComp = $this->_getNroComprobante( $data['tipcomp'], 
+			                                  $data['tipo'],
+			                                  $data['sucursal'] );
+		$datos = [ 'Fecha'          => $data['fecha'],
+				   'TipoForm'       => $data['tipcomp'], 
+				   'Tipo'           => $data['tipo'], 
+				   'Sucursal'       => (integer) $data['sucursal'],
+				   'NroComprobante' => $nroComp,
+				   'IdCliente'      => $data['idclie'], 
+				   'Firma'          => $data['cliente'], 
+				   'Concepto'       => $data['concept'], 
+				   'FechaDesde'     => $data['fecha'],
+				   'FechaHasta'     => $data['fecha'],
+				   'IdUsuario'      => $_SESSION['user'],
+				   'Total'          => $this->utils->convStrToFloat( $data['importe'] ) ];
+
+		//echo "<pre><br>";
+		//print_r($data);
+		//echo "</pre><br><pre>";
+		//print_r($datos);
+		//echo "</pre><br>";
+		//die('Ver datos...');
 
 		$comp = Comprobante::insertGetId($datos);
 

@@ -94,3 +94,14 @@ $('#btnActualizar').click(function (event) {
 	$('input #filter').val('').focus();
 });
 
+// Click boton Seleccionar por Id
+$('#btnSelecPorId').click(function(event) {
+	const idVis = parseInt( $('#inpSelId').val() ); 	// Convierto a número
+	//console.log('Seleccionó: ' + idVis);
+
+	if ( idVis > 0 ) {
+		// Redirecciona a mostrar visita seleccionada
+		location.assign( VISITAS.pathVisitaConId + "?idvisita=" + idVis );
+
+	} else $('#inpSelId').val('');		// Si no es número, vacia el input
+});

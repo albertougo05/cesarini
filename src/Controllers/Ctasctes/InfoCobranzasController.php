@@ -63,7 +63,7 @@ class InfoCobranzasController extends Controller
 									    $request->getParam('desde'), 
 									    $request->getParam('hasta') );
 
-		$periodo = $this->_getPeriodo($request->getParam('desde'), $request->getParam('hasta'), $listado);
+		$periodo = $this->utils->getPeriodo($request->getParam('desde'), $request->getParam('hasta'), $listado);
 		$total   = $this->_sumaTotal($listado);
 		// $fechaTransp = Calcular fecha trasnporte...
 		// $transporte = $this->_getTransporte($request->getParam('desde'));
@@ -88,56 +88,6 @@ class InfoCobranzasController extends Controller
 	}
 
 	/**
-	 * Devuelve string con where de fechas
-	 * 
-	 * @param  string $desde
-	 * @param  string $hasta
-	 * @return string
-	 */
-	private function _getWhereFechas($desde, $hasta)
-	{
-		if ($desde == '' && $hasta == '') {
-			$where = '';
-		} elseif ($hasta == '') {
-			$desde = date('Y-m-d', strtotime($desde));
-			$where = "AND vis.Fecha >= '".$desde."' ";
-		} elseif ($desde == '') {
-			$hasta = date('Y-m-d', strtotime($hasta));
-			$where = "AND vis.Fecha <= '".$hasta."' ";
-		} else {
-			$desde = date('Y-m-d', strtotime($desde));
-			$hasta = date('Y-m-d', strtotime($hasta));
-			$where = "AND vis.Fecha >= '".$desde."' AND vis.Fecha <= '".$hasta."' ";
-		}
-
-		return $where;
-	}
-
-	/**
-	 * Armo texto del periodo para informe
-	 * 
-	 * @param  string $desde
-	 * @param  string $hasta
-	 * @return string
-	 */
-	private function _getPeriodo($desde, $hasta, $lista)
-	{
-		# Si no hay fecha desde, busca primera fecha del listado
-		if ($desde === '') {
-			$desde = $lista[0]['Fecha'];
-		}
-		# Si no hay hasta, es la fecha de hoy
-		if ($hasta === '') {
-			$hasta = date("d/m/Y");
-		}
-		$desde = date('d/m/Y', strtotime($desde));
-		$hasta = date('d/m/Y', strtotime($hasta));
-		$periodo = "desde $desde, hasta $hasta";
-
-		return $periodo;
-	}
-
-	/**
 	 * Busca el listado de cobranzas
 	 * 
 	 * @param  Request $req
@@ -147,7 +97,7 @@ class InfoCobranzasController extends Controller
 	{
 		$sql = $this->_sqlVisitaDetCli($idcli, $idrep);
 
-		$sql = $sql . $this->_getWhereFechas($desde, $hasta);
+		$sql = $sql . $this->utils->getWhereFechas($desde, $hasta);
 		$sql = $sql . " ORDER BY vis.Fecha ASC, vdc.IdVisita ASC";
 
 		# Data de cobranzas en visitas...
@@ -210,7 +160,7 @@ class InfoCobranzasController extends Controller
 		$sql = $sql . "FROM Comprobantes AS vis WHERE TipoForm = 'RE' AND ";
 		$sql = $sql . "IdCliente = " . $idcli . " ";
 
-		$sql = $sql . $this->_getWhereFechas($desde, $hasta); 
+		$sql = $sql . $this->utils->getWhereFechas($desde, $hasta); 
 
 		$sql = $sql . "ORDER BY vis.Fecha ASC";
 

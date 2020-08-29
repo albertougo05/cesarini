@@ -98,7 +98,7 @@ VISITAS._onkeyupDeja = function (elem) {
 
 			VISITAS._alerta('No puede dejar más de lo Retirado !!', $(this));
 
-//console.log('Id prod: ' + idprod + ' - Devuelto: ' + prodDevuelto );
+//console.log('Id prod: ' + idprod + 'Venta: ' + valor +  ' - Devuelto: ' + prodDevuelto );
 
 			// Vuelvo todos los resultados atras...
 			elem.value = 0;  // $(this).val('');
@@ -120,7 +120,7 @@ VISITAS._onkeyupDeja = function (elem) {
 			VISITAS.modif_Input('dejado-', idprod, sumaProdDeId);
 		}
 
-//console.log('Id prod: ' + idprod + ' - Devuelto: ' + prodDevuelto );
+//console.log('Id prod: ' + idprod + ' Venta: ' + valor +  ' - Id Cliente: ' + idclie );
 
 	}
 }
@@ -413,40 +413,43 @@ $(document).ready( function () {
 
     // Click checkbox pendiente cambia el input hidden #pendiente
     $('input:checkbox#chkPend').click(function (event) {
-    	let idvisita = $('#idvisita').val();
+    	let idvisita = $('#idvisita').val();		// Modificado 27/08/2020. v34
 
-    	if ( VISITAS.nivelUsuario === 'admin' && idvisita > 0 ) {
-    		// Solo modifica si el usuario es admin
-	        if ($(this).prop( "checked" )) {
-	        	// Actualizo input hidden
-	        	$('#pendiente').val(1);
-	        	// Habilito boton guardar visita
-	        	$('#btnGuardarVisita').prop('disabled', false);
-				// Habilito los inputs de productos y clientes
-	        	$('input:text').removeAttr('disabled');
-	        	// Excepto ..
-	        	$("input[name^='devu-'], input[name^='recu-'], input[name^='dejado-']").prop('disabled', true);
-	        	// Habilito boton recalcular sumas
-	        	$('#btnRecalSumsProds').prop('disabled', false);
-	        	// Habilito agregar cliente
-	        	$('#btnAgregarCli').prop('disabled', false);
-	        	// Habilito agregar dispenser
-	        	$('#btnAgregaDisp').prop('disabled', false);
-	        } else {
-	        	// Not checked...
-	        	$('#pendiente').val(0);
+	    if (idvisita == 0) {
 
-	        }
-	    } else {
+	    	return null;
+	    } 
 
+	    if ( $(this).prop("checked") && VISITAS.nivelUsuario !== 'admin' ) {
+	    	// Si usuario comun, intenta tildar como pendiente NO PUEDE
 	    	VISITAS._alerta('Solo usuario administrador modifica.', $(this));
 	    	// Volver al estado original
-	    	if ($(this).prop( "checked" )) {
-	    		$(this).prop("checked", false);
-	    	} else {
-	    		$(this).prop("checked", true);
-	    	}
+	    	$(this).prop("checked", false);
+
+	    	return null;
 	    }
+
+        if ( $(this).prop("checked") ) {
+        	// Actualizo input hidden
+        	$('#pendiente').val(1);
+        	// Deshabilito boton guardar visita
+        	$('#btnGuardarVisita').prop('disabled', false);
+			// Habilito los inputs de productos y clientes
+        	$('input:text').removeAttr('disabled');
+        	// Excepto ..
+        	$("input[name^='devu-'], input[name^='recu-'], input[name^='dejado-']").prop('disabled', true);
+        	// Habilito boton recalcular sumas
+        	$('#btnRecalSumsProds').prop('disabled', false);
+        	// Habilito agregar cliente
+        	$('#btnAgregarCli').prop('disabled', false);
+        	// Habilito agregar dispenser
+        	$('#btnAgregaDisp').prop('disabled', false);
+        } else {
+        	// Not checked...
+        	$('#pendiente').val(0);
+        }
+
+        return null;
     });
 
 	// Dispara el submit de formulario

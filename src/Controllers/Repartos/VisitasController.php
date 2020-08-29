@@ -216,6 +216,11 @@ class VisitasController extends Controller
 		$resultClies = $this->_guardarClientes($request, $id);
 		// Guardo datos de Movimientos de dispenser
 		$resultDisp  = $this->_guardarDispensers($request, $id);
+		// Guardar en log los resultados de salvar datos
+		$this->logger->debug('Salvando visita...', array('Id Visita: ' => $id, 
+														 'resultProds' => $resultProds, 
+														 'resultClies' => $resultClies, 
+														 'resultDisp'  => $resultDisp));
 
 		return json_encode([ 'id'          => $id, 
 							 'resultProds' => $resultProds, 
@@ -596,18 +601,24 @@ class VisitasController extends Controller
 
 			// Cliente puede NO tener producto...
 			if ($value->IdProducto == 0) {
-				$producto = '';
+				$nombreProducto = '';
+				$precioProd = 0;
 			} else {
 				// Si es para imprimir, no pongo el Tipo de Prod en nombre de producto
 				if ($esPrint) {
-					$producto = $value->Producto->Descripcion;
+					$nombreProducto = $value->Producto->Descripcion;
 				} else {
-					$producto = $value->Producto->DescripTipoProducto->Descripcion." - ".$value->Producto->Descripcion;
+					$nombreProducto = $value->Producto->DescripTipoProducto->Descripcion." - ".$value->Producto->Descripcion;
 				}
+				// Busco precio producto
+				$producto = Producto::find( $value->IdProducto );
+				$precioProd = $producto->Precio;
 			}
 
-			// Cargo los dispenser despues de domicilio del cliente
+			// Cargo codigos de dispenser, despues de domicilio del cliente
 			$domicilio = $this->_agregoListaDispensers( $value->IdCliente, $domCli->Direccion );
+			// Si el cliente tiene abono
+			$abono = ($value->Cliente->CostoAbono > 0) ? 1 : 0;
 
 			$clisVisit[] = [ 'idreg'     => $value->Id,
 							 'idclie'    => $value->IdCliente,
@@ -616,17 +627,20 @@ class VisitasController extends Controller
 							 'iddomic'   => $value->IdDomicilio,
 							 'domicilio' => $domicilio,    // $domCli->Direccion,
 							 'idprod'    => $value->IdProducto,
-							 'producto'  => $producto,
+							 'producto'  => $nombreProducto,
+							 'precio'    => $precioProd,
 							 'stockenv'  => $value->CantStock,
 							 'cantsuge'  => '',
 							 'cantidad'  => ($value->CantDejada === 0) ? '' : $value->CantDejada,
 							 'retira'    => ($value->CantRetira === 0) ? '' : $value->CantRetira,
 							 'saldo'     => ($value->Saldo === 0) ? '' : $value->Saldo,
 							 'entrega'   => ($value->Entrega === 0) ? '' : $value->Entrega,
-							 'debito'    => ($value->Debito === 0) ? '' : $value->Debito ];
+							 'debito'    => ($value->Debito === 0) ? '' : $value->Debito,
+							 'abono'     => $abono ];
 
 			$sumaEntregas += $value->Entrega;
 			$idx++;
+			unset($producto);
 		}
 
 		$this->_sumaEntregas = $sumaEntregas;
@@ -826,39 +840,45 @@ class VisitasController extends Controller
 		$listProducCli = [];
 
 		foreach ($clientesEnGuia as $value) {
-			# Busco productos del cliente...
-			# Verifico si exista el registro...
-			$contar = ProductoClienteReparto::where(['IdReparto' => $id, 'IdCliente' => $value['id']])
+			$contar = $saldo = 0;
+			$domicilo = '';
+			# Busco productos del cliente...	# Verifico si existe el registro...
+			$contar = ProductoClienteReparto::where([ 'IdReparto' => $id, 
+													  'IdCliente' => $value['idcli'], 
+													  'IdDomicilio' => $value['iddomic'] ])
 											->count();
-
 		    # Buscar saldo 
-		    $saldo = $this->utils->getSaldo( $value['id'], $fechaHasta );
+		    $saldo = $this->utils->getSaldo( $value['idcli'], $fechaHasta );
 			// Cargo los dispenser despues de domicilio del cliente
-			$domicilio = $this->_agregoListaDispensers( $value['id'], $value['domicilio'] );
+			$domicilio = $this->_agregoListaDispensers( $value['idcli'], $value['domicilio'] );
 
 			if ( $contar > 0 ) {
 
-				$productosClie = ProductoClienteReparto::where(['IdReparto' => $id, 'IdCliente' => $value['id']])
+				$productosClie = ProductoClienteReparto::where([ 'IdReparto' => $id, 
+																 'IdCliente' => $value['idcli'],
+																 'IdDomicilio' => $value['iddomic'] ])
 											           ->get();
+
 				foreach ($productosClie as $key => $prodCli) {
 
 					if ($key > 0) {
 						$saldo = '';
 					}
 
-					// Busco el producto para obtener la descripcion del tipo
-					$tipoProd = Producto::find($prodCli->IdProducto);
+					// Busco el producto para obtener la descripcion del tipo y precio
+					$producto = Producto::find($prodCli->IdProducto);
 					// Busco estock de envases
-					$stockEnv = $this->utils->stockEnvases($prodCli->IdProducto, $value['id']);
+					$stockEnv = $this->utils->stockEnvases($prodCli->IdProducto, $value['idcli']);
 
 					$listProducCli[] = ['idreg'    => 0,
-										'idclie'   => $value['id'],
+										'idclie'   => $value['idcli'],
 										'cliente'  => $prodCli->Cliente->ApellidoNombre,
 										'orden'    => $value['orden'],
 										'iddomic'  => $value['iddomic'],
 										'domicilio' => $domicilio,    //$value['domicilio'],
 										'idprod'   => $prodCli->IdProducto,
-										'producto' => $tipoProd->DescripTipoProducto->Descripcion." - ".$prodCli->Producto->Descripcion,
+										'producto' => $producto->DescripTipoProducto->Descripcion." - ".$prodCli->Producto->Descripcion,
+										'precio'   => $producto->Precio,
 										'cantsuge' => $prodCli->CantSugerida,
 										'stockenv' => $stockEnv,
 										'cantidad' => '',
@@ -871,13 +891,14 @@ class VisitasController extends Controller
 			} else {
 				# Exception si no encuentra el producto
 				$listProducCli[] = ['idreg'    => 0,
-									'idclie'   => $value['id'],
+									'idclie'   => $value['idcli'],
 									'cliente'  => $value['nombre'],
 									'orden'    => $value['orden'],
 									'iddomic'  => $value['iddomic'],
 									'domicilio' => $domicilio,    //$value['domicilio'],
 									'idprod'   => 0,
 									'producto' => '',
+									'precio'   => 0,
 									'cantsuge' => '',
 									'stockenv' => '',
 									'cantidad' => '',
@@ -887,6 +908,7 @@ class VisitasController extends Controller
 									'debito'   => '' ];
 			}
 			unset($productosClie);
+			unset($producto);
 		}
 
 	 	return $listProducCli;
@@ -909,7 +931,7 @@ class VisitasController extends Controller
 			$clienteDom = ClienteDomicilio::find($value->IdClienteDomicilio);
 			$domicilio  = $clienteDom->Direccion;
 
-			$arrTemp = ['id'        => $value->IdCliente,
+			$arrTemp = ['idcli'     => $value->IdCliente,
 						'orden'     => $value->OrdenVisita,
 			            'nombre'    => $value->Cliente->ApellidoNombre,
 			            'iddomic'   => $value->IdClienteDomicilio,
@@ -996,7 +1018,8 @@ class VisitasController extends Controller
 
 		foreach ($prods as $value) {
 			$arrListProd[] = [ 'id'      => $value->Id,
-							   'descrip' => $value->DescripTipoProducto->Descripcion." - ".$value->Descripcion ];
+							   'descrip' => $value->DescripTipoProducto->Descripcion." - ".$value->Descripcion,
+							   'precio'  => $value->Precio ];
 		}
 
 		usort($arrListProd, array($this, '_comparar'));

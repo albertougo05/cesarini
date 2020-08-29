@@ -68,32 +68,32 @@
 					<p id="razon">Razón social: <strong>{{ cliente.ApellidoNombre }} - [{{ cliente.Id }}]</strong></p>
 				</div>
 				<div class="col-4 pr-4">
-					<p class="text-right">Fecha emisión: {{ fecha }}</p>
+					<p class="text-right">Fecha emisión:&nbsp; {{ fecha }}</p>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-4 pl-4">
-					<p class="data">Cuit/Dni: {{ cliente.CUIT }}</p>
-					<p class="data">Dirección: {{ cliente.Direccion }}</p>
+					<p class="data">Cuit/Dni:&nbsp; {{ cliente.CUIT }}</p>
+					<p class="data">Dirección:&nbsp; {{ cliente.Direccion }}</p>
 				</div>
 				<div class="col-4">
-					<p class="data">Condición: {{ cliente.CondicionFiscal }}</p>
-					<p class="data">Localidad: {{ cliente.Localidad }}</p>
+					<p class="data">Condición:&nbsp; {{ cliente.CondicionFiscal }}</p>
+					<p class="data">Localidad:&nbsp; {{ cliente.Localidad }}</p>
 				</div>
 				<div class="col-3">
-					<p class="data">Teléfono: {{ cliente.Telefono }} - Celular: {{ cliente.Celular }}</p>
-					<p class="data">Provincia: {{ cliente.Provincia }}</p>
+					<p class="data">Teléfono:&nbsp; {{ cliente.Telefono }} - Celular:&nbsp; {{ cliente.Celular }}</p>
+					<p class="data">Provincia:&nbsp; {{ cliente.Provincia }}</p>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-4 pl-4">
-					<p class="data">Dispensers: {{ dispensers }}</p>
+					<p class="data">Dispensers:&nbsp; {{ dispensers }}</p>
 				</div>
 				<div class="col-4">
-					<p class="data">Email: {{ cliente.Email }}</p>
+					<p class="data">Email:&nbsp; {{ cliente.Email }}</p>
 				</div>				
 				<div class="col-3">
-					<p class="data">Abono: $ {{ cliente.CostoAbono|number_format(2, ',', '.') }}</p>
+					<p class="data">Abono: $&nbsp; {{ cliente.CostoAbono|number_format(2, ',', '.') }}</p>
 				</div>
 			</div>
 			<div class="row">
@@ -104,11 +104,11 @@
 
 			<div class="row">
 				<div class="col-4 pl-4">
-					<p class="data">Período: {{ periodo }}</p>
+					<p class="data">Período:&nbsp; {{ periodo }}</p>
 				</div>
 				<div class="col-4"></div>
 				<div class="col-4 pr-4">
-					<p class="text-right data">Tranporte al: {{ fechatrans }} &nbsp;&nbsp; $ {{ transporte|number_format(2, ',', '.') }} </p>
+					<p class="text-right data">Tranporte al:&nbsp; {{ fechatrans }} &nbsp;&nbsp; $ {{ transporte|number_format(2, ',', '.') }} </p>
 				</div>
 			</div>
 

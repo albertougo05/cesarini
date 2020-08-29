@@ -192,6 +192,56 @@ class Utils extends Controller
 		return $haber;
 	}
 
+	/**
+	 * Devuelve string con where de fechas
+	 * 
+	 * @param  string $desde
+	 * @param  string $hasta
+	 * @return string
+	 */
+	public function getWhereFechas($desde, $hasta)
+	{
+		if ($desde == '' && $hasta == '') {
+			$where = '';
+		} elseif ($hasta == '') {
+			$desde = date('Y-m-d', strtotime($desde));
+			$where = "AND vis.Fecha >= '".$desde."' ";
+		} elseif ($desde == '') {
+			$hasta = date('Y-m-d', strtotime($hasta));
+			$where = "AND vis.Fecha <= '".$hasta."' ";
+		} else {
+			$desde = date('Y-m-d', strtotime($desde));
+			$hasta = date('Y-m-d', strtotime($hasta));
+			$where = "AND vis.Fecha >= '".$desde."' AND vis.Fecha <= '".$hasta."' ";
+		}
+
+		return $where;
+	}
+
+	/**
+	 * Armo texto del periodo para informes
+	 * 
+	 * @param  string $desde
+	 * @param  string $hasta
+	 * @return string
+	 */
+	public function getPeriodo($desde, $hasta, $lista)
+	{
+		# Si no hay fecha desde, busca primera fecha del listado
+		if ($desde === '') {
+			$desde = $lista[0]['Fecha'];
+		}
+		# Si no hay hasta, es la fecha de hoy
+		if ($hasta === '') {
+			$hasta = date("d/m/Y");
+		}
+		$desde = date('d/m/Y', strtotime($desde));
+		$hasta = date('d/m/Y', strtotime($hasta));
+		$periodo = "desde $desde, hasta $hasta";
+
+		return $periodo;
+	}
+
 
 
 }

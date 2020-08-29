@@ -43,7 +43,7 @@
 						        <select id="selProd" class="form-control form-control-sm">
 						            <option value='0' selected>Seleccione un producto...</option>
 						            {% for producto in listaprod %}
-										<option value="{{ producto.id }}">{{ producto.descrip }}</option>
+										<option value="{{ producto.id }}" data-pre="{{ producto.precio }}">{{ producto.descrip }}</option>
 									{% endfor %}
 						        </select>
 						    </div>

@@ -268,5 +268,3 @@ $container['utils'] = function ($container) {
 
         return new \App\Controllers\Ctasctes\InfoComprobantesController($container);
     };
-
-

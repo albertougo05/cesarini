@@ -63,7 +63,7 @@
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col pr-5 mb-0 mr-5 mt-3">
-					<p class="text-right mb-0">Fecha emisión: {{ fecha }}</p>
+					<p class="text-right mb-0">Fecha emisión:&nbsp; {{ fecha }}</p>
 				</div>
 			</div>
 
@@ -77,7 +77,7 @@
 				<div class="col-1"></div>
 				<div class="col">
 					<table class="table table-sm mb-0">
-						<caption>Observaciones: {{ dataGuia.observac }}</caption>
+						<caption>Observaciones:&nbsp; {{ dataGuia.observac }}</caption>
 					  	<thead class="thead-dark">
 						    <tr>
 						      	<th class="cellRight">ID</th>
@@ -92,10 +92,10 @@
 						    <tr>
 							    <th class="cellRight">{{ dataGuia.idvisita }}</th>
 							    <td class="text-center">{{ dataGuia.fechavisita|date('d/m/Y', timezone="America/Buenos_Aires") }}</td>
-							    <th>{{ dataGuia.dia }} / {{ dataGuia.turno }}</th>
+							    <th>{{ dataGuia.dia }} /&nbsp; {{ dataGuia.turno }}</th>
 							    <td>{{ dataGuia.salida[:5] }}</td>
 							    <td>{{ dataGuia.retorno[:5] }}</td>
-							    <td><strong>{{ dataGuia.idempl }} - {{ dataGuia.nombreempl }}</strong></td>
+							    <td><strong>{{ dataGuia.idempl }} -&nbsp; {{ dataGuia.nombreempl }}</strong></td>
 						    </tr>
 						    <tr>
 						    	<td></td>
@@ -115,7 +115,7 @@
 				<div class="col-1"></div>
 				<div class="col text-right">
 					<hr>
-					<p class="font-weight-bold pr-4">Total entregas: $ {{ dataGuia.entregas|number_format(2, ',', '.') }}</p>
+					<p class="font-weight-bold pr-4">Total entregas: $&nbsp; {{ dataGuia.entregas|number_format(2, ',', '.') }}</p>
 					<hr>
 				</div>
 				<div class="col-1"></div>

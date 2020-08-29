@@ -3,8 +3,7 @@
 {% block head %}
 	{{ parent() }}
 
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-
+	<link rel="stylesheet" href="{{ base_url() }}/css/all.css">
 	<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
 
 	<style type="text/css">
@@ -247,6 +246,6 @@
 
 	</script>
 	<script src="{{ base_url() }}/js/enterXtab.js"></script>
-	<script src="{{ base_url() }}/js/visitaplanta.js"></script>
+	<script src="{{ base_url() }}/js/visitaplanta.js?ver=0.0.3"></script>
 
 {% endblock %}

@@ -58,13 +58,10 @@ class InfoComprobantesController extends Controller
 									     $request->getParam('desde'), 
 									     $request->getParam('hasta') );
 
-		$periodo = $this->_getPeriodo($request->getParam('desde'), $request->getParam('hasta'), $listado);
+		$periodo = $this->utils->getPeriodo($request->getParam('desde'), $request->getParam('hasta'), $listado);
 
-// echo "<br><pre>";
-//print_r($listado);
-//echo "</pre><br>";
-//echo "Periodo: ".$periodo;
-//echo "<br><br>";
+// echo "<br><pre>"; print_r($listado); echo "</pre><br>";
+//echo "Periodo: ".$periodo; echo "<br><br>";
 //die('Ver...');
 
 		$datos = [ 'titulo'  => 'Cesarini - Info Cobranzas',
@@ -73,56 +70,6 @@ class InfoComprobantesController extends Controller
 				   'listado' => $listado ];
 
 		return $this->view->render($response, 'ctasctes/infocomprobantes/imprimecomprobantes.twig', $datos);
-	}
-
-	/**
-	 * Devuelve string con where de fechas
-	 * 
-	 * @param  string $desde
-	 * @param  string $hasta
-	 * @return string
-	 */
-	private function _getWhereFechas($desde, $hasta)
-	{
-		if ($desde == '' && $hasta == '') {
-			$where = '';
-		} elseif ($hasta == '') {
-			$desde = date('Y-m-d', strtotime($desde));
-			$where = "Fecha >= '".$desde."' ";
-		} elseif ($desde == '') {
-			$hasta = date('Y-m-d', strtotime($hasta));
-			$where = "Fecha <= '".$hasta."' ";
-		} else {
-			$desde = date('Y-m-d', strtotime($desde));
-			$hasta = date('Y-m-d', strtotime($hasta));
-			$where = "Fecha >= '".$desde."' AND Fecha <= '".$hasta."' ";
-		}
-
-		return $where;
-	}
-
-	/**
-	 * Armo texto del periodo para informe
-	 * 
-	 * @param  string $desde
-	 * @param  string $hasta
-	 * @return string
-	 */
-	private function _getPeriodo($desde, $hasta, $lista)
-	{
-		# Si no hay fecha desde, busca primera fecha del listado
-		if ($desde === '') {
-			$desde = $lista[0]['Fecha'];
-		}
-		# Si no hay hasta, es la fecha de hoy
-		if ($hasta === '') {
-			$hasta = date("d/m/Y");
-		}
-		$desde = date('d/m/Y', strtotime($desde));
-		$hasta = date('d/m/Y', strtotime($hasta));
-		$periodo = "desde $desde, hasta $hasta";
-
-		return $periodo;
 	}
 
 	/**
@@ -163,6 +110,31 @@ class InfoComprobantesController extends Controller
 		return $list;
 	}
 
+	/**
+	 * Devuelve string con where de fechas
+	 * 
+	 * @param  string $desde
+	 * @param  string $hasta
+	 * @return string
+	 */
+	private function _getWhereFechas($desde, $hasta)
+	{
+		if ($desde == '' && $hasta == '') {
+			$where = '';
+		} elseif ($hasta == '') {
+			$desde = date('Y-m-d', strtotime($desde));
+			$where = "Fecha >= '".$desde."' ";
+		} elseif ($desde == '') {
+			$hasta = date('Y-m-d', strtotime($hasta));
+			$where = "Fecha <= '".$hasta."' ";
+		} else {
+			$desde = date('Y-m-d', strtotime($desde));
+			$hasta = date('Y-m-d', strtotime($hasta));
+			$where = "Fecha >= '".$desde."' AND Fecha <= '".$hasta."' ";
+		}
+
+		return $where;
+	}
 
 	private function _sumaTotal($list)
 	{

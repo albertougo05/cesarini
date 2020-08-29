@@ -133,8 +133,10 @@ class ResumenController extends Controller
 	    $fecha = date('Y-m-d');
 
 		$saldo = $this->utils->getSaldo( $request->getParam('id'), $fecha );
+		$cliente = Cliente::find($request->getParam('id'));
+		$abono = ($cliente->CostoAbono > 0) ? 1 : 0;
 
-		return json_encode([ "saldo" => $saldo ]);
+		return json_encode([ "saldo" => $saldo, "abono" => $abono ]);
 	}
 
 	/**

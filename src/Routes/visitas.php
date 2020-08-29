@@ -42,5 +42,6 @@
 
 # INFORME VISITAS RESUMIDO
 	# Repartos / Informe visitas resumido
-	$app->get('/repartos/visitasinforesum', 'VisitasInfoResumController:informe')->setName('repartos.visitasinforesum');
-
+	$app->get('/repartos/visitasinforesum', 'VisitasInfoResumController:informeResum')->setName('repartos.visitasinforesum');
+	# Cuentas Corrientes / Arma Informe Visitas resumido
+	$app->get('/repartos/visitasinforesum/armainfovisitas', 'VisitasInfoResumController:armaInfoVisitas')->setName('repartos.visitasinforesum.armainfovisitas');

@@ -34,8 +34,6 @@
 			}
 			.fecha {
 				font-size: 0.875em;
-				
-
 			}
 		</style>
 	</head>
@@ -71,10 +69,10 @@
 
 			<div class="row">
 				<div class="col-6 pl-4">
-					<p class="data">Período: {{ periodo }}</p>
+					<p class="data">Período:&nbsp; {{ periodo }}</p>
 				</div>
 				<div class="col-6 pr-4">
-					<p class="text-right data">Fecha emisión: {{ fecha }}</p>
+					<p class="text-right data">Fecha emisión:&nbsp; {{ fecha }}</p>
 				</div>
 			</div>
 
@@ -99,11 +97,11 @@
 									<td>{{ list.Fecha|date("d/m/Y") }}</td>
 									<td>{{ list.IdVisita }}</td>
 									<td>{{ list.Cliente }} ({{ list.IdCliente }})</td>
-									<td>{{ list.IdProducto }} - {{ list.Descripcion }}</td>
+									<td>{{ list.IdProducto }} -&nbsp; {{ list.Descripcion }}</td>
 									<td class="cellRight">{{ list.Venta }}</td>
 									<td class="cellRight">{{ list.Envases }}</td>
-									<td class="cellRight"> $ {{ list.Saldo|number_format(2, ',', '.') }}</td>
-									<td class="cellRight"> $ {{ list.Entrega|number_format(2, ',', '.') }}</td>
+									<td class="cellRight"> $&nbsp; {{ list.Saldo|number_format(2, ',', '.') }}</td>
+									<td class="cellRight"> $&nbsp; {{ list.Entrega|number_format(2, ',', '.') }}</td>
 								</tr>
 							{% endfor %}
 						    <tr>

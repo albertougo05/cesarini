@@ -19,9 +19,15 @@
 			.cellRight {
 			  text-align: right;
 			}
+			p#razon {
+				font-size: 1.1em;
+			}
 			p.data {
 				font-size: 0.875em;
 				/*margin-left: 1px;*/
+			}
+			hr.lin {
+				margin: 10px auto;
 			}
 			table {
 				font-size: 0.875em;
@@ -51,7 +57,7 @@
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col">
-					<h3 class="text-center"><strong>Informe de comprobantes</strong></h3>
+					<h3 class="text-center"><strong>Informe de visitas resumido</strong></h3>
 				</div>
 			</div> {# end row #}
 
@@ -62,25 +68,28 @@
 			</div>
 
 			<div class="row">
-				<div class="col-6 pl-4">
+				<div class="col-1"></div>
+				<div class="col-5 pl-4">
 					<p class="data">Período:&nbsp; {{ periodo }}</p>
 				</div>
-				<div class="col-6 pr-4">
+				<div class="col-5 pr-4">
 					<p class="text-right data">Fecha emisión:&nbsp; {{ fecha }}</p>
 				</div>
+				<div class="col-1"></div>
 			</div>
 
 			<div class="row mt-0">
+				<div class="col-1"></div>
 				<div class="col">
-					<table class="table table-sm">
+					<table class="table table-sm table-striped table-hover">
 					  	<thead class="thead-dark">
 					    	<tr>
 						    	<th scope="col">Fecha</th>
-						    	<th scope="col">Tipo</th>
-						      	<th scope="col">Sucural-Número</th>
-						      	<th scope="col">Cliente</th>
-						      	<th scope="col">Concepto</th>
-						      	<th scope="col" class="cellRight">Total</th>
+						      	<th scope="col" class="cellRight">Id Visita</th>
+						      	<th scope="col">Dia / Turno</th>
+						      	<th scope="col">Repartidor</th>
+						      	<th scope="col" class="cellRight">Entregas</th>
+						      	<th scope="col" class="cellRight">Débitos</th>
 						      	<th scope="col"></th>
 					    	</tr>
 					  	</thead>
@@ -88,26 +97,31 @@
 							{% for list in listado %}
 								<tr>
 									<td>{{ list.Fecha|date("d/m/Y") }}</td>
-									<td>{{ list.TipoForm }}</td>
-									<td>{{ list.Comprobante }}</td>
-									<td>{{ list.Firma }}</td>
-									<td>{{ list.Concepto }}</td>
-									<td class="cellRight"> $ {{ list.Importe|number_format(2, ',', '.') }}</td>
+									<td class="cellRight">{{ list.Id }}</td>
+									<td>{{ list.DiaSemana }} /&nbsp; {{ list.Turno }} </td>
+									<td>{{ list.IdEmpleado }} -&nbsp; {{ list.ApellidoNombre }}</td>
+									<td class="cellRight">$&nbsp; {{ list.Entregas|number_format(2, ',', '.') }}</td>
+									<td class="cellRight">$&nbsp; {{ list.Debitos|number_format(2, ',', '.') }}</td>
 									<td></td>
 								</tr>
 							{% endfor %}
 						    <tr>
+						    	<td></td><td></td><td></td><td></td>
+						    	<td></td><td></td><td></td>
+						    </tr>
+						    <tr>
 						    	<td></td>
 						    	<td></td>
 						    	<td></td>
-						    	<td></td>
-						    	<td></td>
-						    	<td></td>
+						    	<td class="font-weight-bold">Totales:</td>
+						    	<td class="font-weight-bold cellRight">$&nbsp; {{ totentr|number_format(2, ',', '.') }}</td>
+						    	<td class="font-weight-bold cellRight">$&nbsp; {{ totdebi|number_format(2, ',', '.') }}</td>
 						    	<td></td>
 						    </tr>
 						</tbody>
 					</table>
 				</div>
+				<div class="col-1"></div>
 			</div>
 
 		</div>  {# end container #}

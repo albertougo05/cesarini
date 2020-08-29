@@ -149,16 +149,15 @@ class FacturacAbonosController extends Controller
 	 * 
 	 * @param  Request $request
 	 * @param  Response $response
-	 * @return array
+	 * @return json
 	 */
 	public function clientesGuiaRep($request, $response)
 	{
 		$clientes = [];
-		// Obtengo los registros de la tabla
-		$clieGuiaRep = ClienteReparto::select('IdCliente')
-									 ->distinct()
+		// Obtengo los registros de la tabla  //  select('IdCliente')
+		$clieGuiaRep = ClienteReparto::distinct()
 									 ->where('IdReparto', $request->getParam('idguia'))
-									 //->orderBy('OrdenVisita')
+									 ->orderBy('OrdenVisita')
 									 ->get();
 
 		#echo "<pre>"; print_r($clieGuiaRep->toArray()); echo "</pre><br>";
@@ -206,10 +205,11 @@ class FacturacAbonosController extends Controller
 		 							 'ImporteFact'    => $importe );
 		 	}
 	 	}
+
 #echo "<pre>"; print_r($clientes); echo "</pre><br>"; die('Ver ...');
 
 	 	// Ordeno por ApellidoNombre
-		usort($clientes, array($this,'_ordenoArray'));
+		//usort($clientes, array($this,'_ordenoArray'));
 
 		return json_encode($clientes);
 	}

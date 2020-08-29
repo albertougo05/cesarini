@@ -69,10 +69,10 @@
 
 			<div class="row">
 				<div class="col-6 pl-4">
-					<p class="data">Período: {{ periodo }}</p>
+					<p class="data">Período:&nbsp; {{ periodo }}</p>
 				</div>
 				<div class="col-6 pr-4">
-					<p class="text-right data">Fecha emisión: {{ fecha }}</p>
+					<p class="text-right data">Fecha emisión:&nbsp; {{ fecha }}</p>
 				</div>
 			</div>
 
@@ -93,10 +93,10 @@
 							{% for list in listado %}
 								<tr>
 									<td>{{ list.Fecha|date("d/m/Y") }}</td>
-									<td>{{ list.Comprobante }} - {{ list.IdVisita }}</td>
+									<td>{{ list.Comprobante }} -&nbsp; {{ list.IdVisita }}</td>
 									<td>{{ list.Empleado }}</td>
-									<td>{{ list.IdCliente }} - {{ list.ApellidoNombre }}</td>
-									<td class="cellRight"> $ {{ list.Entrega|number_format(2, ',', '.') }}</td>
+									<td>{{ list.IdCliente }} -&nbsp; {{ list.ApellidoNombre }}</td>
+									<td class="cellRight">$&nbsp; {{ list.Entrega|number_format(2, ',', '.') }}</td>
 									<td></td>
 								</tr>
 							{% endfor %}
@@ -116,7 +116,7 @@
 			<div class="row">
 				<div class="col-8"></div>
 				<div class="col-4">
-					<p class="text-right font-weight-bold pr-4">Total general $ {{ total|number_format(2, ',', '.') }}</p>
+					<p class="text-right font-weight-bold pr-4">Total general $&nbsp; {{ total|number_format(2, ',', '.') }}</p>
 				</div>
 			</div>
 

@@ -44,11 +44,15 @@ $('.typeahead').bind('typeahead:autocomplete', function(ev, suggestion) {
 // Click al boton Confirma del modal
 $('#btnConfirmAgrCli').click(function (event) {
 	const idclie = $('#idclie').val();
+	const client = $('#client').val();
 	const iddomi = $('#iddomi').val();
 	const orden  = $('#ordenCli').val();
 	const idprod = $('#selProd').val();
 	const produc = $("#selProd option:selected").text();
+	const precio = $("#selProd option:selected").attr('data-pre');
 	const stockEnv = MODCLIPRO.stock;
+
+	//console.log('Precio: ' + precio);
 
 	if (idclie == 0 || idprod == 0 || orden == 0) {
 		$('#modalAgregarCliente').modal('hide');
@@ -91,8 +95,9 @@ $('#btnConfirmAgrCli').click(function (event) {
 			.done(function( data ) {
 				const dato = $.parseJSON(data);
 			   	const saldo = parseFloat(dato.saldo);
+			   	const abono = parseFloat(dato.abono);
 				// Agrego cliente a la lista de clientes con productos
-				MODCLIPRO.agregoClienteVarGlobal(idclie, idprod, orden, stockEnv, saldo);
+				MODCLIPRO.agregoClienteVarGlobal(idclie, client, idprod, orden, stockEnv, saldo, abono, produc, precio);
 				// Crear linea e insertar a tabla clientes
 				MODCLIPRO.lineaTablaClientes(idclie, orden, produc, idprod, stockEnv, saldo);
 				//console.log('Saldo: ' + saldo);
@@ -100,7 +105,7 @@ $('#btnConfirmAgrCli').click(function (event) {
 
 	} else {
 		// Agrego cliente a la lista de clientes con productos
-		MODCLIPRO.agregoClienteVarGlobal(idclie, idprod, orden, stockEnv, 0);
+		MODCLIPRO.agregoClienteVarGlobal(idclie, client, idprod, orden, stockEnv, 0, VISITAS.prodsDeClies[existCli].abono, produc, precio);
 		// Crear linea e insertar a tabla clientes
 		MODCLIPRO.lineaTablaClientes(idclie, orden, produc, idprod, stockEnv, 0);
 	}
@@ -183,7 +188,7 @@ var MODCLIPRO = {
 			// inserto columna de sugerido
 			linea += '<td></td>';
 		}
-		linea += '<td><input onkeyup="VISITAS._onkeyupDeja(this);" name="deja_' + idclie + 'x' + iddomi + '_' + idprod + 'o' + orden + '" ';
+		linea += '<td><input onkeyup="VISITAS._onkeyupDeja(this);" onfocusout="DEBITOS.onFocusOut(this);" name="deja_' + idclie + 'x' + iddomi + '_' + idprod + 'o' + orden + '" ';
 		linea += 'class="form-control form-control-sm cellRight numero celInputCant" type="text" value=""></td>';
 
 		linea += '<td><input onkeyup="VISITAS._onKeyUpEnv(this);" name="ret_' + idclie + 'x' + iddomi + '_' + idprod + 'o' + orden + '" ';
@@ -211,14 +216,15 @@ var MODCLIPRO = {
 		VISITAS.inputmaskImportes();
 	},
 
-	agregoClienteVarGlobal: function (idcli, idpro, orden, stock, saldo) {
+	agregoClienteVarGlobal: function (idcli, client, idpro, orden, stock, saldo, abono, prod, precio) {
 		let obj = {
 			idreg: 0,
 			idpro: idpro,
-			produ: '',
+			produ: prod,
+			precio: precio,
 			idcli: idcli,
 			iddom: $('#iddomi').val(),
-			clien: '',
+			clien: client,
 			orden: orden,
 			stock: MODCLIPRO.stock,
 			suger: 0,
@@ -226,7 +232,8 @@ var MODCLIPRO = {
 			recu:  0,
 			saldo: saldo,
 			entr:  0,
-			debit: 0
+			debit: 0,
+			abono: abono,
 		};
 
 		VISITAS.prodsDeClies.push( obj );

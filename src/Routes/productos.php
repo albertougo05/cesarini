@@ -10,6 +10,9 @@
 	# Devuelve json con data producto (id debe ser numero)
 	$app->get('/productos/dataproducto', 'ProductoController:dataProducto')->setName('productos.dataproducto');
 
+	# Devuelve json con precio producto (id debe ser numero)
+	$app->get('/productos/precioproducto', 'ProductoController:precioProducto')->setName('productos.precioproducto');
+
 	# productos / producto / eliminar (GET)
 	$app->get('/productos/producto/elimina', 'ProductoController:eliminaProducto')->setName('productos.producto.elimina');	
 

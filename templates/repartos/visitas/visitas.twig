@@ -48,8 +48,8 @@
 							<button type="button" class="d-inline float-right btn btn-success btn-sm" id="btnBuscarGuiaRep" style="margin-bottom: 10px;"{{ (editable) ? ' disabled' : '' }}>Buscar Guía Reparto</button>
 							<hr class="hrMovDisp">
 							{% if dataGuia.idguia > 0 %}
-								<p class="dataGuiaRep" id="idGuiaRep" data-idGuiaRep= "{{ dataGuia.idguia }}"><strong>{{ dataGuia.idguia }} - {{ dataGuia.dia }} ({{ dataGuia.turno }}) | {{ dataGuia.actividad }}</strong></p>
-								<p class="mt-0 pl-2">Sale: {{ dataGuia.salida|date('H:i', timezone="America/Buenos_Aires") }} - Retorna: {{ dataGuia.retorno|date('H:i', timezone="America/Buenos_Aires") }}</p>
+								<p class="dataGuiaRep" id="idGuiaRep" data-idGuiaRep= "{{ dataGuia.idguia }}"><strong>{{ dataGuia.idguia }} -&nbsp;{{ dataGuia.dia }} ({{ dataGuia.turno }}) |&nbsp;{{ dataGuia.actividad }}</strong></p>
+								<p class="mt-0 pl-2">Sale:&nbsp;{{ dataGuia.salida|date('H:i', timezone="America/Buenos_Aires") }} - Retorna:&nbsp;{{ dataGuia.retorno|date('H:i', timezone="America/Buenos_Aires") }}</p>
 						    {% endif %}							
 						</div>
 						<div class="col-1"></div>
@@ -59,7 +59,7 @@
 							<h5 style="display: inline;">Repartidor</h5>
 							<button type="button" class="d-inline float-right btn btn-success btn-sm" id="btnBuscarEmp" style="margin-bottom: 10px;"{{ ( editable and dataGuia.pendiente ) ? '' : ' disabled' }}>Buscar empleado</button>
 							<hr class="hrMovDisp">
-							<p class="nomEmpleado" id="nombreEmpleado" data-idEmpl= "{{ dataGuia.idempl }}"><strong>{{ dataGuia.idempl }} - {{ dataGuia.nombreempl }}</strong></p>
+							<p class="nomEmpleado" id="nombreEmpleado" data-idEmpl= "{{ dataGuia.idempl }}"><strong>{{ dataGuia.idempl }} -&nbsp;{{ dataGuia.nombreempl }}</strong></p>
 						</div>
 					</div> 
 
@@ -285,7 +285,7 @@
 
 												<td>
 													{% if datcli.idprod != 0 %}
-														<input onkeyup="VISITAS._onkeyupDeja(this);" name="deja_{{ datcli.idclie }}x{{ datcli.iddomic }}_{{ datcli.idprod }}o{{ datcli.orden }}" class="form-control form-control-sm cellRight numero celInputCant" type="text" value="{{ datcli.cantidad }}"{{ (dataGuia.pendiente) ? '' : 'disabled' }}>
+														<input onkeyup="VISITAS._onkeyupDeja(this);" onfocusout="DEBITOS.onFocusOut(this);" name="deja_{{ datcli.idclie }}x{{ datcli.iddomic }}_{{ datcli.idprod }}o{{ datcli.orden }}" class="form-control form-control-sm cellRight numero celInputCant" type="text" value="{{ datcli.cantidad }}"{{ (dataGuia.pendiente) ? '' : 'disabled' }}>
 													{% endif %}
 												</td>
 												<td>
@@ -410,6 +410,7 @@
 				pathDispEnStock:   "{{ path_for('productos.dispenser.enstock') }}",
 				pathDispsDeClie:   "{{ path_for('productos.dispenser.decliente') }}",
 				pathStockEnvases:  "{{ path_for('productos.stockenvases') }}",
+				pathDebitoByAjax:  "{{ path_for('ctasctes.generacomprobbyajax') }}",
 				hayClientes:       "{{ (dataClie) ? 1 : 0 }}",
 				ultimOrden:        parseInt("{{ ultimOrd }}") || 0,
 				accion:            "{{ accion }}",
@@ -426,6 +427,7 @@
 				obj.idreg = "{{ datcli.idreg }}";
 				obj.idpro = "{{ datcli.idprod }}";
 				obj.produ = "{{ datcli.producto }}";
+				obj.precio = parseFloat( "{{ datcli.precio }}" ) || 0;
 				obj.idcli = "{{ datcli.idclie }}";
 				obj.iddom = "{{ datcli.iddomic }}";
 				obj.clien = "{{ datcli.cliente }}";
@@ -437,6 +439,8 @@
 				obj.saldo = parseFloat( "{{ datcli.saldo }}" ) || 0;
 				obj.entr  = parseFloat( "{{ datcli.entrega }}" ) || 0;
 				obj.debit = parseFloat( "{{ datcli.debito }}" ) || 0;
+				obj.abono = parseInt( "{{ datcli.abono }}" ) || 0;
+				//obj.debitado = ("{{ datcli.cantidad }}" > 0) ? 1 : 0;
 				VISITAS.prodsDeClies.push( obj );
 				obj = {};
 			{% endfor %}
@@ -471,11 +475,13 @@
 			{% endfor %}
 
 		</script>
+		{% set version = '?ver=0.1.0'%}
 
 		<script src="{{ base_url() }}/js/enterXtab.js"></script>
-		<script src="{{ base_url() }}/js/visitas.js"></script>
-		<script src="{{ base_url() }}/js/modalVisitasBuscarVis.js"></script>
-		<script src="{{ base_url() }}/js/modalVisitasClieProd.js"></script>
-		<script src="{{ base_url() }}/js/modalVisitasDispenser.js"></script>
+		<script src="{{ base_url() }}/js/visitas.js{{ version }}"></script>
+		<script src="{{ base_url() }}/js/visitasDebitos.js{{ version }}"></script>
+		<script src="{{ base_url() }}/js/modalVisitasBuscarVis.js{{ version }}"></script>
+		<script src="{{ base_url() }}/js/modalVisitasClieProd.js{{ version }}"></script>
+		<script src="{{ base_url() }}/js/modalVisitasDispenser.js{{ version }}"></script>
 
 	{% endblock %}

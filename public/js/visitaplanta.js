@@ -45,6 +45,15 @@ function _alerta(contenido, element) {
     });
 }
 
+// Convierte string '1.250,25' A '1250.25'
+function _strToFloat(num) {
+  num = num.replace('.', '');
+  num = num.replace(',', '.');
+  num = parseFloat(num);
+
+  return num;
+}
+
 
 
 // Codigo jQuery
@@ -207,9 +216,9 @@ $(document).ready( function () {
     		return null;
     	}
 
+        let entrega = _strToFloat( $('#entrega').val() );
         // Si ha ingresado importe de entrega
-        if ( $('#entrega').val() > 0 ) {
-
+        if ( entrega > 0 ) {
             // Si no hay productos ingresados...
             if ( _tablaProductos.length === 0 ) {
                 // Armo tabla sin producto...
@@ -217,14 +226,14 @@ $(document).ready( function () {
                                         prod: '',
                                         ret: 0, 
                                         dev: 0, 
-                                        ent: parseFloat($('#entrega').val()) } );
+                                        ent: entrega } );
             } else {
                 // Si ya hay productos en la tabla...
-                _tablaProductos[0].ent = parseFloat($('#entrega').val());
+                _tablaProductos[0].ent = entrega; 
             }
         }
 
-console.log( "Entrega en tabla: " + _tablaProductos[0].ent  );
+        //console.log( "Entrega en tabla: " + _tablaProductos[0].ent  );
 
     	// Ingreso a tabla...
 		if ( _tablaProductos.length === 0 ) {

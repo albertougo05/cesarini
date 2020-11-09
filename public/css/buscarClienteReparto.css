@@ -1,0 +1,100 @@
+/**
+ * CSS para buscarClienteReparto.twig
+ * 
+ */
+
+@import url('https://fonts.googleapis.com/css?family=Lato');
+
+body {
+  background-color: #B9CFEA;
+  margin: 0;
+  padding:  0;
+  font-family: 'Lato', sans-serif;
+}
+
+#buscarClienteRep { 
+  display: flex;
+  flex-direction: column;
+        background-color: rgba(255,255,255,.95);
+        text-align: left;
+  border-radius: 5px;
+  margin: 2%;
+  padding: 10px 10px 10px;
+  -webkit-box-shadow: 4px 4px 5px 0px rgba(0,0,0,0.4);
+  -moz-box-shadow: 4px 4px 5px 0px rgba(0,0,0,0.4);
+  box-shadow: 4px 4px 5px 0px rgba(0,0,0,0.4);
+}
+
+.cellRight {
+  text-align: right;
+}
+
+#tablaBuscarCli tr:hover {
+  cursor: pointer;
+} 
+
+.table-scroll{
+  /*width:100%; */
+  display: block;
+  empty-cells: show;
+  
+  /* Decoration */
+  /*border-spacing: 0;
+  border: 1px solid;*/
+}
+
+.table-scroll thead{
+  /*background-color: #f1f1f1;  */
+  position:relative;
+  display: block;
+  width:100%;
+  /*overflow-y: scroll;*/
+}
+
+.table-scroll tbody{
+  /* Position */
+  display: block; 
+  position:relative;
+  width:100%; 
+  overflow-y:scroll;
+  /* Decoration */
+  /*border-top: 1px solid rgba(0,0,0,0.2);*/
+}
+
+.table-scroll tr{
+  width: 100%;
+  display:flex;
+}
+
+.table-scroll td,.table-scroll th{
+  flex-basis:100%;
+  flex-grow:2;
+  display: block;
+  /*padding: 1rem;
+  text-align:left;*/
+}
+
+/* Other options */
+
+.table-scroll.small-first-col td:first-child,
+.table-scroll.small-first-col th:first-child{
+  flex-basis:20%;
+  flex-grow:1;
+}
+
+.table-scroll tbody tr:nth-child(2n){
+  background-color: rgba(130,130,170,0.1);
+}
+
+/* Set el largo de la tabla */
+.body-half-screen{
+  max-height: 56vh;
+  font-size: 80%;
+}
+
+.small-col{flex-basis:10%;}
+
+/* Largo tabla en visitas segun GR*/
+.body-cuarenta-screen{
+  max-height: 38vh;
+}

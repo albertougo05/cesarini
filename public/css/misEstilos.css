@@ -126,7 +126,7 @@ button#btnAgregarClie {
   margin-right: 2px;
 }
 
-.tablaDetalleVisitas {
+.tablaDetalleVisitas, .tablaDetalleProductos {
   margin-top: 1%;
 }
 
@@ -166,16 +166,7 @@ button#btnAgregarProd {
   }
 }
 
-/* Ocultar primera columna de tabla cantidad productos cliente */
-#tableCantProdClie th:nth-of-type(1) {
-  display: none;
-} 
-
-#tableCantProdClie td:nth-of-type(1) {
-  display: none;
-} 
-
-#tablaBuscarGuia, #tablaBuscarCli, #tableCantProdClie, #tablaMovimDisp, #tablaBuscarVisita tr:hover {
+#tablaBuscarGuia, #tablaBuscarCli, #tablaMovimDisp, #tablaBuscarVisita tr:hover {
   cursor: pointer;
 } 
 

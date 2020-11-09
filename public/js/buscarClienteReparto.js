@@ -6,34 +6,18 @@
 // 
 $(document).ready(function(){
 
-	// Boton de ir arriba
-    $('#scrollUp').click( function(){
-    	$('body, html').animate({
-			scrollTop: '0px'
-		}, 300);
-    });
-    // Para chequear scroll para boton ir arriba
-    $(window).scroll(function(){
-    	if( $(this).scrollTop() > 0 ) {
-    		$('#scrollUp').show();
-    	} else {
-    		$('#scrollUp').hide();
-    	}
-    });
-
     $('input#orden').inputmask("numeric", {
-        radixPoint: ",",
-        groupSeparator: ".",
+        //radixPoint: ",",
+        //groupSeparator: ".",
         digits: 2,
         autoGroup: true,
-        //prefix: '$ ', //Space after $, this will not truncate the first character.
         rightAlign: false,
         unmaskAsNumber: true, 
         oncleared: function () { self.value(''); }
     });
 
 	// Set inicial Filtrado de tabla Clientes	
-	$('#guiaReparto').tableFilter({ tableID: '#tablaBuscarCli', 
+	$('#buscarClienteRep').tableFilter({ tableID: '#tablaBuscarCli', 
                                     filterID: '#filter',
                                     filterCell: '.filter-cell1',
 		                            autofocus: true});
@@ -65,45 +49,49 @@ $(document).ready(function(){
 
 	// Evento click para seleccionar y marcar linea
 	$('#tablaBuscarCli tr').on('click', function(){
-			let idCli = $(this).find('td:first').html();
-			let nombre = $(this).find('td:eq(1)').html();
-			let idDom = $(this).find('td:eq(3)').html();
+		const idCli = $(this).find('td:first').html();
+		const nombre = $(this).find('td:eq(1)').html();
+		const idDom = $(this).find('td:eq(3)').html();
+		const domic = $(this).find('td:eq(4)').html();
+		const local = $(this).find('td:eq(5)').html();
+		const celu = $(this).find('td:eq(6)').html();
 
-			// Buscar si el idCli ESTÁ EN _idsClientes
-			let indice = _idsClientes.indexOf( idCli.trim() );
-			let idxDom = _idsDomicili.indexOf( idDom.trim() );
+		// Buscar si el idCli ESTÁ EN _clientes
+		const filtro = _clientes.filter( (e) => e.idCli == idCli && e.idDomicilio == idDom );
+		// Remover la clase de verde por si está...
+		$('.datos').children().removeClass('bg-success text-white');
+		// Poner en verde las linea seleccionada (cliente)
+		$(this).addClass('bg-success text-white');
 
-			// Remover la clase de verde por si está...
-			$('.datos').children().removeClass('bg-success text-white');
-			// Poner en verde las linea seleccionada (cliente)
-			$(this).addClass('bg-success text-white');
-
-			if ( indice >= 0 && idxDom >= 0 ) {
-
-			    $.alert( {
-			        title: '<strong>Atención !!</strong>',
-			        content: '<p><strong>' + nombre + '</strong> ya existe en lista de visitas</p>',
-			        type: 'red',
-					typeAnimated: true,
-					buttons: {
-						ok: {
-								text: 'Entendido',
-								btnClass: 'btn-red',
-								action: function() {
-									// Remover la clase de verde
-									$('.datos').children().removeClass('bg-success text-white');
-            					}
-					        }
-				    }
-			    } );
+		if ( filtro.length > 0 ) {
+		    $.alert( {
+		        title: '<strong>Atención !!</strong>',
+		        content: '<p><strong>' + nombre + '</strong> ya existe en lista de visitas</p>',
+		        type: 'red',
+				typeAnimated: true,
+				buttons: {
+					ok: {
+							text: 'Entendido',
+							btnClass: 'btn-red',
+							action: function() {
+								// Remover la clase de verde
+								$('.datos').children().removeClass('bg-success text-white');
+           					}
+				        }
+			    }
+		    });
 
 		} else {
-				// Actualiza el input hidden con el id del cliente seleccionado
-				$('input#idclie').val(idCli);
-				// Actualiza el input hidden del id domicilio
-				$('input#iddomi').val(idDom);				
-				// Focus en input orden
-				$('input#orden').val(_idsClientes.length + 1).focus();
+
+			document.getElementById('idclie').value = idCli;
+			document.getElementById('apellidoNom').value = nombre;
+			document.getElementById('iddomi').value = idDom;
+			document.getElementById('domicilio').value = domic;
+			document.getElementById('localidad').value = local;
+			document.getElementById('celular').value = celu;
+			$('input#orden').val(_clientes.length + 1).focus();	// Focus en input orden
+			const boton = document.getElementById('btnSelecClie');
+    		boton.removeAttribute("disabled");
 		}
 	});
 
@@ -119,12 +107,24 @@ $(document).ready(function(){
 
 	// Boton seleccionar cliente
 	$('#btnSelecClie').click(function (event) {
-		let postdata = $('form#formOrden').serialize();
+		_clienteSel = true;		// Flag de cliente seleccionado
+		// Lleno objeto con datos cliente selccionado..
+		_cliente.id          = _clientes.length + 1;
+		_cliente.idCli       = document.getElementById('idclie').value;
+		_cliente.apellidoNom = document.getElementById('apellidoNom').value;
+		_cliente.domicilio   = document.getElementById('domicilio').value;
+		_cliente.idDomicilio = document.getElementById('iddomi').value;
+		_cliente.localidad   = document.getElementById('localidad').value;
+		_cliente.celular     = document.getElementById('celular').value;
+		_cliente.ordenVisita = parseFloat(document.getElementById('orden').value);
+		_cliente.borrado     = 0;
+		// Cierro la ventana
+		window.close();
+	});
 
-//console.log('Array serializado: ' + postdata);
-
-		// Redirecciona a Guia de Reparto modificada
-		location.assign(_pathGuiaReparto + '?' + $('form#formOrden').serialize() );
+	// Boton cerrar ventana
+	$('#btnCerrar').click(function (e) {
+		window.close();
 	});
 
 });

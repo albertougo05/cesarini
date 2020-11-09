@@ -419,6 +419,7 @@
 				movimdisp:         [],
 				// Para envio de form Visitas completa
 				salvaForm:         false,
+				idGuiaRep:         "{{ dataGuia.idguia }}" || 0,
 			};
 
 			// Array de clientes con productos. Cargo cantidades
@@ -475,7 +476,7 @@
 			{% endfor %}
 
 		</script>
-		{% set version = '?ver=0.1.0'%}
+		{% set version = '?ver=0.1.4'%}
 
 		<script src="{{ base_url() }}/js/enterXtab.js"></script>
 		<script src="{{ base_url() }}/js/visitas.js{{ version }}"></script>

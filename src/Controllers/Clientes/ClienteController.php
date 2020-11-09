@@ -102,7 +102,8 @@ class ClienteController extends Controller
 					   'FechaFacturacion'  => ($request->getParam('FechaFacturacion') == '') ? null : $request->getParam('FechaFacturacion'),
 					   'IdActividad'       => $request->getParam('IdActividad'),
 					   'IdTipoFact'        => $request->getParam('IdTipoFact'),
-					   'CostoAbono'        => $costoAbono );
+					   'CostoAbono'        => $costoAbono,
+					   'Observaciones'     => $request->getParam('Observaciones') );
 
 		$datosDom = ['IdCliente' => (int) $request->getParam('Id'),
 					 'Direccion' => $request->getParam('Direccion'),

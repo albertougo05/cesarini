@@ -43,5 +43,11 @@
 # INFORME VISITAS RESUMIDO
 	# Repartos / Informe visitas resumido
 	$app->get('/repartos/visitasinforesum', 'VisitasInfoResumController:informeResum')->setName('repartos.visitasinforesum');
-	# Cuentas Corrientes / Arma Informe Visitas resumido
+	# Repartos / Informe Visitas resumido
 	$app->get('/repartos/visitasinforesum/armainfovisitas', 'VisitasInfoResumController:armaInfoVisitas')->setName('repartos.visitasinforesum.armainfovisitas');
+
+# INFORME PRODUCTOS Y DEBITOS EN VISTA
+	# Repartos / Informe productos y debitos en Visitas
+	$app->get('/repartos/visitas/infoprodsdebs', 'InformeProductosDebitosVisitasController:infoProdsDebs')->setName('repartos.visitas.infoprodsdebs');
+	# Repartos / Informe productos y debitos en Visitas
+	$app->get('/repartos/visitas/imprimeinfoprodsdebs', 'InformeProductosDebitosVisitasController:imprimeInfoProdsDebs')->setName('repartos.visitas.imprimeinfoprodsdebs');

@@ -122,7 +122,7 @@ class DispenserController extends Controller
 	}
 
 	/**
-	 * Elimina dispenser
+	 * Elimina dispenser  (ESTO NO ESTÁ MAS DISPONIBLE)
 	 * Url: productos/dispenser/elimina (Name: productos/dispenser/elimina)
 	 * 
 	 * @return redirecciona a pagina nueva de dispenser

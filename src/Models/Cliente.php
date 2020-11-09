@@ -31,7 +31,8 @@ class Cliente extends Model
 		'FechaVencContrato',
 		'FechaAltaServicio',
 		'FechaFacturacion',
-		'CostoAbono'
+		'CostoAbono',
+		'Observaciones'
 	];
 
 	// Cancelo el registro en campos 'created_at' y 'updated_at' por defecto de Eloquent

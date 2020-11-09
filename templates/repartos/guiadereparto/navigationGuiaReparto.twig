@@ -10,19 +10,14 @@
 
         	<div class="collapse navbar-collapse" id="navbarSupportedContent">
             	<ul class="navbar-nav mr-auto">
-				    <li class="nav-item{{ ( accion == 'Nueva') ? ' disabled' : ' active' }}">
-				        <a id="linkSalvar" class="nav-link {{ ( accion == 'Nueva') ? 'disabled' : '' }}" href="#"{{ ( accion == 'Nueva') ? ' disabled' : '' }}>Guardar</a>
+				    <li class="nav-item{{ ( accion == 'Nueva') ? ' disabled' : ' active' }}" id="liSalvar">
+				        <a id="linkSalvar" class="nav-link{{ ( accion == 'Nueva') ? ' disabled' : '' }}" href="#">Guardar</a>
 				    </li>
-{#
-				    <li class="nav-item  {{ ( accion == 'Nueva') ? 'disabled' : 'active' }}">
-				        <a id="linkBorrar" class="nav-link {{ ( accion == 'Nueva') ? 'disabled' : '' }}" href="#"{{ ( accion == 'Nueva') ? ' disabled' : '' }}>Eliminar</a>
-				    </li>
-#}
-				    <li class="nav-item{{ ( accion == 'Nueva') ? ' disabled' : ' active' }}">
-				        <a class="nav-link{{ ( accion == 'Nueva') ? ' disabled' : '' }}" href="{{ ( accion == 'Nueva') ? '#' : path_for('repartos.guiareparto.imprimirguia') }}" target="_blank">Imprimir</a>
+				    <li class="nav-item{{ ( accion == 'Nueva') ? ' disabled' : ' active' }}" id="liPrint">
+				        <a class="nav-link{{ ( accion == 'Nueva') ? ' disabled' : '' }}" href="{{ ( accion == 'Nueva') ? '#' : path_for('repartos.guiareparto.imprimirguia', {'id': idGuia}) }}" target="_blank">Imprimir</a>
 				    </li>
 				    <li class="nav-item{{ ( accion == 'Nueva') ? ' active' : ' disabled' }}">
-				        <a class="nav-link{{ ( accion == 'Nueva') ? '' : ' disabled' }}" href="{{ path_for('repartos.buscarguiarep') }}">Buscar</a>
+				        <a class="nav-link{{ ( accion == 'Nueva') ? '' : ' disabled' }}" href="{{ path_for('repartos.buscarguiarep') }}" id="linkPrint">Buscar</a>
 				    </li>				    
 				    <li class="nav-item active">
 				    	{% if accion == 'Nueva' %}

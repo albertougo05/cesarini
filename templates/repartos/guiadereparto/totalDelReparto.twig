@@ -1,4 +1,4 @@
-		<div class="col-md-8">
+		<div class="col-md-8" id="divTotalReparto">
 			<h5 class="text-left text-dark"><strong>Total del reparto</strong></h5>
 
 			<table class="table table-sm">
@@ -6,22 +6,19 @@
 				    <tr>
 				        <th class="text-center">Código Producto</th>
 				        <th>Descripción</th>
-				        <th class="text-right">Cantidad</th>
+				        <th class="text-center">Cantidad</th>
 				    </tr>
 			    </thead>
-			    <tbody>
+			    <tbody id="tbodyTablaTotalReparto">
 			    	{% if totalReparto %}
-
 			    		{# loop por cada linea del total reparto - id="tablaId" #}
 						{% for totrep in totalReparto %}
 						    <tr>
-						        <td class="text-center">{{ totrep.codprod }}</td>
-						        <td>{{ totrep.descrip }}</td>
-						        <td class="text-right">{{ totrep.cantid }}</td>
+						        <td class="text-center">{{ totrep.IdProducto }}</td>
+						        <td>{{ totrep.producto }}</td>
+						        <td class="text-center">{{ totrep.sumaCant }}</td>
 						    </tr>
 			    		{% endfor %}
-
-
 			    	{% endif %}
 				    <tr>
 				      <td></td>

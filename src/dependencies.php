@@ -123,11 +123,6 @@ $container['utils'] = function ($container) {
         return new \App\Controllers\Repartos\RepartosBuscarClieController($container);
     };
 
-    $container['RepartosProductosaClieController'] = function ($container) {
-
-        return new \App\Controllers\Repartos\RepartosProductosaClieController($container);
-    };
-
 // Movimientos dispenser
     $container['MovimientoDispenserController'] = function ($container) {
 
@@ -166,6 +161,12 @@ $container['utils'] = function ($container) {
     $container['VisitasInfoResumController'] = function ($container) {
 
         return new \App\Controllers\Repartos\VisitasInfoResumController($container);
+    };
+
+// Visitas informe de productos y debitos
+    $container['InformeProductosDebitosVisitasController'] = function ($container) {
+
+        return new \App\Controllers\Repartos\InformeProductosDebitosVisitasController($container);
     };
 
 // Productos cliente

@@ -96,6 +96,13 @@
 					<p class="data">Abono: $&nbsp; {{ cliente.CostoAbono|number_format(2, ',', '.') }}</p>
 				</div>
 			</div>
+
+			<div class="row">
+				<div class="col pl-4">
+					<p class="data">Observaciones: &nbsp; {{ cliente.Observaciones }}</p>
+				</div>
+			</div>
+
 			<div class="row">
 				<div class="col">
 					<hr class="lin">
@@ -108,7 +115,7 @@
 				</div>
 				<div class="col-4"></div>
 				<div class="col-4 pr-4">
-					<p class="text-right data">Tranporte al:&nbsp; {{ fechatrans }} &nbsp;&nbsp; $ {{ transporte|number_format(2, ',', '.') }} </p>
+					<p class="text-right data">Transporte al:&nbsp; {{ fechatrans }} &nbsp;&nbsp; $ {{ transporte|number_format(2, ',', '.') }} </p>
 				</div>
 			</div>
 

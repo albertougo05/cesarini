@@ -2,15 +2,38 @@
 //
 var _check_fecha, _check_disp, _check_clie, _check_esta;
 
+
+//
+/** Funcionamiento boton UpScroll  **/
+// 
+const _botonUp = document.getElementById("scrollUp");
+
+_botonUp.addEventListener("click", function () {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+});
+// When the user scrolls down 300px from the top of the document, show the button
+window.onscroll = function() {
+    if (document.body.scrollTop > 280 || document.documentElement.scrollTop > 280) {
+        //$('#scrollUp').show();
+         _botonUp.style.display = "block";
+    } else {
+        //$('#scrollUp').hide();
+         _botonUp.style.display = "none";
+    }    
+};
+/** end **/
+
+
 function strOrdena() {
     // global_urlParam: "?column=NroInterno&amp;orden=asc&amp;desde=2019-04-20&amp;hasta=2019-04-30&amp;ordFecha=asc&amp;idDisp=10"
-    var col = $("input:radio[name='radioOrden']:checked").prop('id');
-    var ord = $("input:radio[name='radOrden']:checked").prop('id');
-    var strOrden = 'column=' + col + '&orden=' + ord;
+    const col = $("input:radio[name='radioOrden']:checked").prop('id');
+    const ord = $("input:radio[name='radOrden']:checked").prop('id');
+    let strOrden = 'column=' + col + '&orden=' + ord;
 
     // Si está puesto el filtro de fecha...
     if (_urlParams.ordFecha != '') {
-        var filtroFecha = '&ordFecha=' + _urlParams.ordFecha;
+        let filtroFecha = '&ordFecha=' + _urlParams.ordFecha;
 
         // Si el ordenamiento tambien es fecha, pongo el orden igual 
         if (col == 'Fecha') {
@@ -61,22 +84,6 @@ function _setFiltrosSegunParams() {
 $(document).ready( function () {
 
     _setFiltrosSegunParams();
-
-    // Boton de ir arriba
-    $('div#scrollUp').click( function () {
-        $('body, html').animate({
-            scrollTop: '0px'
-        }, 300);
-    });
-
-    // Para chequear scroll para boton ir arriba
-    $(window).scroll( function () {
-        if( $(this).scrollTop() > 0 ) {
-            $('#scrollUp').show();
-        } else {
-            $('#scrollUp').hide();
-        }
-    });
 
     $('#tablaMovimDisp tr').unbind('click');
 
@@ -185,13 +192,13 @@ $(document).ready( function () {
     // Boton confirma fecha/orden MODAL
     $("button#btnConfFecha").click(function (event) {
         // Orden fecha del modal
-        var ordenFecha = $("input:radio[name='optOrden']:checked").val();
+        let ordenFecha = $("input:radio[name='optOrden']:checked").val();
         // Orden de los radios... (que no son fecha)
-        var colOrden = $("input:radio[name='radioOrden']:checked").prop('id');
-        var ordenCol = $("input:radio[name='radOrden']:checked").val();
-        var fechaDesde = $('input#fechaDesde').val();
-        var fechaHasta = $('input#fechaHasta').val();
-        var strOrden = 'column=' + colOrden + '&orden=' + ordenCol;
+        let colOrden = $("input:radio[name='radioOrden']:checked").prop('id');
+        let ordenCol = $("input:radio[name='radOrden']:checked").val();
+        let fechaDesde = $('input#fechaDesde').val();
+        let fechaHasta = $('input#fechaHasta').val();
+        let strOrden = 'column=' + colOrden + '&orden=' + ordenCol;
 
         // Esconde el modal Fecha
         $('#modalFechas').modal('hide');
@@ -270,8 +277,7 @@ $(document).ready( function () {
 
     // Evento click para seleccionar y cerrar MODAL
     $('#tablaBuscarCli tr').on('click', function(){
-        var idClie = $(this).find('td:first').html();
-        var nomCli = $(this).find('td:eq(1)').html(); // :eq( 2 )
+        const idClie = $(this).find('td:first').html();
         // Cierro el MODAL Clientes
         $('#modalBuscaClie').modal('hide');
         _check_clie = true;
@@ -322,7 +328,7 @@ $(document).ready( function () {
 
     // Evento click para seleccionar y cerrar MODAL estados
     $('#btnSelecEstado').on('click', function(){
-         var estado = $('select#selectEstado').val();
+        const estado = $('select#selectEstado').val();
         // Cierro el MODAL Clientes
         $('#modalBuscaClie').modal('hide');
         _urlParams.estado = estado;

@@ -1,148 +1,126 @@
-{% extends 'base.twig' %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <!-- Para evitar el cache del navegador -->
+		<meta http-equiv="Expires" content="0">
+		<meta http-equiv="Last-Modified" content="0">
+		<meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
+		<meta http-equiv="Pragma" content="no-cache">
+	    <!-- Required meta tags -->
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	{% block head %}
-		{{ parent() }}
-
-		<link rel="stylesheet" href="{{ base_url() }}/css/all.css">
+		<link rel="icon" type="image/png" href="{{ base_url() }}/img/favicon.ico">
+	    <!-- Bootstrap CSS (bootswatch theme Cosmo) -->
+	    <link rel="stylesheet" href="{{ base_url() }}/css/bootstrap.min.css">
+		<!-- Otros estilos -->
 		<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
-		<link rel="stylesheet" href="{{ base_url() }}/css/table-scroll.css">
+		<link rel="stylesheet" href="{{ base_url() }}/css/buscarClienteReparto.css">
 
-	{% endblock %}	
+		<title>{{ titulo }}</title>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div id="buscarClienteRep">
+				<div class="row">
+	    			<div class="col mr-4 mt-2 mb-0">
+	    				<h4 class="text-dark float-right"><strong>Agregar Cliente a Guía de Reparto</strong></h4>
+	    				<br>
+	    			</div>
+	    		</div>
+	    		<div class="row">
+	    			<div class="col-2 ml-4 mt-0">
+	    				<p>Buscar por:</p>
+	    			</div>
+	    			<div class="col-8 ml-2">
+						<div class="custom-control custom-radio custom-control-inline">
+						  <input type="radio" id="radApellido" name="radFiltro" class="custom-control-input" value="ape" checked="true">
+						  <label class="custom-control-label" for="radApellido">Apellido</label>
+						</div>
+						<div class="custom-control custom-radio custom-control-inline">
+						  <input type="radio" id="radFantasia" name="radFiltro" class="custom-control-input" value="fan">
+						  <label class="custom-control-label" for="radFantasia">Fantasía</label>
+						</div>
+	    			</div>
+	    		</div>
 
-	{% block title %}{{ titulo }}{% endblock %} 
+	    		<div class="row">
+	    			<div class="col-4 ml-4">
+	    				<input id="filter" class="form-control form-control-sm" type="text" placeholder="Filtrar por apellido..." autofocus>
+	  				</div>
 
-	{% block navigation %}
-		<nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary">
-	        <a class="navbar-brand" href="#">
-	          <img src="{{ base_url() }}/img/logo-cesarini.png" width="80" height="40" alt="">
-	        </a>
+					<div class="col-7">
+						<form class="form-inline form-sm" id="formOrden">
+							<label class="ml-4 mr-2 mb-2" for="orden">Orden de visita:</label> {# quito clase numero, agrego inputMask #}
+							<input type="text" class="form-control form-control-sm mb-2 cellRight" id="orden" name="orden">
 
-	        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-	          <span class="navbar-toggler-icon"></span>
-	        </button>
+							<input type="hidden" id="idclie" name="idclie">		{# id de cliente seleccionado #} 
+							<input type="hidden" id="apellidoNom" name="apellidoNom">		{# apellidoNom #}
+							<input type="hidden" id="iddomi" name="iddomi">		{# id domicilio cliente seleccionado #}
+							<input type="hidden" id="domicilio" name="domicilio">		{# domicilio #}
+							<input type="hidden" id="localidad" name="localidad">		{# localidad #}
+							<input type="hidden" id="celular" name="celular">		{# celular #}
 
-        	<div class="collapse navbar-collapse" id="navbarSupportedContent">
-            	<ul class="navbar-nav mr-auto">
-				    <li class="nav-item active">
-				        <a class="nav-link" href="{{ path_for('repartos.guiareparto') ~ '?idguia=' ~ idGuia }}">Volver</a>
-				    </li>
-            	</ul>
-            </div>
-        </nav>
-	{% endblock %}
-
-	{% block breadcrumbs %}
-		<div class="container">
-			<nav aria-label="breadcrumb">
-			    <ol class="breadcrumb">
-				    <li class="breadcrumb-item"><a href="#">Menú</a></li>
-				    <li class="breadcrumb-item"><a href="#">Repartos</a></li>
-				    <li class="breadcrumb-item"><a href="#">Guía de reparto</a></li>
-				    <li class="breadcrumb-item active" aria-current="page">Agregar cliente</li>
-			    </ol>
-			</nav>
-		</div>
-	{% endblock %}
-
-	{% block content %}
-		<div class="container" id="guiaReparto">
-			<div class="row align-items-end">
-    			<div class="col-md-12">
-    				<h3><strong>Agregar Cliente a Guía de Reparto</strong></h3>
-    				<br>
-    			</div>
-    		</div>
-    		<div class="row">
-    			<div class="col-md-2 offset-md-1">
-    				<p>Buscar por:</p>
-    			</div>
-    			<div class="col-md-8 ml-0">
-					<div class="custom-control custom-radio custom-control-inline">
-					  <input type="radio" id="radApellido" name="radFiltro" class="custom-control-input" value="ape" checked="true">
-					  <label class="custom-control-label" for="radApellido">Apellido</label>
+							<button id="btnSelecClie" type="button" class="btn btn-sm btn-primary mb-2 ml-4" disabled>Seleccionar</button>
+						</form>
 					</div>
-					<div class="custom-control custom-radio custom-control-inline">
-					  <input type="radio" id="radFantasia" name="radFiltro" class="custom-control-input" value="fan">
-					  <label class="custom-control-label" for="radFantasia">Fantasía</label>
+
+				</div>
+
+				<br />
+
+				<div class="row">
+					<div class="col mt-4 ml-4 mr-4">
+						<table class="table table-sm table-hover table-scroll small-first-col" id="tablaBuscarCli">
+			                <thead class="thead-dark">
+			                  <tr>
+			                    <th class="text-right" scope="col">#</th>
+			                    <th scope="col">Apellido Nombre</th>
+			                    <th scope="col">Nombre fantasía</th>
+			                    <th style="display:none;">Id domicilio</th>
+			                    <th scope="col">Dirección</th>
+			                    <th scope="col">Localidad</th>
+			                    <th scope="col">Celular</th>
+			                  </tr>
+			                </thead>
+			                <tbody class="datos body-half-screen">
+			                    {% for cliente in clientes %}
+			    					<tr>
+			        				    <td class="text-right">{{ cliente.id }}</td>
+			      					    <td class="filter-cell1">{{ cliente.nombre }}</td>
+			      					    <td class="filter-cell2">{{ cliente.fantasia }}</td>
+			      					    <td style="display:none;">{{ cliente.iddomicil }}</td>
+			      					    <td>{{ cliente.direccion }}</td>
+			                            <td>{{ cliente.localidad }}</td>
+			                            <td>{{ cliente.celular }}</td>
+			                        </tr>
+			                    {% endfor %}
+			                </tbody>
+			            </table>
 					</div>
-    			</div>
-    		</div>
+				</div>
 
-    		<div class="row">
-    			<div class="col-md-4 offset-md-1">
-    				<input id="filter" class="form-control form-control-sm" type="text" placeholder="Filtrar por apellido..." autofocus>
-  				</div>
-
-				<div class="col-md-6">
-					<form class="form-inline form-sm" id="formOrden">
-							<label class="mr-2 mb-2" for="orden">Orden de visita:</label> {# quito clase numero, agrego inputMask #}
-							<input type="text" class="form-control form-control-sm mb-2 mr-sm-1 cellRight" id="orden" name="orden">
-
-							{# input hidden para idGuia #}
-							<input type="hidden" id="idguia" name="idguia" value="{{ idGuia }}">
-							{# id de cliente seleccionado #}
-							<input type="hidden" id="idclie" name="idclie">
-							{# id domicilio cliente seleccionado #}
-							<input type="hidden" id="iddomi" name="iddomi">
-
-							<button id="btnSelecClie" type="button" class="btn btn-sm btn-primary mb-2 ml-4">Seleccionar</button>
-					</form>
+				<div class="row">
+					<div class="col mt-2 mr-4 pr-4">
+						<button id="btnCerrar" type="button" class="btn btn-sm btn-secondary float-right">Cerrar</button>
+					</div>
 				</div>
 
 			</div>
-
-			<br />
-
-			<div class="row">
-				<div class="col-md-10 offset-md-1">
-					<table class="table table-sm table-hover table-scroll small-first-col" id="tablaBuscarCli">
-		                <thead class="thead-dark">
-		                  <tr>
-		                    <th scope="col">#</th>
-		                    <th scope="col">Apellido Nombre</th>
-		                    <th scope="col">Nombre fantasía</th>
-		                    <th style="display:none;">Id domicilio</th>
-		                    <th scope="col">Dirección</th>
-		                    <th scope="col">Localidad</th>
-		                  </tr>
-		                </thead>
-		                <tbody class="datos body-half-screen">
-		                    {% for cliente in clientes %}
-		    					<tr>
-		        				    <td>{{ cliente.id }}</td>
-		      					    <td class="filter-cell1">{{ cliente.nombre }}</td>
-		      					    <td class="filter-cell2">{{ cliente.fantasia }}</td>
-		      					    <td style="display:none;">{{ cliente.iddomicil }}</td>
-		      					    <td>{{ cliente.direccion }}</td>
-		                            <td>{{ cliente.localidad }}</td>
-		                        </tr>
-		                    {% endfor %}
-		                </tbody>
-		            </table>
-				</div>
-			</div>
-
     	</div>
-	{% endblock %}
 
-	{% block javascript %}
-		{{ parent() }}
+	    <script src="{{ base_url() }}/js/jquery-3.3.1.min.js"></script>
+		<script src="{{ base_url() }}/js/popper.min.js"></script>
+	    <script src="{{ base_url() }}/js/bootstrap.min.js"></script>
 		<script src="{{ base_url() }}/js/jquery.inputmask.bundle.min.js" charset="utf-8"></script>
-		<script src="{{ base_url() }}/js/jquery.tableFilter.js"></script>
 		<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+		<script src="{{ base_url() }}/js/jquery.tableFilter.js"></script>
 
 		<script type="text/javascript">
 
 			var _pathGuiaReparto = "{{ path_for('repartos.guiareparto') }}";
-			var _idsClientes = [];
-			var _idsDomicili = [];
-			{% for cliente in cliesEnGuia %}
-				_idsClientes.push( "{{ cliente.idCliente }}" );
-				_idsDomicili.push( "{{ cliente.idDomicilio }}");
-			{% endfor %}
-
 		</script>
 
-		<script src="{{ base_url() }}/js/buscarClienteReparto.js"></script>
-
-	{% endblock %}
+		<script src="{{ base_url() }}/js/buscarClienteReparto.js?ver=0.0.3"></script>
+	</body>
+</html>

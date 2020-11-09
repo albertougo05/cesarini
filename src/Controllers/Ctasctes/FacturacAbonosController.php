@@ -197,6 +197,7 @@ class FacturacAbonosController extends Controller
 		 							 'ApellidoNombre' => $cliente->ApellidoNombre, 
 		 							 'Direccion'      => $cliente->Direccion,		//$dataDomicil
 		 							 'Localidad'      => $cliente->Localidad, 	//$dataDomicil
+		 							 'Observaciones'  => $cliente->Observaciones === null ? '' :  $cliente->Observaciones,
 		 							 'Dispensers'     => $dispensers,
 	 								 'cantBx20'       => $cantBx20,
 	 								 'cantBx12'       => $cantBx12,
@@ -321,6 +322,7 @@ class FacturacAbonosController extends Controller
 	 							 'ApellidoNombre' => $value->ApellidoNombre, 
 	 							 'Direccion'      => $value->Direccion,
 	 							 'Localidad'      => $value->Localidad, 
+	 							 'Observaciones'  => $value->Observaciones === null ? '' :  $value->Observaciones,
 	 							 'Dispensers'     => $dispensers,
 	 							 'cantBx20'       => $cantBx20,
 	 							 'cantBx12'       => $cantBx12,

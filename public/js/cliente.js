@@ -1,9 +1,31 @@
 /* jshint esversion: 6 */
 
+
+
 // Para comprobar si la validacion fue rechazada (false)
 CLIENTE.cuilDniOk = false;
 CLIENTE.initCuilDni = '';
 
+//
+/** Funcionamiento boton UpScroll  **/
+// 
+const _botonUp = document.getElementById("scrollUp");
+
+_botonUp.addEventListener("click", function () {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+});
+// When the user scrolls down 300px from the top of the document, show the button
+window.onscroll = function() {
+    if (document.body.scrollTop > 280 || document.documentElement.scrollTop > 280) {
+        //$('#scrollUp').show();
+         _botonUp.style.display = "block";
+    } else {
+        //$('#scrollUp').hide();
+         _botonUp.style.display = "none";
+    }    
+};
+/** end **/
 
 
 // Funciones javascript
@@ -99,21 +121,15 @@ $(document).ready( function() {
 		CLIENTE.cuilDniOk = true;
 	}
 
-    // Boton de ir arriba
-    $('#scrollUp').click( function () {
-        $('body, html').animate({
-            scrollTop: '0px'
-        }, 300);
-    });
+    // Cargo el campo Observaciones
+    if (CLIENTE.observaciones != '') {
+    	//$('textarea#Ovservaciones').val(CLIENTE.observaciones);
+    	let textObs = document.getElementById("Observaciones");
+    	const texto = document.createTextNode(CLIENTE.observaciones);
 
-    // Para chequear scroll para boton ir arriba
-    $(window).scroll( function () {
-        if( $(this).scrollTop() > 0 ) {
-            $('#scrollUp').show();
-        } else {
-            $('#scrollUp').hide();
-        }
-    });
+    	textObs.appendChild(texto);
+    	console.log(CLIENTE.observaciones);
+    }
 
 	// Si el div clase mensaje existe...
 	if ($("div.mensaje").length > 0) {

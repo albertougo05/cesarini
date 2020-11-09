@@ -23,113 +23,40 @@ use App\Controllers\Controller;
 class RepartosController extends Controller
 {
 	/**
-	 * Muestra datos Guia de Reparto
+	 * Inicio Guia de Reparto
 	 * Name: repartos.guiareparto
 	 * 
 	 * @param  Request $request
 	 * @param  Response $response
 	 * @return View Guia de Reparto
 	 */
-	public function getGuiaReparto($request, $response)
+	public function guiaReparto($request, $response)
 	{
-		$idGuia  = $request->getParam('idguia');    // Recibe parametros opcionales por GET ...
-		$accion  = '';			 # Nombre de la acción del menú
-		$showMsg = '';
-
-		// Si no hay parametro de guia, ni la session tiene id - INICIO
-		if ($idGuia == null) {
-
-			if ($request->getParam('msg') == 'guardado') {
-				$showMsg = 'Guía de Reparto guardada con éxito !!';
-			}else if ($request->getParam('msg') == 'guiaBorrada') {
-				$showMsg = 'Guía de Reparto eliminada !!';
-			}
-
-			$idGuia = $this->_buscarIdNuevaGuia();    // Buscar nuevo id de guia. El último de la tabla mas 1
-			$accion = 'Nueva';
-
-			$_SESSION['dataGuia']       = []; // Reset array con datos de Guia de Reparto
-			$_SESSION['listaClie']      = [];  // Idem lista clientes
-			$_SESSION['cliProductos']   = [];  // Idem lista de productos de clientes
-			$_SESSION['guiaModificada'] = false;
-
-			$visitasCliente = [];    # Lista vacia de visitas
-			$listaTotalReparto = [];  # Lista vacia de productos reparto
-
-			// Data vacio para nueva Guia de reparto
-			$dataGuiaReparto = [
-				'Id'          => $idGuia, 'DiaSemana' => '0', 'Turno' => '0', 
-				'IdEmpleado'  => '0', 'IdActividad' => '0', 'HoraSalida' => '',
-				'HoraRetorno' => '', 'Estado' => 'Vigente'
-			];
-
-		} else { 
-
-			$accion = 'Modificar';
-
-			if ($request->getParam('msg') == 'clieBorrado') {
-				$showMsg = 'Cliente eliminado con éxito !!';
-			}
-
-			// Buscar datos de guia de reparto
-			$dataGuiaReparto = $this->_buscarDataGuiaReparto($idGuia);
-			// Buscar lista de clientes
-			$visitasCliente = $this->_buscarClieTablaVisitas( $idGuia, 
-															  $request->getParam('idclie'), 
-															  $request->getParam('orden'),
-															  $request->getParam('iddomi') );
-			// Buscar productos de cada cliente
-			$listaTotalReparto = $this->_armarListaTotalReparto($idGuia); // Armo lista del total de productos del reparto
-		} 
-
-		// La session lleva el id de guia de reparto
-		$_SESSION['idguiarep'] = $idGuia;
-		$repartidores = $this->_dataEmpleadosAlfa();
-
-		$datos = [ 'titulo'         => 'Cesarini - Guia reparto',
-				   'idguia'         => $idGuia,
-				   'accion'         => $accion,
-				   'hayMensaje'     => $showMsg,
-				   'data'           => $dataGuiaReparto,
-				   'repartidores'   => $repartidores,
-				   'visitasCliente' => $visitasCliente,
-				   'totalReparto'   => $listaTotalReparto ];
+		$datos = $this->_dataParaViewGR(0, 'Nueva', $request);
 
 		return $this->view->render($response, 'repartos/guiadereparto/guiareparto.twig', $datos);
 	}
 
 	/**
-	 * Recargar página reordenando lista de clientes a visitar
-	 * Name: repartos.guiareparto.reordenarvisitas
-	 *
-	 * @param  Request $request
+	 * Muestra GR segun id
+	 * Uri:  repartos/getguiareparto/{id}
+	 * Name: repartos.guiareparto
+	 * 
+	 * @param  Request  $request
 	 * @param  Response $response
-	 * @return View Guia de Reparto
+	 * @param  Array $args
+	 * @return View
 	 */
-	public function reordenarVisitas($request, $response)
+	public function getGuiaReparto($request, $response, $args)
 	{
-		$accion = 'Modificar';
-		$idGuia  = $request->getParam('idguia');
-		$dataGuiaReparto   = $this->_buscarDataGuiaReparto($idGuia);
-		$repartidores      = $this->_dataEmpleadosAlfa();
-		$listaTotalReparto = $this->_armarListaTotalReparto($idGuia);
-		// Reordenar la lista de visitas
-		$visitasCliente = $this->_reordenarClieTablaVisitas($request->getParam('idclie'), $request->getParam('orden'));
+		$datos = $this->_dataParaViewGR($args['id'], 'Modifica', $request);
 
-		$datos = [ 'titulo'        => 'Cesarini - Guia reparto',
-					'idguia'       => $idGuia,
-					'accion'       => $accion,
-					'hayMensaje'   => '',
-					'data'         => $dataGuiaReparto,
-					'repartidores' => $repartidores,
-					'totalReparto' => $listaTotalReparto,
-					'visitasCliente' => $visitasCliente ];
-
-		return $response->withRedirect($this->router->pathFor('repartos.guiareparto')."?idguia=".$idGuia."&reorden=1");
+		return $this->view->render($response, 'repartos/guiadereparto/guiareparto.twig', $datos);
 	}
 
 	/**
 	 * Guardar Guia de Reparto (POST)
+	 * name: repartos.guiareparto
 	 * 
 	 * @param  Request $request
 	 * @param  Response $response
@@ -137,97 +64,14 @@ class RepartosController extends Controller
 	 */
 	public function postGuiaReparto($request, $response)
 	{
-		$idGuia = $request->getParam('idGuia');
+		// Datos a tabla GuiaReparto
+		$statusGR = $this->_guardarGR($request);
+		// Datos a tabla ClienteReparto
+		$statusCR = $this->_guardarClientesGR($request);
+		// Datos a tabla ProductoClienteReparto
+		$statusPC = $this->_guardarProductosGR($request);
 
-		//Cargo los datos en la session 'dataGuia'
-		$this->_cargoData_a_Session($request);
-		// Guardo los campos en el registro de la BD
-		$guiaRep = GuiaReparto::updateOrInsert(['Id' => $idGuia], $_SESSION['dataGuia']);
-		// Ver si listaClie está vacio o tiene clientes anotados
-		if ( !empty($_SESSION['listaClie'])) {
-			// Guardar lista de clientes a visitar
-			$this->_guardarVisitasClientes($idGuia);
-		} 
-
-		if (!empty($_SESSION['cliProductos'])) {
-			// Guardar lista de productos de clientes
-			$this->_guardarProdsClientes($idGuia);
-		}
-
-		// (NO) Redirecciono a misma Guia de Reparto para poner cartel creado con exito
-		//return $response->withRedirect($this->router->pathFor('repartos.guiareparto')."?idguia=".$idGuia."&msg=guardado");
-		// Vuelvo a GR vacia con mensaje
-		return $response->withRedirect($this->router->pathFor('repartos.guiareparto')."?msg=guardado");
-	}
-
-	/**
-	 * Borrar cliente de la lista de visitas
-	 * Name: repartos.guiareparto.borrarcliente
-	 * 
-	 * @param  [type] $request  [description]
-	 * @param  [type] $response [description]
-	 * @return redirecciona 
-	 */
-	public function borrarCliente($request, $response)
-	{
-		$idClie = $request->getParam('idclie');
-		$idDom  = $request->getParam('iddom');
-		$idGuia = $_SESSION['idguiarep'];
-		$idx = 0;		// Indice para borrrar cliente en $_SESSION['listaClie']
-
-		// Loop para buscar el indice dentro de 'listaClie'
-		foreach ($_SESSION['listaClie'] as $value) {
-
-			if ( $value['idCliente'] == $idClie && $value['idDomicilio'] == $idDom ) {
-				// Al encontrar el indice salgo del loop
-				$indice = $value['id'];
-				break;
-			}
-			$idx++;
-		}
-		// Poner true el campo 'borrado'
-		$_SESSION['listaClie'][$idx]['borrado'] = true;
-		// Pongo en 0 los productos, si es que tiene...
-		if (isset($_SESSION['cliProductos'][$idx])) {
-
-			foreach ($_SESSION['cliProductos'][$idx] as $key => $value) {
-				$_SESSION['cliProductos'][$idx][$key] = 0;
-			}
-		}
-
-		return $response->withRedirect($this->router->pathFor('repartos.guiareparto')."?idguia=".$idGuia."&msg=clieBorrado");
-	}
-
-	/**
-	 * Eliminar (borrar) por COMPLETO la actual guia de  reparto
-	 *
-	 * 
-	 * >>>  OPCION SACADA DEL MENU (NO PODEMOS ELIMINAR LOS DATOS DE GUIA DE REPARTO) !!
-	 *
-	 * 
-	 * @param  Request  $request  [description]
-	 * @param  Response $response [description]
-	 * @return redirecciona a una nueva guia de rep
-	 */
-	public function eliminarGuiaReparto($request, $response)
-	{
-		$idGuia = $_SESSION['idguiarep'];
-
-		// Borra guia
-		GuiaReparto::where(['Id' => $idGuia])->delete();
-
-		// Borra clientes
-		ClienteReparto::where(['IdReparto' => $idGuia])->delete();
-
-		// Borrar productos de clientes en la guia
-		ProductoClienteReparto::where(['IdReparto' => $idGuia])->delete();
-
-		// Elimina id de la session
-		$_SESSION['idguiarep'] = null;
-		$_SESSION['listaClie'] = null;
-		$_SESSION['cliProductos'] = null;
-
-		return $response->withRedirect($this->router->pathFor('repartos.guiareparto')."?msg=guiaBorrada");
+		return json_encode(['status' => ['gr' => $statusGR, 'cli' => $statusCR, 'prod' => $statusPC ]]);
 	}
 
 	/**
@@ -237,27 +81,24 @@ class RepartosController extends Controller
 	 * @param  Response $response 
 	 * @return redirecciona a una nueva guia de rep
 	 */
-	public function imprimirGuiaReparto($request, $response)
+	public function imprimirGuiaReparto($request, $response, $args)
 	{
-		$idGuia = $_SESSION['idguiarep'];
-		$idCliente = null;
-		$accion = 'Imprimir Guia de Reparto';
-		$showMsg = '';
+		$idGuia = $args['id'];
+		$dataGuiaReparto = GuiaReparto::find($idGuia);
+		$visitasCliente  = $this->_buscarClieTablaVisitas($idGuia);
+		$listaTotalReparto  = $this->_armarListaTotalReparto($idGuia);
 
-		// Buscar datos de guia de reparto
-		$dataGuiaReparto = $this->_buscarDataGuiaReparto($idGuia);
 		$empleado = Empleado::find($dataGuiaReparto->IdEmpleado);
 		$nombreEmpleado = $empleado->ApellidoNombre;
 		$actividad = Actividad::find($dataGuiaReparto->IdActividad);
 		$descActividad = $actividad->Descripcion;
-		// Buscar lista de clientes
-		$visitasCliente = $this->_buscarClieTablaVisitas($idGuia);
-		// Buscar productos de cada cliente
-		$listaTotalReparto = $this->_armarListaTotalReparto($idGuia); // Armo lista del total de productos del reparto
 
-		// La session lleva el id de guia de reparto
-		$idGuia = $_SESSION['idguiarep'];
-		//$repartidores = $this->_dataEmpleadosAlfa();
+//echo "Id guia: ".$idGuia;
+//echo "<pre>";
+//print_r($dataGuiaReparto);
+//echo "<pre><br>";
+
+//die('Ver...');
 
 		$datos = [
 			'titulo'       => 'Cesarini - Imprimir Guia',
@@ -273,9 +114,155 @@ class RepartosController extends Controller
 	}
 
 
+	/**
+	 * Guarda datos en tabla GuiaReparto
+	 * 
+	 * @param  Request $req
+	 * @return array
+	 */
+	private function _guardarGR($req)
+	{
+		$status = 'error';
+		$idGuia = $req->getParam('idGuia');
+		$data   = [ 'DiaSemana'   => $req->getParam('diaSemana'),
+					'IdEmpleado'  => $req->getParam('idEmpleado'),
+					'Turno'       => $req->getParam('turno'),
+					'IdActividad' => $req->getParam('idActividad'),
+					'HoraSalida'  => $req->getParam('horaSalida'),
+					'HoraRetorno' => $req->getParam('horaRetorno'),
+					'Estado'      => $req->getParam('estado') ];
+		$guiaRep = GuiaReparto::updateOrInsert(['Id' => $idGuia], $data);
+
+		if ($guiaRep) {
+			$status = 'ok';
+		}
+
+		return ['status' => $status];
+	}
+
+
+	private function _guardarClientesGR($req)
+	{
+		$status = 'error';
+		$idGuia = $req->getParam('idGuia');
+		$data = json_decode($req->getParam('dataClientes'));
+		$ordenVisita = 1;
+
+
+//echo "Id guia: ".$idGuia;
+//echo "<pre>";
+//print_r($data);
+//echo "<pre><br>";
+
+//die('Ver...');
+
+
+
+		$cant = ClienteReparto::where('IdReparto', $idGuia)->delete();
+
+		foreach ($data as $value) {
+			$cliente = [ 'IdReparto' => $idGuia,
+						 'IdCliente' => $value->idCli,
+						 'IdClienteDomicilio' => $value->idDomicilio,
+						 'OrdenVisita' => $ordenVisita ];
+
+			// guardo registro en la tabla
+			$clie = ClienteReparto::create($cliente);
+			$ordenVisita++;
+		}
+
+		if ($clie) {
+			$status = 'ok';
+		}
+
+		return ['status' => $status];
+	}
+
+	private function _guardarProductosGR($req) {
+		$status = 'error';
+		$idGuia = $req->getParam('idGuia');
+		$data = json_decode($req->getParam('dataProductos'));
+
+		$cant = ProductoClienteReparto::where('IdReparto', $idGuia)->delete();
+
+		foreach ($data as $value) {
+			$product = [ 'IdReparto'   => $idGuia,
+						 'IdCliente'   => $value->idCliente,
+						 'IdDomicilio' => $value->idDomicilio,
+						 'IdProducto'  => $value->idProducto,
+						 'CantSugerida' => $value->cantidad ];
+			// guardo registro en la tabla
+			$prod = ProductoClienteReparto::create($product);
+		}
+
+		if ($prod) {
+			$status = 'ok';
+		}
+
+		return ['status' => $status];
+	}
+
+	/**
+	 * Datos para el view de la GR
+	 * 
+	 * @param  string $accion
+	 * @param  Request $req
+	 * @return array
+	 */
+	private function _dataParaViewGR($id, $accion, $req)
+	{
+		$data = [];
+		$data['titulo'] = 'Cesarini - Guia reparto';
+		$data['accion'] = $accion;
+		$data['hayMensaje'] = $req->getParam('msg') || '';
+		$data['repartidores'] = $this->_dataEmpleadosAlfa();
+
+		switch ($accion) {
+			case 'Nueva':
+				$data['idGuia'] = $this->_buscarIdNuevaGuia();
+				$data['data'] = ['Id'          => $data['idGuia'], 
+								 'DiaSemana'   => '0', 
+								 'Turno'       => '0', 
+								 'IdEmpleado'  => '0', 
+								 'IdActividad' => '0', 
+								 'HoraSalida'  => '',
+								 'HoraRetorno' => '', 
+								 'Estado'      => 'Vigente'];
+				$data['clientesGR']    = [];
+				$data['productosClie'] = [];
+				$data['productos']     = [];
+				$data['totalReparto']  = [];
+				break;
+
+			case 'Modifica':
+				$data['idGuia']        = $id;
+				$data['data']          = GuiaReparto::find($id);
+				$data['clientesGR']    = $this->_buscarClieTablaVisitas($id);
+				$data['productosClie'] = $this->_buscaProductosCliente($id, $data['clientesGR'] );
+				$data['productos']     = $this->_listaDeProductos();
+				$data['totalReparto']  = $this->_armarListaTotalReparto($id);
+				break;
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Buscar nuevo id para guia
+	 * 
+	 * @return integer
+	 */
+	private function _buscarIdNuevaGuia()
+	{
+		// Busco el máximo de Id y ese es el último
+		$lastId = GuiaReparto::max('Id');
+
+		return $lastId + 1;
+	}
 
 	/**
 	 * Devuelve lista de empleados ordenados alfab
+	 * 
 	 * @return array Lista de empleados
 	 */
 	private function _dataEmpleadosAlfa()
@@ -296,403 +283,117 @@ class RepartosController extends Controller
 	}
 
 	/**
-	 * Busca datos de guia de reparto segun id
-	 * 
-	 * @param  integer $idGuia 
-	 * @return array   Datos de tabla GuiaRepartos
-	 */
-	private function _buscarDataGuiaReparto($idGuia)
-	{
-
-		if (empty($_SESSION['dataGuia'])) {
-
-			$data = GuiaReparto::find($idGuia);
-
-		} else {
-
-			$data = $_SESSION['dataGuia'];
-		}
-
-		return $data;
-	}
-
-
-	/**
-	 * Buscar nuevo id para guia
-	 * 
-	 * @return integer
-	 */
-	private function _buscarIdNuevaGuia()
-	{
-		// Busco el máximo de Id y ese es el último
-		$lastId = GuiaReparto::max('Id');
-
-		return $lastId + 1;
-	}
-
-	private function _cargoData_a_Session($request)
-	{
-		$_SESSION['dataGuia'] = [
-			'Id'          => $request->getParam('idGuia'),
-			'DiaSemana'   => $request->getParam('diaSemana'),
-			'Turno'       => $request->getParam('turno'),
-			'IdEmpleado'  => $request->getParam('idEmpleado'),
-			'IdActividad' => $request->getParam('idActividad'),
-			'HoraSalida'  => $request->getParam('horaSalida'),
-			'HoraRetorno' => $request->getParam('horaRetorno'),
-			'Estado'      => $request->getParam('estado'),
-		];		
-	}
-
-	/**
-	 * Confecciona la lista de clientes a visitar
-	 * 
-	 * @param  [int] $idCliente
-	 * @param  [int] $orden
-	 * @return [type]            [description]
-	 */
-	private function _agregarClieTablaVisitas($idClie, $orden, $iddom)
-	{
-		$dataCliente = Cliente::find($idClie);
-		//$dataDomicilio = ClienteDomicilio::where('IdCliente', $idClie)->first();
-		$dataDomicilio = ClienteDomicilio::find($iddom);
-
-		// Cuenta - Apellido Nombre - domicilio - localidad - celular
-		$arrClie = array( 'id' => 0,
-						  'idCliente'   => $dataCliente->Id,
-                          'apellidoNom' => $dataCliente->ApellidoNombre,
-                          'domicilio'   => $dataDomicilio->Direccion,
-                          'localidad'   => $dataDomicilio->Localidad,
-                          'celular'     => $dataDomicilio->Celular,
-                          'idDomicilio' => $dataDomicilio->Id,
-                          'ordenVisita' => (float) $orden,
-                          'borrado'     => false );
-
-		if (isset($_SESSION['listaClie'])) {
-			// Si ya existe el array en session, el id será el último a agregar
-			$arrClie['id'] = count( $_SESSION['listaClie'] );
-			array_push( $_SESSION['listaClie'], $arrClie );
-			$arrListaClientes = $_SESSION['listaClie'];
-
-		} else {
-
-			$_SESSION['listaClie'] = [];
-			array_push($_SESSION['listaClie'], $arrClie);
-			$arrListaClientes = $_SESSION['listaClie'];
-		}
-
-		// Ordena la lista por OrdenVisita
-		usort($arrListaClientes, array($this, '_comparar'));
-
-		// Reenumerar Orden de visita
-		$arrListaClientes = $this->_reenumeraOrdenVisita($arrListaClientes);
-
-		return $arrListaClientes;
-	}
-
-	/**
-	 * Para ordenar array multidimension de clientes
-	 * 
-	 * @param  string $a
-	 * @param  string $b 
-	 * @return string
-	 */
-	private function _comparar($a, $b)
-	{
-	    if ($a["ordenVisita"] == $b["ordenVisita"]) {
-	        return 0;
-	    }
-
-	    return ($a["ordenVisita"] < $b["ordenVisita"]) ? -1 : 1;
-
-		//return strcmp($a["ordenVisita"], $b["ordenVisita"]);
-		//return $a["ordenVisita"] - $b["ordenVisita"];
-	}
-
-
-	/**
-	 * Reenumera en orden de visita de lista de clientes
-	 * 
-	 * @param  array $listaClies
-	 * @return array
-	 */
-	private function _reenumeraOrdenVisita($listaClies)
-	{
-		$i = 1;
-		foreach ($listaClies as $key => $value) {
-			$listaClies[$key]['ordenVisita'] = $i;
-			$i++;
-		}
-
-		return $listaClies;
-	}
-
-	/**
-	 * Guardar lista de clientes a visitar en la guia (Distinto de v28)
-	 * 
-	 * @param  integer $idGuia Id de la Guia de Repartos
-	 * @return void
-	 */
-	private function _guardarVisitasClientes($idGuia)
-	{
-		// Borro todos los registros de la Guia de Reparto
-		$cant = ClienteReparto::where('IdReparto', $idGuia)->delete();
-
-		foreach ($_SESSION['listaClie'] as $value) {
-
-			if ( !$value['borrado'] ) {		// Si el cliente no ha sido borrado
-
-				$dataCli = array( 'IdReparto'         => $idGuia, 
-					              'IdCliente'          => $value['idCliente'],
-					              'IdClienteDomicilio' => $value['idDomicilio'],
-					              'OrdenVisita'        => $value['ordenVisita'] );
-				// guardo registro en la tabla
-				$data = ClienteReparto::insert( $dataCli );
-			}
-		}
-	}
-
-	/**
-	 * Guardar lista de productos de cada cliente (Distinto de v28)
-	 * 
-	 * @param  integer $idGuia
-	 * @return void
-	 */
-	private function _guardarProdsClientes($idGuia)
-	{
-		// Borro lo del disco y cargar lo actual !!
-		ProductoClienteReparto::where( 'IdReparto', $idGuia )->delete();
-
-		foreach ($_SESSION['cliProductos'] as $key => $prods) {
-			// Busco el $key en los clientes. Para saber el cliente...
-			$idArrCli = $this->_idDelcliente($key);
-
-			foreach ($prods as $key => $cant) {
-
-				if ($cant > 0) {		# Si la cantidad es cero, el cliente ha sido borrado
-
-					$idProducto = intval(mb_substr($key, 2, 2));		# tipo de codigo en $key = id01tp1
-
-					$dataProd = array('IdReparto'    => (integer) $idGuia, 
-						              'IdCliente'    => (integer) $_SESSION['listaClie'][$idArrCli]['idCliente'],
-						              'IdDomicilio'  => (integer) $_SESSION['listaClie'][$idArrCli]['idDomicilio'],
-						              'IdProducto'   => (integer) $idProducto,
-					    	          'CantSugerida' => (integer) $cant);
-					// guardo registro en la tabla
-					$data = ProductoClienteReparto::insert( $dataProd );
-				}
-			}
-		}		
-	}
-
-	private function _idDelcliente($clave)
-	{
-		foreach ($_SESSION['listaClie'] as $key => $value) {
-			if ( $value['id'] == $clave ) {
-			    $id = $key;
-			    break;
-			}
-		}
-
-		return $id;
-	}
-
-	/**
 	 * Buscar los clientes de la tabla visitas
 	 * 
 	 * @param  integer $idGuia
 	 * @return array Lista de clientes a visitar
 	 */
-	private function _buscarClieTablaVisitas($idGuia, $idCliente = null, $orden = null, $idDom = null)
+	private function _buscarClieTablaVisitas($idGuia)
 	{
-		// Si está vacia la lista busco lo guardado en disco
-		if (empty($_SESSION['listaClie']) && $idCliente == null) {
+		$arrListaClientes = [];
+		$arrClieVisitas = ClienteReparto::where('IdReparto', $idGuia)
+										->orderBy('OrdenVisita')
+										->get();
+		$idx = 0;
+		// Armo la lista para presentar en pantalla
+		foreach ($arrClieVisitas as $value) {
 
-			$arrListaClientes = [];
-			// Obtengo los registros de la tabla
-			$arrClieVisitas = ClienteReparto::where('IdReparto', $idGuia)
-											->orderBy('OrdenVisita')
-											->get();
-			$idx = 0;
+			$dataCliente = Cliente::find((integer) $value->IdCliente);
+			//$dataCliente = Cliente::where('Id', $value->IdCliente);
+			$dataDomicil = ClienteDomicilio::find($value->IdClienteDomicilio);
 
-			// Armo la lista para presentar en pantalla
-			foreach ($arrClieVisitas as $value) {
-
-				$dataCliente = Cliente::find((integer) $value->IdCliente);
-				//$dataCliente = Cliente::where('Id', $value->IdCliente);
-				$dataDomicil = ClienteDomicilio::find($value->IdClienteDomicilio);
-
-				// ('id') Identifica al cliente en la lista
-				$arrClie = array( 'id'          => $idx,
-								  'idCliente'   => $dataCliente->Id,
-	                              'apellidoNom' => $dataCliente->ApellidoNombre,
-	                              'domicilio'   => $dataDomicil->Direccion,
-	                              'localidad'   => $dataDomicil->Localidad,
-	                              'celular'     => $dataDomicil->Celular,
-	                              'idDomicilio' => $dataDomicil->Id, 
-	                         	  'ordenVisita' => $value->OrdenVisita,
-	                         	  'borrado'     => false );
-				$arrListaClientes[] = $arrClie;
-				$idx++;
-			}
-
-			$_SESSION['listaClie'] = $arrListaClientes;
-
-		} else {
-
-			if ($idCliente != null ) {
-				// Cargo visitas a clientes de la guia de reparto si hay nuevo cliente...
-				$arrListaClientes  = $this->_agregarClieTablaVisitas($idCliente, $orden, $idDom);
-				$_SESSION['listaClie'] = $arrListaClientes;
-
-			} else {
-				// Si no hay nuevo cliente y hay lista de visitas a cliente devuelvo la que está ya cargada en session
-				$arrListaClientes = $_SESSION['listaClie'];
-			}
+			// ('id') Identifica al cliente en la lista
+			$arrClie = [ 'id'          => $idx,
+						 'idCliente'   => $dataCliente->Id,
+						 'apellidoNom' => $dataCliente->ApellidoNombre,
+						 'domicilio'   => $dataDomicil->Direccion,
+						 'localidad'   => $dataDomicil->Localidad,
+						 'celular'     => $dataDomicil->Celular,
+						 'idDomicilio' => $dataDomicil->Id, 
+						 'ordenVisita' => $value->OrdenVisita,
+						 'borrado'     => 0 ];
+			$arrListaClientes[] = $arrClie;
+			$idx++;
 		}
 
 		return $arrListaClientes;
 	}
 
-
 	/**
-	 * Arma la lista de totales de productos de la guia con los datos de $_SESSION['cliProductos']
-	 *
-	 * Arma array con [codcli] => array(3) { ["codprod"]=> int(1) ["descrip"]=> string(34) "Agua Desmineralizada - Bidón x 10" ["cantid"]=> string(1) "1" } 
-	 * 
-	 * Es para presentar los datos en pantalla
+	 * Arma la lista de totales de productos
 	 * 
 	 * @param int id guia de reparto
-	 * @param int id cliente
-	 * @return array [description]
+	 * @return array
 	 */
 	private function _armarListaTotalReparto($idGuia)
 	{
-		$arrLista = [];
-		$arrListaCliProductos = [];
+		$sql = "SELECT cant.IdReparto, cant.IdProducto, prod.IdTipoProducto, ";
+		$sql = $sql . "CONCAT(tp.Descripcion, ' - ', prod.Descripcion ) as producto, ";
+		$sql = $sql . "SUM(cant.CantSugerida) AS sumaCant FROM ProductoClienteReparto ";
+		$sql = $sql . "AS cant LEFT JOIN Productos AS prod ON cant.IdProducto = prod.Id ";
+		$sql = $sql . "LEFT JOIN TipoProducto AS tp ON prod.IdTipoProducto = tp.Id ";
+		$sql = $sql . "WHERE cant.IdReparto = " . $idGuia . " ";
+		$sql = $sql . "GROUP BY cant.IdProducto ORDER BY cant.IdProducto";
 
-		// La lista está vacia, busco si hay productos en el disco...
-		if (empty($_SESSION['cliProductos'])) {
+		$arLista = $this->pdo->pdoQuery($sql);
 
-			if (empty($_SESSION['listaClie'])) {
-
-				// si no hay lista de clientes, retorno falso
-				return false;
-
-			} else {
-				// print_r($_SESSION['listaClie']);
-				// Array ( [0] => Array ( [id] => 0 [idCliente] => 3 [apellidoNom] => AGUERO Maximiliano [domicilio] => Neuquen 555 - Barrio La Florida Norte [localidad] => Jesús María [celular] => [idDomicilio] => 3 [ordenVisita] => 1 ) [1] => Array ( [id] => 1 [idCliente] => 4 [apellidoNom] => CANALE Sandra Isabel [domicilio] => La Toma 456 [localidad] => Jesús María [celular] => [idDomicilio] => 4 [ordenVisita] => 2 ) ) 
-
-				// Si hay clientes. Loop por cada cliente...
-				foreach ($_SESSION['listaClie'] as $value) {
-
-					$id = $value['id'];
-					// Busco los productos del cliente
-					$dataProCli = ProductoClienteReparto::where( [ 'IdReparto'   => $idGuia, 
-																   'IdCliente'   => $value['idCliente'],
-																   'IdDomicilio' => $value['idDomicilio'] ]
-																)->get();
-					if ( $dataProCli->count() === 0 ) {
-						# Si nada devuelve, sigue el loop..
-						continue;
-
-					} else {
-						# Si hay productos...
-						$cantDeProducto = [];    // Reset array para productos
-
-						foreach ($dataProCli as $prod) {
-
-							# Armo la lista para $_SESSION['cliProductos']
-							$idProd = $prod->IdProducto;
-							# Busco el tipo de producto...
-							$idTipoProd = Producto::find($prod->IdProducto)->IdTipoProducto;
-							# Armo el codigo del producto para $_SESSION['cliProductos']
-							$codigoProd = "id".sprintf("%'.02d", $idProd)."tp".$idTipoProd;
-
-							$cantDeProducto[$codigoProd] = $prod->CantSugerida;
-						}
-
-						$arrListaCliProductos[$id] = $cantDeProducto;
-					}
-				}
-
-				$_SESSION['cliProductos'] = $arrListaCliProductos;
-
-			}
-
-		} //else { 
-
-			// loop por cada cliente
-			foreach ($_SESSION['cliProductos'] as $value) {
-				// indice para cada producto
-				$idx = 0;
-				// loop por cada producto de cliente
-				foreach ($value as $key => $cant) {
-					// Obtengo el entero del codigo de producto
-					$codProd = intval(mb_substr($key, 2, 2));
-					$descProd = Producto::find($codProd)->Descripcion;
-
-					// id01tp1 - Obtengo el entero del Id Tipo Producto
-					$idTipoProd = intval(mb_substr($key, 6, 1));
-					$descTipoProd = TipoProducto::find($idTipoProd)->Descripcion;
-
-					// Si codProd ya está en el array...
-					if (array_key_exists($codProd, $arrLista)) {
-						// Sumo a la cant que ya está, la cantidad nueva
-						$sumaCant = $cant + $arrLista[$codProd]['cantid'];
-						$arrLista[$codProd] = array('codprod' => $codProd,
-											    'descrip' => $descTipoProd.' - '.$descProd, 
-											    'cantid' => $sumaCant);
-					} else {
-						// Si no está en el aray, lo agrego...
-						$arrLista[$codProd] = array('codprod' => $codProd,
-											'descrip' => $descTipoProd.' - '.$descProd, 
-											'cantid' => $cant);
-					}
-				}
-
-				$idx++;
-			}
-		//}
-
-//var_dump($arrLista);
-//die();
-
-		return $arrLista;
+		return $arLista;
 	}
 
 	/**
-	 * Reordena la lista de visitas cuando cambia el orden de un cliente
+	 * Busca productos de cada cliente en GR
 	 * 
-	 * @param  int $idclie
-	 * @param  int $orden
-	 * @return view redirecciona 
+	 * @param  integer $id Id de la GR
+	 * @return array
 	 */
-	private function _reordenarClieTablaVisitas($idclie, $orden)
+	private function _buscaProductosCliente($id, $clientes)
 	{
-		$arrListaClientes = $_SESSION['listaClie'];
+		$lista = [];
+		$sql = "SELECT prod.Id, prod.IdTipoProducto, ";
+		$sql = $sql . "CONCAT(tp.Descripcion, ' - ', prod.Descripcion) AS Producto ";
+		$sql = $sql . "FROM Productos AS prod LEFT JOIN TipoProducto AS tp ";
+		$sql = $sql . "ON prod.IdTipoProducto = tp.Id WHERE prod.Id = ";
 
-		// Busco el indice del cliente
-		foreach ($arrListaClientes as $key => $value) {
-			if ($value['idCliente'] == $idclie) {
-				$indexCli = $key;
-				break;
+		foreach ($clientes as $clie) {
+			$producto = ProductoClienteReparto::where([
+												[ 'IdReparto', '=',	$id ],
+												[ 'IdCliente', '=',	$clie['idCliente'] ],
+												[ 'IdDomicilio', '=', $clie['idDomicilio'] ] ] )
+											  ->get()
+											  ->toArray();
+
+			foreach ($producto as $value) {
+				$sql2 = $sql . $value['IdProducto'];
+				$prod = $this->pdo->pdoQuery($sql2);
+				$DescripProducto = $prod[0]['Producto'];
+
+				$lista[] = [ 'id'           => $clie['id'], 
+							 'idCliente'    => $clie['idCliente'],
+							 'idDomicilio'  => $clie['idDomicilio'],
+							 'idProducto'   => $value['IdProducto'],
+							 'producto'     => $DescripProducto,
+							 'cantSugerida' => $value['CantSugerida'] ];
 			}
 		}
-		// Asigno el nuevo orden al id de cliente pasado
-		//$arrListaClientes[$indexCli]['ordenVisita'] = (integer) $orden;
-		$arrListaClientes[$indexCli]['ordenVisita'] = (float) $orden;
 
-		// reordeno array
-		usort($arrListaClientes, array($this, '_comparar'));
+		return $lista;
+	}
 
-		// Reenumerar orden de visita
-		$arrListaClientes = $this->_reenumeraOrdenVisita($arrListaClientes);
+	/**
+	 * Devuelve lista de productos
+	 * 
+	 * @return array
+	 */
+	private function _listaDeProductos()
+	{
+		$sql = "SELECT prod.Id, prod.IdTipoProducto, ";
+		$sql = $sql . "CONCAT(tp.Descripcion, ' - ', prod.Descripcion) AS Producto ";
+		$sql = $sql . "FROM Productos AS prod LEFT JOIN TipoProducto AS tp ";
+		$sql = $sql . "ON prod.IdTipoProducto = tp.Id ORDER BY Producto";
 
-		// Lo paso a la session
-		$_SESSION['listaClie'] = $arrListaClientes;
+		$lista = $this->pdo->pdoQuery($sql);
 
-		return $arrListaClientes;
+		return $lista;
 	}
 
 

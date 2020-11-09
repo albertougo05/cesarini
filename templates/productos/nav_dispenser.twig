@@ -15,9 +15,12 @@
 	        		<a class="nav-link" href="{{ path_for('productos.dispenser') }}">Nuevo</a>
 	      		</li>
       		{% endif %}
+
+{#
 		    <li id="linkBorrar" class="nav-item {{ ( accion == 'Nuevo') ? 'disabled' : 'active' }}">
 		        <a id="linkBorrar" class="nav-link" href="#"{{ ( accion == 'Nuevo') ? ' disabled' : '' }}>Eliminar</a>
 		    </li>
+#}
 		    <li class="nav-item active">
 		        <a class="nav-link buscar" href="{{ path_for('productos.dispenser.buscar') }}">Buscar</a>
 		    </li>				    

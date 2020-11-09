@@ -133,25 +133,27 @@
 			// 
 			var _vieneDe = "{{ vienede }}";
 
-
 			// jQuery
 			// 
 			$(document).ready(function(){
+				//
+				/** Funcionamiento boton UpScroll  **/
+				// 
+				const _botonUp = document.getElementById("scrollUp");
 
-				// Boton de ir arriba
-			    $('#scrollUp').click( function(){
-			    	$('body, html').animate({
-		    			scrollTop: '0px'
-		    		}, 300);
-			    });
-			    // Para chequear scroll para boton ir arriba
-			    $(window).scroll(function(){
-			    	if( $(this).scrollTop() > 0 ) {
-			    		$('#scrollUp').show();
-			    	} else {
-			    		$('#scrollUp').hide();
-			    	}
-			    });
+				_botonUp.addEventListener("click", function () {
+				    document.body.scrollTop = 0; // For Safari
+				    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+				});
+				// When the user scrolls down 300px from the top of the document, show the button
+				window.onscroll = function() {
+				    if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+				         _botonUp.style.display = "block";
+				    } else {
+				         _botonUp.style.display = "none";
+				    }    
+				};
+				/** end **/
 
 			    // Radio buttons click radDiaSemana
 			    $('input#radDiaSemana').click(function () {
@@ -196,12 +198,13 @@
 					                           autofocus: true});
 				// Evento click para seleccionar y redireccionar 
 				$('#tablaBuscarGuia tr').on('click', function(){
-	  				var guia = $(this).find('td:first').html();
+	  				const idguia = $(this).find('td:first').html();
+
 	  				if (_vieneDe == 'visitas') {
-	  					location.assign("{{ path_for('repartos.visitas.conguia') }}" + "?idguia=" + guia);
+	  					location.assign("{{ path_for('repartos.visitas.conguia') }}" + "?idguia=" + idguia);
 	  				} else {
-	  					location.assign("{{ path_for('repartos.guiareparto') }}" + "?idguia=" + guia);
-	  					// location.assign("{{ path_for('repartos.guiareparto') }}" + "?idguia=" + guia + '&action=buscar');
+	  					const url = "{{ path_for('repartos.getguiareparto', {'id': ''}) }}";
+	  					location.assign( url + idguia );
 	  				}
 				});
 

@@ -25,14 +25,12 @@ class RepartosBuscarClieController extends Controller
 	 */
 	public function buscarCliente($request, $response)
 	{
-		$idGuia = $request->getParam('idguia'); # Parametro pasado por GET
-		$clientes = $this->_dataClientesAlfa();  # Trae todos los clientes ordenado alfabeticamente
-		$clientesEnGuia = $_SESSION['listaClie'];
+		$idGuia = $request->getParam('idguia'); 	# Parametro pasado por GET
+		$clientes = $this->_dataClientesAlfa();  	# Trae todos los clientes ordenado alfabeticamente
 
 		$datos = [ 'titulo'   => 'Cesarini - Buscar Cliente',
 				   'idGuia'   => $idGuia,
-				   'clientes' => $clientes,
-				   'cliesEnGuia' => $clientesEnGuia ];
+				   'clientes' => $clientes ];
 
 		return $this->view->render($response, 'repartos/guiadereparto/buscarClienteReparto.twig', $datos);
 	}
@@ -59,12 +57,12 @@ class RepartosBuscarClieController extends Controller
 							'fantasia'  => $valueCli->NombreFantasia,
 							'iddomicil' => $valueDom->Id,
 						    'direccion' => $valueDom->Direccion,
-						    'localidad' => $valueDom->Localidad ];
+						    'localidad' => $valueDom->Localidad,
+						    'celular'   => $valueCli->Celular ];
 			    $arrEmp[] = $arrTemp;
 			}
 		}
 
 		return $arrEmp;
 	}
-
 }

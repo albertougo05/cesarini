@@ -2,6 +2,28 @@
 // Código JAVASCRIPT...
 //
 
+
+//
+/** Funcionamiento boton UpScroll  **/
+// 
+const _botonUp = document.getElementById("scrollUp");
+
+_botonUp.addEventListener("click", function () {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+});
+// When the user scrolls down 300px from the top of the document, show the button
+window.onscroll = function() {
+    if (document.body.scrollTop > 280 || document.documentElement.scrollTop > 280) {
+        //$('#scrollUp').show();
+         _botonUp.style.display = "block";
+    } else {
+        //$('#scrollUp').hide();
+         _botonUp.style.display = "none";
+    }    
+};
+/** end **/
+
 // Constructs the suggestion engine
 VISITAS.clientes = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.whitespace,
@@ -346,22 +368,6 @@ $(document).ready( function () {
         oncleared: function () { self.value(''); }
     });
 
-    // Boton de ir arriba
-    $('div#scrollUp').click( function () {
-        $('body, html').animate({
-            scrollTop: '0px'
-        }, 300);
-    });
-
-    // Para chequear scroll para boton ir arriba
-    $(window).scroll( function () {
-        if( $(this).scrollTop() > 0 ) {
-            $('#scrollUp').show();
-        } else {
-            $('#scrollUp').hide();
-        }
-    });
-
 	// Si el div clase mensaje existe...
 	if ($("div.mensaje").length > 0) {
 		// Hace desaparecer el div con la línea del mensaje
@@ -376,7 +382,6 @@ $(document).ready( function () {
 	    	this.value = this.value.replace(/\D/g, '');
 	  	}
 	});
-
 
 	// InputMask para importes de saldos y entregas de clientes
 	VISITAS.inputmaskImportes();
@@ -419,8 +424,9 @@ $(document).ready( function () {
 
 	    	return null;
 	    } 
+		//console.log('Id Guia reparto: ' + VISITAS.idGuiaRep);
 
-	    if ( $(this).prop("checked") && VISITAS.nivelUsuario !== 'admin' ) {
+	    if ( $(this).prop("checked") && VISITAS.nivelUsuario !== 'admin' && VISITAS.idGuiaRep !== 0 ) {
 	    	// Si usuario comun, intenta tildar como pendiente NO PUEDE
 	    	VISITAS._alerta('Solo usuario administrador modifica.', $(this));
 	    	// Volver al estado original
@@ -447,6 +453,8 @@ $(document).ready( function () {
         } else {
         	// Not checked...
         	$('#pendiente').val(0);
+        	// Si deshabilito los inputs no se pueden guardar los form !!
+        	//$('input:text').attr('disabled', true);
         }
 
         return null;

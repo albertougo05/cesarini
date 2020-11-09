@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <!-- Required meta tags -->
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="icon" type="image/png" href="{{ base_url() }}/img/favicon.ico">
+
+	   <!-- Bootstrap CSS -->
+	   <link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/bootstrap.min.css">
+
+		<!-- Mis estilos css -->
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/estilosPrint.css">
+		<title>{{ titulo }}</title>
+		<style type="text/css">
+			body {
+				font-size: 100%;
+			}
+			.cellRight {
+			  text-align: right;
+			}
+			p#razon {
+				font-size: 1.1em;
+			}
+			p.data {
+				font-size: 0.875em;
+				/*margin-left: 1px;*/
+			}
+			hr.lin {
+				margin: 10px auto;
+			}
+			table {
+				font-size: 0.875em;
+			}
+			.fecha {
+				font-size: 0.875em;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<div class="container-fluid">
+				<div class="row justify-content-end">
+					<div class="col-xs-3">
+						<button id="btnImprimir" type="button" class="btn btn-primary">Imprimir</button>
+						<button id="btnVolver" type="button" class="btn btn-light mr-1">Volver</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<hr>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col">
+					<h3 class="text-center"><strong>Informe Productos y Débitos en Visitas</strong></h3>
+				</div>
+			</div> {# end row #}
+
+			<div class="row">
+				<div class="col">
+					<hr>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-1"></div>
+				<div class="col-5 pl-4">
+					<p class="data">Período:&nbsp; {{ periodo }}</p>
+				</div>
+				<div class="col-5 pr-4">
+					<p class="text-right data">Fecha emisión:&nbsp; {{ fecha }}</p>
+				</div>
+			</div>
+
+			{# Filtro de Empleado #}
+			{% if empleado %}
+				<div class="row">
+					<div class="col-1"></div>
+					<div class="col-8 pl-4">
+						<p class="data">Filtro por empleado:&nbsp; {{ empleado.ApellidoNombre }}</p>
+					</div>
+				</div>
+			{% endif %}
+
+			<div class="row mt-0">
+				<div class="col-2"></div>
+				<div class="col">
+					<table class="table table-sm table-striped table-hover">
+					  	<thead class="thead-dark">
+					    	<tr>
+						      	<th scope="col" class="cellRight">Id Prod</th>
+						      	<th scope="col">Descripción</th>
+						      	<th scope="col" class="cellRight">Suma Entregas</th>
+						      	<th scope="col" class="cellRight">Suma Débitos</th>
+						      	<th scope="col"></th>
+					    	</tr>
+					  	</thead>
+					  	<tbody>
+							{% for list in listado %}
+								<tr>
+									<td class="cellRight">{{ list.IdProducto }}</td>
+									<td>{{ list.Producto }}</td>
+									<td class="cellRight">{{ list.SumaDejados|number_format(0, ',', '.') }}</td>
+									<td class="cellRight">$&nbsp; {{ list.SumaDebitos|number_format(2, ',', '.') }}</td>
+									<td></td>
+								</tr>
+							{% endfor %}
+						    <tr>
+						    	<td></td><td></td>
+						    	<td></td><td></td><td></td>
+						    </tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="col-2"></div>
+			</div>
+
+		</div>  {# end container #}
+
+		<script src="{{ base_url() }}/js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript">
+			// Codigo jQuery
+			$(document).ready(function(){
+
+				// Para boton volver
+				$('#btnVolver').click( function() {
+			    	window.close();
+			    });
+
+				// Boton Imprimir
+				$('#btnImprimir').click( function() {
+                    window.print();
+				});
+			});
+		</script>
+	</body>
+</html>

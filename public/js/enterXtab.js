@@ -32,3 +32,28 @@ $(document).keydown(function(e) {
   // We need to capture the [Shift] key and check the [Enter] key either way.
   if (e.shiftKey) { enterKey() } else { enterKey() }
 });
+
+
+//
+// Funciones Utiles Comunes a todos
+// 
+var COMMONS = {
+
+  // Devuelve verdadero si el string está vacio
+  isEmpty: function(str) {    // Verifica string vacios
+
+    return (str.length === 0 || !str.trim());
+  },
+
+  // Convierte string '1.250,25' A (float) 1250.25
+  strToFloat: function(num) {
+    num = num.replace('.', '');
+    num = num.replace(',', '.');
+    num = parseFloat(num);
+
+    return num.toFixed(2);
+  },
+
+
+
+};

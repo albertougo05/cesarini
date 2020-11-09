@@ -15,7 +15,7 @@ return [
         'db' => [
             'driver'    => 'mysql',
             'host'      => 'localhost',
-            'database'  => 'cesarini2',
+            'database'  => 'cesarini3',
             'username'  => 'root',
             'password'  => '1234',
             'charset'   => 'utf8',

@@ -262,16 +262,16 @@ class VisitaPlantaController extends Controller
 				$clienteSinAbono = $this->_clienteTieneAbono($idcli);
 
 				foreach ($prods as $value) {
-					$debito = 0;
+					//$debito = 0;
 					// Si el producto es Soda genera débito
-					if ((integer)$value['id'] === 15 || (integer)$value['id'] === 18) {
+					//if ((integer)$value['id'] === 15 || (integer)$value['id'] === 18) {
 
-						$debito = $this->ProductoController->precioPorCantidad( (integer) $value['id'], (integer) $value['ret'] );
+					//	$debito = $this->ProductoController->precioPorCantidad( (integer) $value['id'], (integer) $value['ret'] );
 
-					} else if ($clienteSinAbono) {
+					//} else if ($clienteSinAbono) {
 
-						$debito = $this->ProductoController->precioPorCantidad( (integer) $value['id'], (integer) $value['ret'] );
-					}
+					//	$debito = $this->ProductoController->precioPorCantidad( (integer) $value['id'], (integer) $value['ret'] );
+					//}
 
 					$cants = array( 'IdVisita'    => (integer) $idvis,
 									'IdCliente'   => (integer) $idcli,
@@ -284,7 +284,7 @@ class VisitaPlantaController extends Controller
 									'CantRetira'  => (integer) $value['dev'],
 									'Saldo'       => 0,
 									'Entrega'     => (float) $value['ent'],
-									'Debito'      => $debito );
+									'Debito'      => (float) $value['deb'] );	//$debito );
 
 					$visita = VisitaDetalleCliente::create($cants);
 				}

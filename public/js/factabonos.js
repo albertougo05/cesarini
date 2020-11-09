@@ -189,6 +189,7 @@ FACTABONO.poblarTablaClientes = function (idguia) {
     	  let dataObj = $.parseJSON(data);
   		  //console.log(dataObj);
   	    FACTABONO.dibujarLineasTabla(dataObj);
+        $('[data-toggle="tooltip"]').tooltip();
       },
       error: function(jqXHR, textStatus, errorThrown) 
       { // if fails
@@ -210,7 +211,11 @@ FACTABONO.dibujarLineasTabla = function (data) {
 	    importeFact = '';
 
 	data.forEach(o => {
-      linea += `<tr><td>${o.ApellidoNombre} - (${o.Id }) <small>${o.Direccion}, ${o.Localidad}</small></td>`;
+      if (o.Observaciones.length > 0) {
+          linea += `<tr><td>${o.ApellidoNombre} - (${o.Id }) <small>${o.Direccion}, ${o.Localidad}</small> &nbsp; <span class="badge badge-dark" data-toggle="tooltip" data-placement="top" title="${o.Observaciones}">Obs</span></td>`;
+      } else {
+          linea += `<tr><td>${o.ApellidoNombre} - (${o.Id }) <small>${o.Direccion}, ${o.Localidad}</small></td>`;
+      }
       linea += `<td>${o.Dispensers}</td>`;
       linea += `<td class="cellRight">${o.cantBx12}</td>`;
       linea += `<td class="cellRight">${o.cantBx20}</td>`;

@@ -8,10 +8,28 @@
 		<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
 
 		<style type="text/css">
+			html {
+				scroll-behavior: smooth;
+			}
 			table#tablaClientesGR th {   /* Crea el sticky para titulos de tabla clientes con abono */
   				position: sticky;
   				top: 68px;
 			}
+			.celInputCant {
+				width: 60px; 
+				float: right;
+				height: 25px; 
+			}
+			/* Ocultar primera columna de tabla cantidad productos cliente */
+			#tableCantProdClie th:nth-of-type(1) {
+				display: none;
+			}
+			#tbodyTablaClientesGR {
+				font-size: 85%;
+			}
+			#tableCantProdClie td:nth-of-type(1) {
+				display: none;
+			} 
 		</style>
 
 	{% endblock %}	
@@ -51,24 +69,75 @@
 
 	{% block content %}
 		{% include 'repartos/guiadereparto/contentGuiaReparto.twig' %}
+		{% include 'repartos/guiadereparto/modalIngresoProd.twig' %}
 	{% endblock %}
 
 	{% block javascript %}
 		{{ parent() }}
 
-		<script src="https://unpkg.com/imask"></script>
+		{# <script src="https://unpkg.com/imask"></script> #}
+		<script src="{{ base_url() }}/js/imask.min.js"></script>
 		<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+		<script src="{{ base_url() }}/js/enterXtab.js"></script>
 
 		<script type="text/javascript">
 			// Variables globales de path
-			var global_productosacliente = "{{ path_for('repartos.productosacliente') }}";
-			var global_borrarcliente     = "{{ path_for('repartos.guiareparto.borrarcliente') }}";
-			var global_buscarcliente     = "{{ path_for('repartos.buscarcliente') }}";
-			var global_eliminarguia      = "{{ path_for('repartos.guiareparto.eliminarguia') }}";
-			var _pathReordenarVisitas    = "{{ path_for('repartos.guiareparto.reordenarvisitas') }}";
+			const _pathPostGuiaReparto   = "{{ path_for('repartos.guiareparto') }}" ;
+			const _pathBuscarCliente     = "{{ path_for('repartos.buscarcliente') }}";
+
+			var ACTIONS_BTNS = {}
+
+			var GUIAREPARTO = {
+				id: "{{ idGuia }}",
+				winBuscar: false,   // Variable para saber si está abierta la ventana de búsqueda
+				objWinBuscar: { _cerrar: false },   // Ventana de búsqueda
+			}
+
+			var MODALPRODS = {
+				dataModalProds: [],
+			}
+
+			var DATA_GR = {
+				clientes: [],
+				productosClie: [],
+				totalProdsReparto: [],
+			}
+
+			let obj = {};
+			{% for cli in clientesGR %}		// Array de clientes 
+				obj.id          = "{{ cli.id }}";
+				obj.idCli       = "{{ cli.idCliente }}";
+				obj.apellidoNom = "{{ cli.apellidoNom }}";
+				obj.domicilio   = "{{ cli.domicilio }}";
+				obj.localidad   = "{{ cli.localidad }}";
+				obj.idDomicilio = "{{ cli.idDomicilio }}";
+				obj.celular     = "{{ cli.celular }}";
+				obj.ordenVisita = parseInt("{{ cli.ordenVisita }}");
+				obj.borrado     = parseInt("{{ cli.borrado }} ");
+				DATA_GR.clientes.push( obj );
+				obj = {};
+			{% endfor %}
+
+			{% for prod in productosClie %}		// Array de productos de clientes 
+				obj.idCliente   = "{{ prod.idCliente }}";
+				obj.idDomicilio = "{{ prod.idDomicilio }}";
+				obj.idProducto  = "{{ prod.idProducto }}";
+				obj.producto    = "{{ prod.producto }}";
+				obj.cantidad    = "{{ prod.cantSugerida }}";
+				DATA_GR.productosClie.push( obj );
+				obj = {};
+			{% endfor %}
+
+			{% for rep in totalReparto %}		// Array de productos de clientes 
+				obj.idProduc = "{{ rep.IdProducto }}";
+				obj.producto = "{{ rep.producto }}";
+				obj.cantidad = "{{ rep.sumaCant }}";
+				DATA_GR.totalProdsReparto.push( obj );
+				obj = {};
+			{% endfor %}
 
 		</script>
 
-		<script src="{{ base_url() }}/js/guiareparto.js"></script>
+		<script src="{{ base_url() }}/js/guiareparto.js?ver=0.0.6"></script>
 
 	{% endblock %}

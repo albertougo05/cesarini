@@ -14,10 +14,13 @@
   		  padding-bottom: 10px;
 		}
 		.cardEntrega {
+		  display: flex;
+		  justify-content: center;
   		  background: rgba(236, 236, 236, 0.95);
   		  border-radius: 3px;
   		  padding-top: 10px;
   		  padding-bottom: 10px;
+  		  margin-right: 20px;
 		}
 		.anchoSelect {
     	  max-width: 350px;
@@ -89,11 +92,6 @@
 				</nav>
 			</div>
 		</div>
-
-		<div id="alertGuardar" class="alert col-12 text-center" role="alert">
-			<strong>Hecho !!</strong>&nbsp;&nbsp; Visita guardada con éxito.
-		</div>
-
 	</div>
 {% endblock %}
 
@@ -128,8 +126,8 @@
 						<button type="button" class="d-inline float-right btn btn-success btn-sm btnsBuscarDisp" id="btnBuscarCli">Buscar cliente</button>
 						<hr class="hrMovDisp">
 						{% if cliente.Id != 0 %}						
-							<h5 class="dataClieVisita" id="nombreCliente" data-idClie="{{ cliente.Id }}"><strong>{{ cliente.Id }} - {{ cliente.ApellidoNombre }}</strong> - <small>{{ cliente.Direccion }} - {{ cliente.Localidad }} - 
-							Teléfono: {{ cliente.Telefono }} - Celular: {{ cliente.Celular }}</small></h5>
+							<h5 class="dataClieVisita" id="nombreCliente" data-idClie="{{ cliente.Id }}"><strong>{{ cliente.Id }} - &nbsp; {{ cliente.ApellidoNombre }}</strong> - <small>{{ cliente.Direccion }} - &nbsp; {{ cliente.Localidad }} &nbsp;|&nbsp; 
+							Teléfono: &nbsp; {{ cliente.Telefono }} - Celular: &nbsp; {{ cliente.Celular }}</small></h5>
 					    {% endif %}
 					</div>
 				</div>
@@ -195,19 +193,29 @@
 				</div>
 
 				<div class="row">
-					{# ENTREGA #}						
-					<div class="col-6 offset-md-3 cardEntrega d-flex justify-content-center">
-						<form class="form-inline">
+					{# ENTREGA #}
+					<div class="col-4 offset-sm-2 cardEntrega">
+						<div class="pl-2">
+							<label class="mb-0" for="debito">Débito &nbsp;</label>
+							<div class="input-group input-group-sm mb-1 mt-1">
+							  	<div class="input-group-prepend">
+							    	<span class="input-group-text">$</span>
+							  	</div>
+							  	<input type="text" class="form-control form-control-sm cellRight" id="debito" name="debito">
+							</div>
+						</div>
 
-							<label class="ml-1 my-2 mr-4 h5" for="entrega">Entrega</label>
+					</div>
+					<div class="col-4 cardEntrega">
+						<div class="pl-2">
+							<label class="mb-0" for="entrega">Entrega &nbsp;</label>
 							<div class="input-group input-group-sm mb-1 mt-1">
 							  	<div class="input-group-prepend">
 							    	<span class="input-group-text">$</span>
 							  	</div>
 							  	<input type="text" class="form-control form-control-sm cellRight" id="entrega" name="entrega">
 							</div>
-
-						</form>
+						</div>
 
 					</div>
 				</div>  {# /.row  #}
@@ -222,6 +230,9 @@
 
 						{% include 'partes/enviando.twig' %}
 
+						<div id="alertGuardar" class="alert alert-success col-12 text-center" role="alert">
+							<strong>Hecho !!</strong>&nbsp;&nbsp; Visita guardada con éxito.
+						</div>
 					</div>
 				</div>
 
@@ -243,9 +254,10 @@
 		var _pathVisitaPlanta  = "{{ path_for('repartos.visitaplanta') }}";
 		var _pathGuardaVisita  = "{{ path_for('repartos.visitaplanta.guardavisita') }}";
 		var _pathImprimir      = "{{ path_for('repartos.visitaplanta.imprimir') }}";
+		var _pathPrecioProduc  = "{{ path_for('productos.precioproducto') }}";
 
 	</script>
 	<script src="{{ base_url() }}/js/enterXtab.js"></script>
-	<script src="{{ base_url() }}/js/visitaplanta.js?ver=0.0.3"></script>
+	<script src="{{ base_url() }}/js/visitaplanta.js?ver=0.0.8"></script>
 
 {% endblock %}

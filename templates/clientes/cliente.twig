@@ -118,7 +118,7 @@
 							</div>
 						</div>
 						<div class="form-row">
-							<div class="form-group col-3">
+							<div class="form-group col-3 mb-0">
 								<label for="Actividad">Actividad</label>
 								<select class="form-control form-control-sm" id="IdActividad" name="IdActividad">
 									<option value=0>Todas</option>
@@ -127,11 +127,11 @@
 									{% endfor %}
 								</select>
 							</div>
-							<div class="form-group col-3">
+							<div class="form-group col-3 mb-0">
 						        <label for="FechaFacturacion">Fecha facturación</label>
 						        <input type="date" class="form-control form-control-sm" id="FechaFacturacion" name="FechaFacturacion" value="{{ cliente.FechaFacturacion }}">
 							</div>
-							<div class="form-group col-3">
+							<div class="form-group col-3 mb-0">
 								<label for="Estado">Tipo Facturac.</label>
 								<select class="form-control form-control-sm" id="IdTipoFact" name="IdTipoFact">
 									<option data-importe="" value=0>Seleccione...</option>
@@ -143,7 +143,7 @@
 								</select>
 							</div>
 
-							<div class="form-group col-3">
+							<div class="form-group col-3 mb-0">
 						        <label for="CostoAbono">Costo del abono</label>
 						       {# <input type="text" class="form-control form-control-sm" id="CostoAbono" name="CostoAbono" value="{{ cliente.CostoAbono }}"> #}
 								<div class="input-group input-group-sm mb-3">
@@ -155,6 +155,12 @@
 							</div>
 						</div>
 
+						<div class="form-row">
+							<div class="form-group col">
+								<label for="Observaciones">Observaciones</label>
+								<textarea class="form-control" id="Observaciones" name="Observaciones" rows="2"></textarea>
+    						</div>
+						</div>
 
 						{# Para CSRF control #}
 						{{ csrf.field | raw }}
@@ -201,6 +207,7 @@
 				patheliminardomicilio: "{{ path_for('clientes.cliente.eliminardomicilio') }}",
 				pathcomprobarcuitdni:  "{{ path_for('clientes.comprobarcuitdni') }}",
 				pathaccion:            "{{ accion }}",
+				observaciones:          "{{ cliente.Observaciones }}",
 				arrDoms: [ [], [], [], [], [], [], [], [], [], [] ]    // Pongo para 10 domicilios
 			}
 
@@ -221,6 +228,6 @@
 			{% endfor %}
 
 		</script>
-		<script src="{{ base_url() }}/js/cliente.js"></script>
+		<script src="{{ base_url() }}/js/cliente.js?ver=0.0.1"></script>
 
 	{% endblock %}

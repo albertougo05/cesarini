@@ -1,0 +1,74 @@
+{# Modal ingreso/modifica productos de cliente #}
+
+<!-- Modal -->
+<div class="modal fade" id="modalIngresoProds" tabindex="-1" role="dialog" aria-labelledby="modalIngresoProds" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+
+        <div class="modal-header">
+        	<h5 class="modal-title" id="tituloModalAgregaProd"><strong>Ver/Agregar productos a:</strong></h5>
+        	<button id="btnModAgrClie" type="button" class="close" data-dismiss="modal" aria-label="Close">
+          		<span aria-hidden="true">&times;</span>
+        	</button>
+        </div>
+
+        <form id="formModalProds">
+        	<input type="hidden" id="idCliEnModalProd" value="">
+        	<input type="hidden" id="idDomCliEnModalProd" value="">
+        </form>
+
+        <div class="modal-body">
+			<div class="row">
+				<div class="col-10 offset-1 shadow bg-white rounded">
+					<div class="row">
+						<div class="col-6 mt-4 ml-2">
+					        <select id="selectProducto" name="selectProducto" class="form-control form-control-sm">
+					            <option value=0 selected>Seleccione un producto...</option>
+					            {% for prod in productos %}
+									<option value="{{ prod.Id }}">{{ prod.Producto }}</option>
+								{% endfor %}
+					        </select>
+						</div>
+				        <div class="col-4 mt-4 d-flex">
+							<label for="cantProduct" class="mt-1 mr-2">Cantidad:</label>
+							<input id="cantProduct" name="cantProduct" type="text" class="form-control form-control-sm text-right">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col mt-2 mb-4 ml-2 mr-4 d-flex justify-content-end">
+							<button id="btnModalAgregarProd" type="button" class="btn btn-sm btn-success" disabled><i class="fas fa-plus"></i>&nbsp;Agregar</button>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-10 offset-1 mt-4">
+					<p class="text-left text-dark mb-0"><strong>Productos del cliente</strong></p>
+
+					<table class="table table-sm table-hover mt-0" id="tableCantProdClie">
+					    <thead class="thead-dark">
+						    <tr>
+						    	<th>#</th>
+						        <th class="text-center">Código Producto</th>
+						        <th>Descripción</th>
+						        <th class="text-right">Cantidad</th>
+						        <th></th>
+						    </tr>
+					    </thead>
+						<tbody id="bodyTablaProds">
+							{# llenado con js #}
+						</tbody>
+					</table>
+				</div>  {# end col-md-8 #}
+			</div>	{# end row #}
+
+        </div>   {# end modal-body #}
+
+        <div class="modal-footer">
+        	<button type="button" id="btnConfirmAgregaProd" class="btn btn-primary btn-sm">Confirma</button>
+        	<button id="btnCancelAgregaProd" type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">Cancela</button>
+        </div>
+      </div>
+    </div>
+</div>

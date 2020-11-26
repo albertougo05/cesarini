@@ -155,21 +155,60 @@
 									<td class="cellRight">{{ list.Saldo|number_format(2, ',', '.') }}</td>
 								</tr>
 							{% endfor %}
-						    <tr>
-						    	<td></td><td></td><td></td><td></td><td></td>
-						    	<td></td><td></td><td></td><td></td><td></td><td></td>
-						    </tr>
 						</tbody>
 					</table>
 				</div>
 			</div>
 
 			<div class="row">
-				<div class="col-8"></div>
-				<div class="col-4">
-					<p class="text-right font-weight-bold pr-3">Saldo $ {{ saldo|number_format(2, ',', '.') }}</p>
+				<div class="col">
+					<hr class="mt-0">
 				</div>
 			</div>
+
+			<div class="row">
+				<div class="col-8"></div>
+				<div class="col-4">
+					<p class="text-right font-weight-bold pr-3">Saldo $&nbsp; {{ saldo|number_format(2, ',', '.') }}</p>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col">
+					<hr class="mt-0">
+				</div>
+			</div>
+
+			{% if movsdisp %}
+
+			<div class="row mt-3">
+				<div class="col-8 offset-2">
+					<h5>Movimientos de Dispensers</h5>
+					<table id="resumen" class="table table-sm table-striped table-hover">
+					  	<thead class="thead-dark">
+					    	<tr>
+						    	<th>Fecha</th>
+						      	<th>Id Disp.</th>
+						      	<th>Nro. Int.</th>
+						      	<th>Modelo</th>
+						      	<th>Observaciones</th>
+					    	</tr>
+					  	</thead>
+					  	<tbody>
+							{% for disp in movsdisp %}
+								<tr>
+									<td>{{ disp.Fecha|date("d/m/Y") }}</td>
+									<td>{{ disp.IdDispenser }}</td>
+									<td>{{ disp.NroInterno }}</td>
+									<td>{{ disp.Modelo }}</td>
+									<td>{{ disp.Observaciones }}</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			{% endif %}
 
 		</div>  {# end container #}
 

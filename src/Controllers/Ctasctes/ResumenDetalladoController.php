@@ -133,6 +133,10 @@ class ResumenDetalladoController extends Controller
 
 		// Período del resumen
 		$periodo = $this->ResumenController->getPeriodoRes($request->getParam('desde'), $request->getParam('hasta'), $resumen);
+		// Movimientos de dispenser de cliente en el periodo
+		$movsDispensers = $this->_movsDispensers( $request->getParam('idcli'), 
+				                    			  $request->getParam('desde'), 
+				                    			  $request->getParam('hasta') );
 
 		$datos = [ 'titulo'     => 'Cesarini - Cta.Cte.Detallado',
 				   'fecha'      => $fecha,
@@ -142,6 +146,7 @@ class ResumenDetalladoController extends Controller
 				   'transporte' => $transporte,
 				   'saldo'      => $saldo,
 				   'dispensers' => $dispensers,
+				   'movsdisp'   => $movsDispensers,
 				   'listado'    => $dataResumen ];
 
 	    return $this->view->render($response, 'ctasctes/resumendetallado/imprimeResumDetal.twig', $datos);
@@ -167,7 +172,6 @@ class ResumenDetalladoController extends Controller
 		return $data;
 	}
 
-
 	/**
 	 * Para ordenar array por fecha
 	 * 
@@ -191,7 +195,6 @@ class ResumenDetalladoController extends Controller
 	private function _datosVisitas($id, $desde, $hasta)
 	{
 		$data = [];
-
 		$sql2 = "SELECT visi.Fecha, ";
 		$sql2 = $sql2."CONCAT('Reparto/Visita - ', visi.Id) AS Comprobante, ";
 		$sql2 = $sql2."CONCAT(guia.DiaSemana, '-', guia.Turno) AS DiaTurno, ";
@@ -230,7 +233,6 @@ class ResumenDetalladoController extends Controller
 	private function _creaDataDebe($idcli, $desde, $hasta)
 	{
 		$debe = $this->_debeComprobantes($idcli, $desde, $hasta);
-
 		$data = [];
 
 		foreach ($debe as $value) {
@@ -250,7 +252,6 @@ class ResumenDetalladoController extends Controller
 			$data[] = $temp;
 			unset($temp);
 		}
-
 		return $data;
 	}
 
@@ -271,11 +272,33 @@ class ResumenDetalladoController extends Controller
 		$sql = $sql . "FROM Comprobantes AS vis WHERE IdCliente = " . $idcli . " ";
 		$sql = $sql . $this->ResumenController->getWhereFechas($desde, $hasta); 
 		$sql = $sql . "ORDER BY vis.Fecha ASC";
-
 		// Comprobantes
 		$debe = $this->pdo->pdoQuery($sql);
 
 		return $debe;
+	}
+
+	/**
+	 * Devuelve movimientos de dispensers del cliente en el período
+	 * 
+	 * @param  integer $idcli
+	 * @param  date $desde
+	 * @param  date $hasta
+	 * @return array
+	 */
+	private function _movsDispensers($idcli, $desde, $hasta)
+	{
+		$sql = "SELECT md.IdCliente, md.Fecha, md.IdDispenser, dis.NroInterno, ";
+		$sql .= "dis.Modelo, md.Observaciones, md.Estado ";
+		$sql .= "FROM MovimientosDispenser md ";
+		$sql .= "LEFT JOIN Dispenser AS dis ON md.IdDispenser = dis.Id ";
+		$sql .= "WHERE md.IdCliente = " . $idcli . " ";     // " AND md.Estado = 'Cliente' ";
+		$sql .= $this->utils->getWhereFechas($desde, $hasta, $asTable = 'md');
+		$sql .= " ORDER BY md.Fecha ASC";
+
+		$movs = $this->pdo->pdoQuery($sql);
+
+		return $movs;
 	}
 
 }

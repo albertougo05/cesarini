@@ -159,13 +159,13 @@ $(document).ready( function () {
 			_alertError('Debe ingresar un cliente. <br> <small>(Estado = Cliente)</small>');
   		    return false;
 		}
-		// Controlo que si seleccionó un Cliente el estado sea Cliente
-		if (idClie > 0 && selectEstado != 'Cliente') {
-			event.preventDefault();
-			_alertError('Selecionó un cliente. <br> <strong>Estado DEBE ser: Cliente</strong>');
-			$('select#Estado').focus();
-  		    return false;
-		}
+		// Controlo que si seleccionó un Cliente el estado sea Cliente (QUEDA SIN EFECTO. CUANDO SELEC UN DISP. CON ESTADO CLIENTE)
+		//if (idClie > 0 && selectEstado != 'Cliente') {
+		//	event.preventDefault();
+		//	_alertError('Selecionó un cliente. <br> <strong>Estado DEBE ser: Cliente</strong>');
+		//	$('select#Estado').focus();
+  		//    return false;
+		//}
 		// Controlo que fecha no sea menor al último movimiento
 		if (comparoFechasMov(fecha)) {
 			let fechaLocal = convertirAFechaLocal($('p#fechaUltMov').text());

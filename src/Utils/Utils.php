@@ -199,20 +199,20 @@ class Utils extends Controller
 	 * @param  string $hasta
 	 * @return string
 	 */
-	public function getWhereFechas($desde, $hasta)
+	public function getWhereFechas($desde, $hasta, $asTable = 'vis')
 	{
 		if ($desde == '' && $hasta == '') {
 			$where = '';
 		} elseif ($hasta == '') {
 			$desde = date('Y-m-d', strtotime($desde));
-			$where = "AND vis.Fecha >= '".$desde."' ";
+			$where = "AND " . $asTable . ".Fecha >= '".$desde."' ";
 		} elseif ($desde == '') {
 			$hasta = date('Y-m-d', strtotime($hasta));
-			$where = "AND vis.Fecha <= '".$hasta."' ";
+			$where = "AND " . $asTable . ".Fecha <= '".$hasta."' ";
 		} else {
 			$desde = date('Y-m-d', strtotime($desde));
 			$hasta = date('Y-m-d', strtotime($hasta));
-			$where = "AND vis.Fecha >= '".$desde."' AND vis.Fecha <= '".$hasta."' ";
+			$where = "AND " . $asTable . ".Fecha >= '".$desde."' AND " . $asTable . ".Fecha <= '".$hasta."' ";
 		}
 
 		return $where;

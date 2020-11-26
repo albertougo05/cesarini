@@ -45,7 +45,9 @@
 					<div class="row">
 						<div class="col cardMovDisp">
 							<h5 style="display: inline;">Dispenser</h5>
+
 							<button type="button" class="d-inline float-right btn btn-success btn-sm btnsBuscarDisp{{ (accion == 'Modifica') ? ' disabled' : '' }}" id="btnBuscarDisp"{{ (accion == 'Modifica') ? ' disabled' : '' }}>Buscar dispenser</button>
+
 							<table class="table table-sm" id="tableMovDisp">
 								<thead class="thead-dark">
 								    <tr>
@@ -84,7 +86,7 @@
 							<h5 style="display: inline;">Empleado</h5>
 							<button type="button" class="d-inline float-right btn btn-success btn-sm" id="btnBuscarEmp" style="margin-bottom: 10px;"{{ (editable) ? '' : ' disabled' }}>Buscar empleado</button>
 							<hr class="hrMovDisp">
-							<p class="dataMovDisp" id="nombreEmpleado" data-idEmpl= "{{ data.Empleado.Id }}"><strong>{{ data.Empleado.Id }} - {{ data.Empleado.ApellidoNombre }}</strong></p>
+							<p class="dataMovDisp" id="nombreEmpleado" data-idEmpl= "{{ data.Empleado.Id }}"><strong>{{ data.Empleado.Id }} -&nbsp; {{ data.Empleado.ApellidoNombre }}</strong></p>
 						</div>
 
 						<div class="col-1"></div>
@@ -94,10 +96,10 @@
 							<h5 style="display: inline;">Cliente</h5>
 							<button type="button" class="d-inline float-right btn btn-success btn-sm btnsBuscarDisp" id="btnBuscarCli"{{ (editable and editableBtnClie) ? '' : ' disabled' }}>Buscar cliente</button>
 							<hr class="hrMovDisp">
-							<p class="dataMovDispNombCli" id="nombreCliente" data-idClie="{{ data.Cliente.Id }}"><strong>{{ data.Cliente.Id }} - {{ data.Cliente.ApellidoNombre }}</strong></p>
+							<p class="dataMovDispNombCli" id="nombreCliente" data-idClie="{{ data.Cliente.Id }}"><strong>{{ data.Cliente.Id }} -&nbsp; {{ data.Cliente.ApellidoNombre }}</strong></p>
 							{% if data.Cliente.Id != 0 %}
-								<p class="pl-2 mb-0"><em>{{ data.Cliente.Direccion }} - {{ data.Cliente.Localidad }}</em></p>
-								<p class="pl-2 mb-3"><em>Teléfono: {{ data.Cliente.Telefono }} - Celular: {{ data.Cliente.Celular }}</em></p>
+								<p class="pl-2 mb-0"><em>{{ data.Cliente.Direccion }} -&nbsp; {{ data.Cliente.Localidad }}</em></p>
+								<p class="pl-2 mb-3"><em>Teléfono: {{ data.Cliente.Telefono }} -&nbsp; Celular:&nbsp; {{ data.Cliente.Celular }}</em></p>
 						    {% endif %}
 						</div>
 					</div>
@@ -167,6 +169,6 @@
 			var global_accion = "{{ accion }}";
 
 		</script>
-		<script src="{{ base_url() }}/js/movimientodispenser.js?30.1.0"></script>
+		<script src="{{ base_url() }}/js/movimientodispenser.js?0.3.0"></script>
 
 	{% endblock %}

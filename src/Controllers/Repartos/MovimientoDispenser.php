@@ -266,7 +266,7 @@ class MovimientoDispenserController extends Controller
 				$_SESSION['dataMovimDisp']['IdDispenser'] = $request->getParam('idDisp');
 				$datosDisp = Dispenser::where('Id', $request->getParam('idDisp'))
 										->first();
-				$fechaUltMov = MovimientoDispenser::select('Fecha')
+				$dataMovim = MovimientoDispenser::select('Fecha', 'IdCliente', 'IdDomicilio')
 													->where('IdDispenser', $request->getParam('idDisp'))
 													->orderBy('Fecha', 'desc')
 													->first();
@@ -275,7 +275,24 @@ class MovimientoDispenserController extends Controller
 		                                                   'NroInterno' => $datosDisp->NroInterno,
 		                                                   'Modelo' => $datosDisp->Modelo,
 		                                                   'Estado' => $datosDisp->Estado,
-		                                                   'FechaUltMov' => $fechaUltMov->Fecha ];
+		                                                   'FechaUltMov' => $dataMovim->Fecha ];
+
+		        if ($datosDisp->Estado === 'Cliente') {
+				    $_SESSION['dataMovimDisp']['IdCliente'] = $dataMovim->IdCliente;
+				    $datosClie = Cliente::where('Id', $dataMovim->IdCliente)
+				    					->first();
+				    $datosDom = ClienteDomicilio::where('Id', $dataMovim->IdDomicilio)
+				    							->first();
+				    $_SESSION['dataMovimDisp']['Cliente'] = ['Id' => $datosClie->Id,
+				                                              'ApellidoNombre' => $datosClie->ApellidoNombre,
+				                                              'IdDom' => $datosDom->Id,
+				                                              'Direccion' => $datosDom->Direccion,
+				                                              'Localidad' => $datosDom->Localidad,
+				                                              'Telefono' => $datosDom->Telefono,
+				                                              'Celular' => $datosDom->Celular ];
+				    $this->_editableBtnClie = false;
+		        }
+
 			    break;
 
 			case 'idEmpl':

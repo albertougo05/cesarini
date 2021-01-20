@@ -96,8 +96,8 @@ class FacturacAbonosController extends Controller
 
 		if ( $_SESSION['IdFactAbonos'] === "factAbonos@".date('Y-m-d') ) {
 			# Validar por session id...
-	    	date_default_timezone_set("America/Buenos_Aires");
-	    	$fecha = date('Y-m-d');
+			date_default_timezone_set("America/Buenos_Aires");
+			$fecha = date('Y-m-d');
 			$nroComp = $this->_getNroComprob('FA', 'B');
 
 			$datos = [ 'Fecha'          => $fecha,

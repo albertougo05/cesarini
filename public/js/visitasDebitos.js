@@ -1,6 +1,6 @@
 //
 // Realiza débitos por carga de cantidades entregadas en visitas
-// (Sifones a todos y Bidones a clientes sin abono)
+// (Sifones y agua destilada a todos y Bidones a clientes sin abono)
 //
 // http://localhost:8080/repartos/visitas/conidvisita?idvisita=539
 
@@ -19,19 +19,19 @@ const DEBITOS = {
 
 		const debito = (dat.cantid * dat.precio); 
 		$('input[name=' + nameInput).val(debito);
-
         //console.log('Input debito: ' + valDebito + ' - Debito por ' + prod + ': ' + debito);
         //console.log(dat, prod);
 	},
 
 	// Cuando pierde el foco el input deja...
 	onFocusOut: function (elem) {
+		const codsProdsDebitar = [1, 3, 5, 6, 15, 18];	// Códigos productos a debitar
 		const obj = this.setVariables(elem);
 
-			// Si los productos son soda...
-			if ( obj.idprod === 15 || obj.idprod === 18 ) {
+			// Si los productos son soda y agua destilada...
+			if (codsProdsDebitar.includes(obj.idprod)) {
 
-				this.debitoComun(obj, 'soda');		// Debito por soda
+				this.debitoComun(obj, 'soda');		// Debito por soda o agua dest
 
 			} else {		// Si el cliente NO TIENE ABONO
 				

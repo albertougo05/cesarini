@@ -1,5 +1,27 @@
+//
 // codigo javascript
 // 
+ 
+/**
+ * Funcionamiento boton UpScroll
+ */ 
+const _botonUp = document.getElementById("scrollUp");
+
+_botonUp.addEventListener("click", function () {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+});
+// When the user scrolls down 300px from the top of the document, show the button
+window.onscroll = function() {
+    if (document.body.scrollTop > 280 || document.documentElement.scrollTop > 280) {
+         _botonUp.style.display = "block";
+    } else {
+         _botonUp.style.display = "none";
+    }    
+};
+/** end **/
+
+
 var _tablaProductos = [];
 var _idVisitaParaImp = 0;
 
@@ -54,8 +76,8 @@ function _strToFloat(num) {
 }
 
 
-// Obtiene el precio del Producto Sifon de Soda
-async function _getPrecioSoda(id, produc, retira, devuel ) {
+// Obtiene el precio del Producto
+async function _getPrecioProducto(id, produc, retira, devuel ) {
     const param = `?id=${id}`;
     const debitoAct = parseFloat( $('input#debito').val() ) || 0; 
     let precio = 0, debito = 0;
@@ -116,22 +138,6 @@ $(document).ready( function () {
         oncleared: function () { self.value(''); }
     });
 
-    // Boton de ir arriba
-    $('div#scrollUp').click( function () {
-        $('body, html').animate({
-            scrollTop: '0px'
-        }, 300);
-    });
-
-    // Para chequear scroll para boton ir arriba
-    $(window).scroll( function () {
-        if( $(this).scrollTop() > 0 ) {
-            $('#scrollUp').show();
-        } else {
-            $('#scrollUp').hide();
-        }
-    });
-
     // Al iniciar pongo focus en select empleado
     $('select#selectEmpleado').focus();
 
@@ -173,10 +179,11 @@ $(document).ready( function () {
 
     // Boton ingresa Producto
     $('button#btnIngresaProd').click(function (event) {
-    	let idprod = $('#selectProducto').val();
+        const codsProdsDebitar = [1, 3, 5, 6, 15, 18];  // Códigos productos a debitar
+    	let idprod = parseInt( $('#selectProducto').val() );
     	let produc = $('#selectProducto option:selected').text();
-    	let retira = $('input#retira').val();
-    	let devuel = $('input#devuelve').val();
+    	let retira = parseInt( $('input#retira').val() );
+    	const devuel = $('input#devuelve').val();
 
     	// Chequear cliente
     	if ( $('input#idcliente').val() == 0 ) {
@@ -201,10 +208,9 @@ $(document).ready( function () {
     			$('#btnCancela').prop('disabled', false);
     		}
 
-            if (idprod == 15 || idprod == 18) {    // Si seleccionó Soda, buscar precio
-
-                _getPrecioSoda(idprod, produc, retira, devuel);
-
+            if ( codsProdsDebitar.includes(idprod) ) {
+                // Si seleccionó Soda o Agua Destilada, buscar precio
+                _getPrecioProducto(idprod, produc, retira, devuel);
             } else {
                 // Agregar valores variable global
                 _tablaProductos.push( { id: idprod, prod: produc, ret: retira, dev: devuel, ent: 0, deb: 0, precio: 0 } );
@@ -217,7 +223,6 @@ $(document).ready( function () {
 			// Reset inputs y select
 			$('input#retira').val('');
 			$('input#devuelve').val('');
-
 			$('#selectProducto').val(0).focus();
     	}
     });

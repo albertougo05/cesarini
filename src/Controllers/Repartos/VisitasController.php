@@ -15,6 +15,7 @@ use App\Models\Visita;
 use App\Models\VisitaSalidaProducto;
 use App\Models\VisitaDetalleCliente;
 use App\Models\VisitaMovimDispenser;
+use App\Models\Usuario;
 
 use App\Controllers\Controller;
 
@@ -29,6 +30,8 @@ class VisitasController extends Controller
 {
 	private $_accion;
 	private $_sumaEntregas;
+	private $_sumaHielo;
+	private $_sumaOtros;
 
 	/**
 	 * Visitas a clientes
@@ -42,19 +45,21 @@ class VisitasController extends Controller
 	{
 		$this->_accion = 'Nueva';
 		$usuario = $this->auth->user();
-		$nivelUser = $usuario->Nivel;
 		$empleados = $this->EmpleadosController->listaEmpleadosActivos();
 	    date_default_timezone_set("America/Buenos_Aires");
 	    $fecha = date('Y-m-d');
-	    $fechaDesde = date("Y-m-d", strtotime($fecha."- 60 days")); 
+	    $desdeResum = date("Y-m-d", strtotime($fecha."- 30 days"));
 
 		$datos = array('titulo'     => 'Cesarini - Visitas',
-					   'nivelUser'  => $nivelUser,
+					   'nivelUser'  => $usuario->Nivel,
+					   'usuario'    => $usuario,
 			           'accion'     => $this->_accion,
-			           'editable'   => false,
+			           'editable'   => true,
+			           'verBtnGR'   => true,
 			           'dataGuia'   => ['idvisita' => 0, 'fechavisita' => $fecha],
-			           'fechaDesde' => $fechaDesde,
+			           'fechaDesde' => date("Y-m-d", strtotime($fecha."- 60 days")),
 			           'fechaHasta' => $fecha,
+			           'desdeResum' => $desdeResum,
 			           'empleados'  => $empleados);
 
 		return $this->view->render($response, 'repartos/visitas/visitas.twig', $datos);
@@ -72,7 +77,6 @@ class VisitasController extends Controller
 	{
 		$this->_accion = 'Nueva';  // Ver esto !!
 		$usuario       = $this->auth->user();
-		$nivelUser     = $usuario->Nivel;
 		$idGuia        = $request->getParam('idguia');
 		$guiaRep       = $this->_dataGuiaReparto($idGuia);
 		// Agrego datos de la visita
@@ -81,6 +85,7 @@ class VisitasController extends Controller
 		$guiaRep['fechavisita'] = date('Y-m-d');
 	    $fecha                  = date('Y-m-d');
 	    $fechaDesde             = date("Y-m-d", strtotime($fecha."- 60 days")); 
+	    $desdeResum = date("Y-m-d", strtotime($fecha."- 30 days"));
 		$guiaRep['pendiente']   = 1;
 
 		$clientes  = $this->_clientesGuiaRep($idGuia, $fecha);		// Clientes de la guia de reparto
@@ -94,17 +99,20 @@ class VisitasController extends Controller
 		//$this->logger->debug('Con todos lo datos de la GR', array('Id GR: ' => $idGuia));
 
 		$datos = array( 'titulo'    => 'Cesarini - Visitas',
-						'nivelUser' => $nivelUser,
+						'nivelUser' => $usuario->Nivel,
+						'usuario'   => $usuario,
 			            'accion'    => $this->_accion,
-			            'editable'  => true,
+			            'editable'  => false,
+			            'verBtnGR'  => false,
 			            'empleados' => $empleados,
 			            'productos' => $productos,
 			            'listaprod' => $listaProd,
 			       	    'dataGuia'  => $guiaRep,
 			       	    'dataClie'  => $clientes,
 			       	    'dataDisp'  => $dataDisp,
-			            'fechaDesde' => $fechaDesde,
-			            'fechaHasta' => $fecha,
+			            'fechaDesde'=> $fechaDesde,
+			            'fechaHasta'=> $fecha,
+			            'desdeResum'=> $desdeResum,
 			       	    'ultimOrd'  => $ultimOrd );
 
 		return $this->view->render($response, 'repartos/visitas/visitas.twig', $datos);
@@ -122,40 +130,32 @@ class VisitasController extends Controller
 	{
 		$this->_accion = 'Modifica';
 		$usuario = $this->auth->user();
-		$nivelUser = $usuario->Nivel;
 	    date_default_timezone_set("America/Buenos_Aires");
 	    $fecha = date('Y-m-d');
-	    $fechaDesde = date("Y-m-d", strtotime($fecha."- 60 days")); 
+	    $fechaDesde = date("Y-m-d", strtotime($fecha."- 60 days"));
+	    $desdeResum = date("Y-m-d", strtotime($fecha."- 30 days"));
 
 		// Datos de la visita
 		$visita = Visita::find($request->getParam('idvisita'));
 
-		// Busco datos Guia de Reparto de la visita...
-		$dataVisita = $this->_dataGuiaReparto($visita->IdGuiaReparto);
-		$dataVisita['idvisita'] = $request->getParam('idvisita');
-		$dataVisita['fechavisita'] = $visita->Fecha;
-
-		// Si el IdGuiaReparto es 0, es una visita en planta...
-		// Verifico Empleado, que puede ser cambiado al de la guía de reparto
-		if ( $dataVisita['idempl'] != $visita->IdEmpleado) {
-			$empleado = Empleado::find($visita->IdEmpleado);
-			$dataVisita['idempl']     = $visita->IdEmpleado;
-			$dataVisita['nombreempl'] = $empleado->ApellidoNombre;
+		// Chequear si la visita tiene mas de 5 dias de realizada, cambiar pendiente a false
+		if ($this->_checkDiasPendiente($visita)) {
+			$visita->Pendiente = false;
+			Visita::where('Id', $request->getParam('idvisita'))
+					->update(['Pendiente' => false]);
 		}
-
-		$dataVisita['salida']    = $visita->HoraSalida;
-		$dataVisita['retorno']   = $visita->HoraRetorno;
-		$dataVisita['pendiente'] = $visita->Pendiente;
-		$dataVisita['observac']  = $visita->Observaciones;
 
     	// Productos de la visita
 		$productos = $this->_productosVisita($request->getParam('idvisita'));
-		// Clientes de la visita
+		// Clientes de la visita (suma de entregas y productos)
 		$clientes  = $this->_clientesVisita($request->getParam('idvisita'));
+		// Busco datos Guia de Reparto de la visita...
+		$dataVisita = $this->_dataGuiaReparto($visita->IdGuiaReparto);
+		// Cargo otros datos de la visita
+		$dataVisita = $this->_masDatosVisita($visita, $dataVisita);
+
 		// Suma productos dejados
 		$productos = $this->_sumaProdDejados($productos, $clientes);
-		// Suma de entregas
-		$dataVisita['entregas']  = $this->_sumaEntregas;
 		// Listas para busquedas...
 		$empleados = $this->EmpleadosController->listaEmpleadosActivos();
 		// Lista de productos, para modal agregar cliente y prod
@@ -164,9 +164,11 @@ class VisitasController extends Controller
 		$dataDisp  = $this->_movimDispAsoc($request->getParam('idvisita'));
 
 		$datos = array( 'titulo'     => 'Cesarini - Visitas',
-						'nivelUser'  => $nivelUser,
+						'nivelUser'  => $usuario->Nivel,
+						'usuario'    => $usuario,
 			            'accion'     => $this->_accion,
-			           	'editable'   => ($visita->IdGuiaReparto == 0) ? false: true,   // Para botón Agregar Cliente
+			           	'editable'   => ($visita->IdGuiaReparto === 0) ? false : true,   // Para botón Agregar Cliente
+			           	'verBtnGR'   => false,
 			          	'empleados'  => $empleados,
 			            'productos'  => $productos,
 			            'listaprod'  => $listaProd,
@@ -175,6 +177,7 @@ class VisitasController extends Controller
 			            'dataDisp'   => $dataDisp,
 			       	    'dataGuia'   => $dataVisita,
 			       	    'dataClie'   => $clientes,
+			       	    'desdeResum' => $desdeResum,
 			       	    'ultimOrd'   => ( count($clientes) > 0 ) ? $clientes[count($clientes) - 1]['orden'] : 0 );
 
 		return $this->view->render($response, 'repartos/visitas/visitas.twig', $datos);
@@ -192,6 +195,7 @@ class VisitasController extends Controller
 	{
 		$datos = array( 'IdGuiaReparto' => (integer) ($request->getParam('idguiarep') == '') ? 0 : $request->getParam('idguiarep'), 
 					    'IdEmpleado'    => (integer) $request->getParam('idemplead'),
+					    'IdUsuario'     => (integer) $request->getParam('idUsuario'),
 					    'Fecha'         => $request->getParam('fechavisita'),
 					    'HoraSalida'    => $request->getParam('horaSalida'),
 					    'HoraRetorno'   => $request->getParam('horaRetorno'),
@@ -263,30 +267,17 @@ class VisitasController extends Controller
 	{
 		// Datos de la visita
 		$visita = Visita::find($request->getParam('idvisita'));
-
-		// Busco datos Guia de Reparto de la visita...
-		$dataVisita = $this->_dataGuiaReparto($visita->IdGuiaReparto);
-
-		$dataVisita['idvisita']    = $request->getParam('idvisita');
-		$dataVisita['fechavisita'] = $visita->Fecha;
-		$dataVisita['salida']      = $visita->HoraSalida;
-		$dataVisita['retorno']     = $visita->HoraRetorno;
-		$dataVisita['observac']    = $visita->Observaciones;
-		// Verifico Empleado, que puede ser cambiado al de la guía de reparto
-		if ( $visita->IdGuiaReparto == 0 || $dataVisita['idempl'] != $visita->IdEmpleado) {
-			$empleado = Empleado::find($visita->IdEmpleado);
-			$dataVisita['idempl']     = $visita->IdEmpleado;
-			$dataVisita['nombreempl'] = $empleado->ApellidoNombre;
-		}
-
     	// Productos de la visita
 		$productos = $this->_productosVisita($request->getParam('idvisita'));
 		// Clientes de la visita
 		$clientes = $this->_clientesVisita($request->getParam('idvisita'), true);
 		// Suma productos dejados
 		$productos = $this->_sumaProdDejados($productos, $clientes);
-		// Suma de entregas (se suma en $this->_clientesVisita(...))
-		$dataVisita['entregas']  = $this->_sumaEntregas;
+		// Busco datos Guia de Reparto de la visita...
+		$dataVisita = $this->_dataGuiaReparto($visita->IdGuiaReparto);
+		// Agrego datos a la visita
+		$dataVisita = $this->_masDatosVisita($visita, $dataVisita);
+
 		date_default_timezone_set("America/Buenos_Aires");
 	    $fecha = date('d/m/Y');
 		// Mov. dispenser asociados a la visita
@@ -368,11 +359,18 @@ class VisitasController extends Controller
 
 		foreach ($visitas as $value) {
 
+			if ( isset($value->GuiaReparto->Nombre) ) {
+				$nombreGR = $value->GuiaReparto->Nombre;
+			} else {
+				$nombreGR = "";
+			}
+
 			$arr = [ 'id'       => $value->Id, 
-				 	 'fecha'    => $value->Fecha, 
+				 	 'fecha'    => $value->Fecha,
+				 	 'nombre'   => $nombreGR,
 				     'empleado' => $value->Empleado->ApellidoNombre, 
-				     'diasem'   => ($value->IdGuiaReparto === 0) ? '' : $value->GuiaReparto->DiaSemana,
-				     'turno'    => ($value->IdGuiaReparto === 0) ? '' : $value->GuiaReparto->Turno,
+				     //'diasem'   => ($value->IdGuiaReparto === 0) ? '' : $value->GuiaReparto->DiaSemana,
+				     //'turno'    => ($value->IdGuiaReparto === 0) ? '' : $value->GuiaReparto->Turno,
 					 'salida'   => $value->HoraSalida, 
 					 'retorno'  => $value->HoraRetorno,
 					 'pendiente' => $value->Pendiente ];
@@ -380,6 +378,45 @@ class VisitasController extends Controller
 		}
 
 		return json_encode($arrListado);
+	}
+
+	private function _masDatosVisita($visita, $dataVisita)
+	{
+		$dataVisita['idvisita'] = $visita->Id;
+		$dataVisita['fechavisita'] = $visita->Fecha;
+		$dataVisita['idguiarep'] = $visita->IdGuiaReparto;
+
+		// Si el IdGuiaReparto es 0, es una visita en planta...
+		// Verifico Empleado, que puede ser cambiado al de la guía de reparto
+		if ( $dataVisita['idempl'] != $visita->IdEmpleado) {
+			$empleado = Empleado::find($visita->IdEmpleado);
+			$dataVisita['idempl']     = $visita->IdEmpleado;
+			$dataVisita['nombreempl'] = $empleado->ApellidoNombre;
+		}
+
+		// Busco Nombre Usuario
+		if ($visita->IdUsuario > 0) {
+			$dataVisita['idusuario'] = $visita->IdUsuario;
+			$usuario = Usuario::find($visita->IdUsuario);
+			if ($usuario) {
+				$dataVisita['usuario'] = $usuario->Usuario;
+			} else {
+				$dataVisita['usuario'] = $usuario->Usuario;				
+			}
+		}
+
+		$dataVisita['salida']    = $visita->HoraSalida;
+		$dataVisita['retorno']   = $visita->HoraRetorno;
+		$dataVisita['pendiente'] = $visita->Pendiente;
+		$dataVisita['observac']  = $visita->Observaciones;
+		// Suma de entregas
+		$dataVisita['entregas']  = $this->_sumaEntregas;
+		// Suma de hielo
+		$dataVisita['sumaHielo'] = $this->_sumaHielo;
+		// Suma de otros productos
+		$dataVisita['sumaOtros'] = $this->_sumaOtros;
+
+		return $dataVisita;
 	}
 
 	/**
@@ -401,12 +438,8 @@ class VisitasController extends Controller
 		// Indice para los Id de registros
 		$idxIds = 0;
 
-//echo "<pre>";
-//print_r($dataProdsClies);
-//echo "</pre><br><pre>";
-//print_r($idsRegistros);
-//echo "</pre><br>";
-//die('Ver...');
+		//echo "<pre>"; print_r($dataProdsClies); echo "</pre><br><pre>";
+		//print_r($idsRegistros); echo "</pre><br>"; die('Ver...');
 
 		try {
 			// 
@@ -587,7 +620,7 @@ class VisitasController extends Controller
 	private function _clientesVisita($idVisita, $esPrint = false)
 	{
 		$clisVisit = [];
-		$sumaEntregas = 0;
+		$sumaEntregas = $sumaHielo = $sumaOtros = 0;
 		$clientesVisita = VisitaDetalleCliente::where('IdVisita', $idVisita)
 												->orderBy('OrdenVisita')
 												->get();
@@ -639,11 +672,20 @@ class VisitasController extends Controller
 							 'abono'     => $abono ];
 
 			$sumaEntregas += $value->Entrega;
+			// Si el producto es Tipo Hielo...
+			if ($value->IdProducto >= 9 && $value->IdProducto <= 14) {
+				$sumaHielo += $value->Entrega;
+			} else {
+				$sumaOtros += $value->Entrega;
+			}
+
 			$idx++;
 			unset($producto);
 		}
 
 		$this->_sumaEntregas = $sumaEntregas;
+		$this->_sumaHielo = $sumaHielo;
+		$this->_sumaOtros = $sumaOtros;
 
 		return $clisVisit;
 	}
@@ -1142,5 +1184,31 @@ class VisitasController extends Controller
 
 		return $direccion;
 	}
+
+	/**
+	 * Veririfca que si la visita tiene mas de 5 dias pendiente, 
+	 * si lo está, hay que destildar el pendiente (false)
+	 * 
+	 * @param  recordset  $visita
+	 * @return boolean  $pendiente
+	 */
+	private function _checkDiasPendiente($visita)
+	{
+		$pendiente = false;
+
+		if ($visita->Pendiente === 1) {
+			$fecha_actual = date("Y-m-d H:i:00",time());
+			$fecha_menos5 = strtotime(date("Y-m-d", strtotime($fecha_actual." -5 days")));
+			$fecha_visita = strtotime($visita->Fecha." 21:00:00");
+
+			if ($fecha_visita < $fecha_menos5) {
+				$pendiente = true;
+			}
+		}
+
+		return $pendiente;
+	}
+
+
 
 }

@@ -223,10 +223,8 @@ class ResumenController extends Controller
 
 		$sql = $sql . "ORDER BY vis.Fecha ASC, vdc.IdVisita ASC";
 
-		# Data del informe cobranzas...
-		$list = $this->pdo->pdoQuery($sql);
-
-		return $list;
+		# Retorna la Data del informe cobranzas...
+		return $this->pdo->pdoQuery($sql);
 	}
 
 	/**

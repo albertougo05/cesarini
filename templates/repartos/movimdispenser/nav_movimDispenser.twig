@@ -15,11 +15,13 @@
 	        		<a class="nav-link" href="{{ path_for('repartos.movimientodispenser') }}">Nuevo</a>
 	      		</li>
       		{% endif %}
-		    <li id="linkBorrar" class="nav-item {{ (accion == 'Nuevo' and editable) ? 'disabled' : 'active' }}">
+
+{#		    <li id="linkBorrar" class="nav-item {{ (accion == 'Nuevo' and editable) ? 'disabled' : 'active' }}">
 	        	<a id="linkBorrar" class="nav-link" href="#"{{ (accion == 'Nuevo' or not editable) ? ' disabled' : '' }}>Eliminar</a>
 		    </li>
+#}
 		    <li class="nav-item active">
-		        <a class="nav-link buscar" href="{{ path_for('repartos.movimientodispenser.buscar') }}">Buscar</a>
+		        <a class="nav-link buscar" href="#modalBuscarMovimDisp" data-toggle="modal" data-target="#modalBuscarMovimDisp">Buscar</a>
 		    </li>				    
 		    <li class="nav-item active">
 	        	<a class="nav-link" href="{{ path_for('home') }}">Salir</a>

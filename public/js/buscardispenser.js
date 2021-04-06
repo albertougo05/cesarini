@@ -1,5 +1,23 @@
 // Código javascript
 
+const _botonUp = document.getElementById("scrollUp");
+
+_botonUp.addEventListener("click", function () {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+});
+// When the user scrolls down 300px from the top of the document, show the button
+window.onscroll = function() {
+    if (document.body.scrollTop > 280 || document.documentElement.scrollTop > 280) {
+        //$('#scrollUp').show();
+         _botonUp.style.display = "block";
+    } else {
+        //$('#scrollUp').hide();
+         _botonUp.style.display = "none";
+    }    
+};
+/** end **/
+
 
 // Variable para saber que boton está modificando fecha
 var _idRadioFecha = '';
@@ -8,7 +26,6 @@ var _idRadioFecha = '';
 // Returns true if checked, false if unchecked. */
 
 function actualizoRadioOrden() {
-
 	$('input:radio#' + global_radioButtonCheck).prop("checked", true);
 }
 
@@ -17,22 +34,6 @@ function actualizoRadioOrden() {
 $(document).ready( function () {
 	// Actualiza radio buttons cuando carga la página
 	actualizoRadioOrden();
-
-    // Boton de ir arriba
-    $('div#scrollUp').click( function () {
-        $('body, html').animate({
-            scrollTop: '0px'
-        }, 300);
-    });
-
-    // Para chequear scroll para boton ir arriba
-    $(window).scroll( function () {
-        if( $(this).scrollTop() > 0 ) {
-            $('#scrollUp').show();
-        } else {
-            $('#scrollUp').hide();
-        }
-    });
 
     $('table#tablaBuscarGuia tr').unbind('click');
 
@@ -47,7 +48,7 @@ $(document).ready( function () {
             // Va a form InfoMovDisp
             _urlParam = _urlParam.replace(/amp;/g, '');
 
-//console.log('Va a: ' + global_infoMovDisp + _urlParam + "&idDisp=" + id);
+//console.log('Va a: ' + global_infoMovDisp + ' urlParam: ' + _urlParam + "&idDisp=" + id);
 
             location.assign(global_infoMovDisp + _urlParam + "&idDisp=" + id);
         } else {
@@ -97,9 +98,9 @@ $(document).ready( function () {
 
 	// Filtrado de tabla dispenser	
 	$('#guiaReparto').tableFilter({ tableID: '#tablaBuscarGuia', 
-                                   filterID: '#filter',
-                                   filterCell: '.filter-cell',
-		                           autofocus: true});
+                                    filterID: '#filter',
+                                    filterCell: '.filter-cell',
+	                                autofocus: true});
 
     $("input:radio[name='radioOrden']").unbind('click');
 

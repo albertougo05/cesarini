@@ -60,12 +60,16 @@
     		</div>
 
     		<div class="row">
-    			<div class="col-md-4 offset-md-1">
+    			<div class="col-md-3 offset-md-1">
     				<input id="filter" class="form-control" type="text" placeholder="Filtrar..." autofocus>
   				</div>
-  				<div class="col-md-7">
+  				<div class="col-md-8">
 					<div class="form-check form-check-inline">
-					    <input class="form-check-input" name="filtros" type="radio" id="radDiaSemana" value="dia" checked>
+					    <input class="form-check-input" name="filtros" type="radio" id="radNombre" value="dia" checked>
+					    <label class="form-check-label" for="radNombre">Nombre</label>
+					</div>
+					<div class="form-check form-check-inline">
+					    <input class="form-check-input" name="filtros" type="radio" id="radDiaSemana" value="dia">
 					    <label class="form-check-label" for="radDiaSemana">Día semana</label>
 					</div>
 					<div class="form-check form-check-inline">
@@ -80,10 +84,12 @@
 					    <input class="form-check-input" name="filtros" type="radio" id="radActividad" value="actividad">
 					    <label class="form-check-label" for="radActividad">Actividad</label>
 					</div>
-					<div class="form-check form-check-inline">
-					    <input class="form-check-input" name="filtros" type="radio" id="radEstado" value="estado">
-					    <label class="form-check-label" for="radEstado">Estado</label>
-					</div>
+					{% if vienede != 'visitas' %}
+						<div class="form-check form-check-inline">
+						    <input class="form-check-input" name="filtros" type="radio" id="radEstado" value="estado">
+						    <label class="form-check-label" for="radEstado">Estado</label>
+						</div>
+					{% endif %}
     			</div>
 			</div>
 
@@ -91,10 +97,11 @@
 
 			<div class="row">
 				<div class="col-md-10 offset-md-1">
-					<table class="table table-sm table-hover" id="tablaBuscarGuia">
+					<table class="table table-sm table-hover" id="tablaBuscarGuia" style="font-size: 85%;">
 		                <thead class="thead-dark">
 		                  <tr>
 		                    <th scope="col">Id</th>
+		                    <th scope="col">Nombre</th>
 		                    <th scope="col">Día semana</th>
 		                    <th scope="col">Turno</th>
 		                    <th scope="col">Empleado</th>
@@ -108,13 +115,14 @@
 		                    {% for guia in guiaReparto %}
 		    					<tr>
 		        				    <td>{{ guia.id }}</td>
-		      					    <td class="cellDia filter-cell">{{ guia.dia }}</td>
+		        				    <td class="cellNombre filter-cell">{{ guia.nombre }}</td>
+		      					    <td class="cellDia">{{ guia.dia }}</td>
 		      					    <td class="cellTurno">{{ guia.turno }}</td>
 		                            <td class="cellEmpleado">{{ guia.empleado }}</td>
 		                            <td class="cellActividad">{{ guia.actividad }}</td>
 		                            <td>{{ guia.salida[:5] }}</td>
 		                            <td>{{ guia.retorno[:5] }}</td>
-		                            <td>{{ guia.estado }}</td>
+		                            <td class="cellEstado">{{ guia.estado }}</td>
 		                        </tr>
 		                    {% endfor %}
 		                </tbody>
@@ -156,6 +164,9 @@
 				/** end **/
 
 			    // Radio buttons click radDiaSemana
+			    $('input#radNombre').click(function () {
+			    	cambiarCeldaBusq('cellNombre');
+			    });
 			    $('input#radDiaSemana').click(function () {
 			    	cambiarCeldaBusq('cellDia');
 			    });
@@ -175,7 +186,7 @@
 			    // Funcion para cambiar celda de busqueda
 			    function cambiarCeldaBusq(celda) {
 			    	$('input#filter').val('');   // Vacio el input
-			    	var celdaSel = ['cellDia', 'cellTurno', 'cellEmpleado', 'cellActividad', 'celEstado'];
+			    	var celdaSel = [ 'cellNombre', 'cellDia', 'cellTurno', 'cellEmpleado', 'cellActividad', 'cellEstado'];
 			    	// Remuevo clase filter-cell de todos los td
 			    	for (var i = 0; i < celdaSel.length; i++) {
 			    		if ($("td." + celdaSel[i]).hasClass("filter-cell")) {
@@ -184,8 +195,9 @@
 			    	}
 			    	// Busco el indice
 			    	var index = celdaSel.findIndex(function (data) {
-			    		return data == celda;
-			    	});
+			    			return data == celda;
+			    		});
+
 			    	$("td." + celdaSel[index]).toggleClass("filter-cell");
 			    	$("input#filter").focus();
 			    	$("input#filter").change();

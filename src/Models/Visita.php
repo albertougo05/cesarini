@@ -14,7 +14,8 @@ class Visita extends Model
 	protected $table = 'Visitas';
 	// Lista de campos modificables:
 	protected $fillable = ['IdGuiaReparto', 
-						   'IdEmpleado', 
+						   'IdEmpleado',
+						   'IdUsuario',
 						   'Fecha',
 						   'HoraSalida',
 						   'HoraRetorno',

@@ -17,7 +17,7 @@ use App\Controllers\Controller;
 
 /**
  * 
- * Clase RepartosController
+ * Clase RepartosController (Guias de Reparto)
  * 
  */
 class RepartosController extends Controller
@@ -123,16 +123,17 @@ class RepartosController extends Controller
 	private function _guardarGR($req)
 	{
 		$status = 'error';
-		$idGuia = $req->getParam('idGuia');
-		$data   = [ 'DiaSemana'   => $req->getParam('diaSemana'),
+		$data   = [ 'Nombre'      => $req->getParam('nombre'),
+					'DiaSemana'   => $req->getParam('diaSemana'),
 					'IdEmpleado'  => $req->getParam('idEmpleado'),
 					'Turno'       => $req->getParam('turno'),
 					'IdActividad' => $req->getParam('idActividad'),
 					'HoraSalida'  => $req->getParam('horaSalida'),
 					'HoraRetorno' => $req->getParam('horaRetorno'),
 					'Estado'      => $req->getParam('estado') ];
-		$guiaRep = GuiaReparto::updateOrInsert(['Id' => $idGuia], $data);
 
+		$guiaRep = GuiaReparto::updateOrInsert( ['Id' => $req->getParam('idGuia')], 
+												$data );
 		if ($guiaRep) {
 			$status = 'ok';
 		}
@@ -147,16 +148,6 @@ class RepartosController extends Controller
 		$idGuia = $req->getParam('idGuia');
 		$data = json_decode($req->getParam('dataClientes'));
 		$ordenVisita = 1;
-
-
-//echo "Id guia: ".$idGuia;
-//echo "<pre>";
-//print_r($data);
-//echo "<pre><br>";
-
-//die('Ver...');
-
-
 
 		$cant = ClienteReparto::where('IdReparto', $idGuia)->delete();
 
@@ -220,7 +211,8 @@ class RepartosController extends Controller
 		switch ($accion) {
 			case 'Nueva':
 				$data['idGuia'] = $this->_buscarIdNuevaGuia();
-				$data['data'] = ['Id'          => $data['idGuia'], 
+				$data['data'] = ['Id'          => $data['idGuia'],
+								 'Nombre'      => '',
 								 'DiaSemana'   => '0', 
 								 'Turno'       => '0', 
 								 'IdEmpleado'  => '0', 

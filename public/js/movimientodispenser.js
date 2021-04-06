@@ -128,17 +128,6 @@ $(document).ready( function () {
 		let selectEstado = $('select#Estado').val();
 		let estadoDispen = $('th#estadoDisp').html();
 
-//console.log('Id dispenser: ' + idDisp);
-//console.log('Id empleado: ' + idEmpl);
-//console.log('Id cliente: ' + idClie);
-//console.log('Fecha: ' + fecha);
-//console.log('Estado select: ' + selectEstado);
-//console.log('Estado dispen: ' + estadoDispen);
-//console.log('Fecha: ' + new Date(fecha));
-//console.log('Hoy: ' + hoy.getTime());
-//console.log('Fecha: ' + fechaObj.getTime());
-//console.log('Es mayor ?: ' + ( fechaObj.getTime() > hoy.getTime() ));
-
 		if (isEmpty(idDisp)) {
 			event.preventDefault();
 			_alertError('Debe ingresar un dispenser.');
@@ -182,7 +171,7 @@ $(document).ready( function () {
 			return false;
 		}
 
-//event.preventDefault();
+		//event.preventDefault();
 
 		// Finalmente si está todo Ok... Enviar el form !
 		$('#btnConfirma').prop({disabled: true});

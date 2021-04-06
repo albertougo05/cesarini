@@ -14,6 +14,7 @@ class GuiaReparto extends Model
 	protected $table = 'GuiaRepartos';
 	// Lista de campos modificables:
 	protected $fillable = [
+		'Nombre',
 		'DiaSemana', 
 		'Turno', 
 		'IdEmpleado',

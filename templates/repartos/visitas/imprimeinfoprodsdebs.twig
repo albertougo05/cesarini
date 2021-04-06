@@ -4,7 +4,7 @@
 	    <!-- Required meta tags -->
 	    <meta charset="utf-8">
 	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<link rel="icon" type="image/png" href="{{ base_url() }}/img/favicon.ico">
+		<link rel="icon" href="{{ base_url() }}/favicon.ico">
 
 	   <!-- Bootstrap CSS -->
 	   <link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/bootstrap.min.css">
@@ -40,10 +40,10 @@
 	<body>
 		<header>
 			<div class="container-fluid">
-				<div class="row justify-content-end">
-					<div class="col-xs-3">
-						<button id="btnImprimir" type="button" class="btn btn-primary">Imprimir</button>
-						<button id="btnVolver" type="button" class="btn btn-light mr-1">Volver</button>
+				<div class="row">
+					<div class="col-6 offset-6 d-flex justify-content-end pr-4">
+						<button id="btnImprimir" type="button" class="btn btn-lg btn-primary">Imprimir</button>
+						<button id="btnVolver" type="button" class="btn btn-lg btn-light ml-4">Volver</button>
 					</div>
 				</div>
 				<div class="row">
@@ -88,8 +88,7 @@
 			{% endif %}
 
 			<div class="row mt-0">
-				<div class="col-2"></div>
-				<div class="col">
+				<div class="col-8 offset-2">
 					<table class="table table-sm table-striped table-hover">
 					  	<thead class="thead-dark">
 					    	<tr>
@@ -117,26 +116,43 @@
 						</tbody>
 					</table>
 				</div>
-				<div class="col-2"></div>
+			</div>
+
+			<!-- <div class="row">
+				<div class="col-8 offset-2 d-flex justify-content-end">
+					<p>Total Débitos: $ &nbsp;<strong>{{ sumaProds|number_format(2, ',', '.') }}</strong> </p>
+				</div>
+			</div> -->
+
+			<div class="row">
+				<div class="col-8 offset-2 mt-4">
+					<div class="card">
+						<div class="card-body text-center">
+							Total de Abonos facturados en el Período: $ &nbsp;<strong>{{ totalAbonos.total|number_format(2, ',', '.') }}</strong>
+						</div>
+					</div>
+				</div>
 			</div>
 
 		</div>  {# end container #}
 
-		<script src="{{ base_url() }}/js/jquery-3.3.1.min.js"></script>
 		<script type="text/javascript">
-			// Codigo jQuery
-			$(document).ready(function(){
+			// Código JS  -  Se ejecuta cuando está cargado todo el DOM
+			(function() {
+				// Click en boton Volver
+			   	const btnVolver = document.getElementById('btnVolver');
 
-				// Para boton volver
-				$('#btnVolver').click( function() {
-			    	window.close();
-			    });
+			   	btnVolver.addEventListener('click', event => {
+			   		window.close();
+			   	});
 
-				// Boton Imprimir
-				$('#btnImprimir').click( function() {
-                    window.print();
-				});
-			});
+				// Click en boton Imprimir
+			   	const btnImprimir = document.getElementById('btnImprimir');
+
+			   	btnImprimir.addEventListener('click', event => {
+			   		window.print();
+			   	});
+			})();
 		</script>
 	</body>
 </html>

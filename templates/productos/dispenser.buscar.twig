@@ -180,23 +180,27 @@
 
 	{% include 'partes/modalFiltroFecha.twig' %}
 
-	{% block javascript %}
-		{{ parent() }}
-		<script src="{{ base_url() }}/js/jquery.tableFilter.js"></script>
-		<script>
-
-			var global_dispenser = "{{ path_for('productos.dispenser') }}";
-			var global_dispenserBuscar = "{{ path_for('productos.dispenser.buscar') }}";
-			var global_ordenaBuscar = "{{ path_for('productos.dispenser.ordenabuscar') }}";
-			var global_radioButtonCheck = "{{ radioButtonCheck }}";
-			var global_txtOrdenadoPor = "{{ txtOrdenadoPor }}";
-			var global_vieneDeMovimDisp = "{{ movimDisp }}";
-			var global_vieneDeInfoMovDisp = "{{ infoMovDisp }}";
-			var global_movimDispenser = "{{ path_for('repartos.movimientodispenser') }}";
-			var global_infoMovDisp = "{{ path_for('repartos.ordenainforme') }}";
-			var _urlParam = "{{ urlParam }}";
-
-		</script>
-		<script src="{{ base_url() }}/js/buscardispenser.js"></script>
-	{% endblock %}
 {% endblock %}
+
+{% block javascript %}
+	{{ parent() }}
+
+	<script src="{{ base_url() }}/js/jquery.tableFilter.js"></script>
+	<script>
+
+		var _urlParam = "{{ urlParam }}";
+
+		const global_dispenser          = "{{ path_for('productos.dispenser') }}";
+		const global_dispenserBuscar    = "{{ path_for('productos.dispenser.buscar') }}";
+		const global_ordenaBuscar       = "{{ path_for('productos.dispenser.ordenabuscar') }}";
+		const global_radioButtonCheck   = "{{ radioButtonCheck }}";
+		const global_txtOrdenadoPor     = "{{ txtOrdenadoPor }}";
+		const global_vieneDeMovimDisp   = "{{ movimDisp }}";
+		const global_vieneDeInfoMovDisp = "{{ infoMovDisp }}";
+		const global_movimDispenser     = "{{ path_for('repartos.movimientodispenser') }}";
+		const global_infoMovDisp        = "{{ path_for('repartos.ordenainforme') }}";
+
+	</script>
+	<script src="{{ base_url() }}/js/buscardispenser.js?ver=0.0.4"></script>
+{% endblock %}
+

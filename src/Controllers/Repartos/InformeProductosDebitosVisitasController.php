@@ -65,19 +65,14 @@ class InformeProductosDebitosVisitasController extends Controller
 			$empleado = Empleado::find( $request->getParam('idemp') );
 		} else $empleado = [];
 
-//echo "<br><pre>"; 
-//print_r($listado); 
-//echo "</pre><br>";
-//echo "Periodo: ".$periodo; echo "<br><br>";
-//echo "Id empleado: ".$request->getParam('idemp'); echo "<br><br>";
-
-//die('Ver...');
+		$totalAbonos = $this->_getTotalAbonos($request->getParam('desde'), $request->getParam('hasta'));
 
 		$datos = [ 'titulo'   => 'Cesarini - Info Productos Débitos',
 				   'fecha'    => $fecha,
 				   'periodo'  => $periodo,
 				   'empleado' => $empleado,
-				   'listado'  => $listado ];
+				   'listado'  => $listado,
+				   'totalAbonos' => $totalAbonos ];
 
 		return $this->view->render($response, 'repartos/visitas/imprimeinfoprodsdebs.twig', $datos);
 	}
@@ -99,16 +94,16 @@ class InformeProductosDebitosVisitasController extends Controller
 		$sql = $sql . "LEFT JOIN Productos AS prod ON vdc.IdProducto = prod.Id ";
 		$sql = $sql . "LEFT JOIN TipoProducto AS tp ON prod.IdTipoProducto = tp.Id ";
 		$sql = $sql . "WHERE vdc.IdVisita IN (SELECT Id FROM Visitas AS vis WHERE ";
-		$sql = $sql . $this->_whereFechas($req->getParam('desde'), $req->getParam('hasta'));
+		$sql = $sql . $this->_whereFechas($req->getParam('desde'), $req->getParam('hasta'), "vis");
 
 		if ((integer) $req->getParam('idemp') > 0) {
 			$sql = $sql . " AND vis.IdEmpleado = " . $req->getParam('idemp') . ") ";
 		} else {
 			$sql = $sql . ") ";
 		}
-		$sql = $sql . "AND vdc.IdProducto <> 0 AND vdc.IdProducto <> 7 ";
-		$sql = $sql . "AND vdc.IdProducto <> 8 GROUP BY vdc.IdProducto ";
-		$sql = $sql . "ORDER BY Producto";//"ORDER BY vdc.IdProducto";
+		//$sql = $sql . "AND vdc.IdProducto <> 7 AND vdc.IdProducto <> 8 ";
+		$sql = $sql . "AND vdc.IdProducto <> 0 GROUP BY vdc.IdProducto ";
+		$sql = $sql . "ORDER BY Producto";   //"ORDER BY vdc.IdProducto";
 
 		return $sql;
 	}
@@ -120,25 +115,44 @@ class InformeProductosDebitosVisitasController extends Controller
 	 * @param  string $hasta
 	 * @return string
 	 */
-	private function _whereFechas($desde, $hasta)
+	private function _whereFechas($desde, $hasta, $alias)
 	{
 		if ($desde == '' && $hasta == '') {
 			$where = '';
 		} elseif ($hasta == '') {
 			$desde = date('Y-m-d', strtotime($desde));
-			$where = "vis.Fecha >= '".$desde."' ";
+			$where = $alias . ".Fecha >= '".$desde."' ";
 		} elseif ($desde == '') {
 			$hasta = date('Y-m-d', strtotime($hasta));
-			$where = "vis.Fecha <= '".$hasta."' ";
+			$where = $alias . ".Fecha <= '".$hasta."' ";
 		} else {
 			$desde = date('Y-m-d', strtotime($desde));
 			$hasta = date('Y-m-d', strtotime($hasta));
-			$where = "vis.Fecha >= '".$desde."' AND vis.Fecha <= '".$hasta."' ";
+			$where = $alias . ".Fecha >= '" . $desde . "' AND " . $alias . ".Fecha <= '" . $hasta."' ";
 		}
 
 		return $where;
 	}
 
+	/**
+	 * Devuelve el total de abonos facturados en el periodo
+	 * 
+	 * @param  [date] $desde
+	 * @param  [date] $hasta
+	 * @return [float]
+	 */
+	private function _getTotalAbonos($desde, $hasta)
+	{
+		$sql = "SELECT SUM(c.Total) AS total FROM Comprobantes c ";
+		$sql = $sql ."WHERE c.Concepto LIKE 'Abono%'";
 
+		if ($desde != '' || $hasta != '') {
+			$sql = $sql . " AND " . $this->_whereFechas($desde, $hasta, "c");
+		}
+
+		$total = $this->pdo->pdoQuery($sql);
+
+		return $total[0];
+	}
 
 }

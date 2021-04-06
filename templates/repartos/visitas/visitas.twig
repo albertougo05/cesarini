@@ -4,7 +4,7 @@
 		{{ parent() }}
 
 		<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
-		<link rel="stylesheet" href="{{ base_url() }}/css/visitas.css">
+		<link rel="stylesheet" href="{{ base_url() }}/css/visitas.css?ver=0.5.0">
 		<link rel="stylesheet" href="{{ base_url() }}/css/typeahead.css">
 		<link rel="stylesheet" href="{{ base_url() }}/css/table-scroll.css">
 
@@ -36,7 +36,7 @@
 
 	{% block content %}
 		<div class="container">
-			<div class="row justify-content-center">
+			<div class="row">
 				<div class="col" id="guiaReparto">
 					<h2 class="text-right" style="margin-bottom: 18px;"><strong>Visita a clientes</strong></h2>
 
@@ -45,7 +45,7 @@
 				    	{# GUIA REPARTO #}						
 						<div class="col cardVisitas ml-3">
 							<h5 style="display: inline;">Guía Reparto</h5>
-							<button type="button" class="d-inline float-right btn btn-success btn-sm" id="btnBuscarGuiaRep" style="margin-bottom: 10px;"{{ (editable) ? ' disabled' : '' }}>Buscar Guía Reparto</button>
+							<button type="button" class="d-inline float-right btn btn-success btn-sm" id="btnBuscarGuiaRep"{{ ( verBtnGR ) ? '' : ' disabled' }}>Buscar Guía Reparto</button>
 							<hr class="hrMovDisp">
 							{% if dataGuia.idguia > 0 %}
 								<p class="dataGuiaRep" id="idGuiaRep" data-idGuiaRep= "{{ dataGuia.idguia }}"><strong>{{ dataGuia.idguia }} -&nbsp;{{ dataGuia.dia }} ({{ dataGuia.turno }}) |&nbsp;{{ dataGuia.actividad }}</strong></p>
@@ -57,7 +57,7 @@
 						{# EMPLEADO #}						
 						<div class="col cardVisitas mr-3">
 							<h5 style="display: inline;">Repartidor</h5>
-							<button type="button" class="d-inline float-right btn btn-success btn-sm" id="btnBuscarEmp" style="margin-bottom: 10px;"{{ ( editable and dataGuia.pendiente ) ? '' : ' disabled' }}>Buscar empleado</button>
+							<button type="button" class="d-inline float-right btn btn-success btn-sm" id="btnBuscarEmp"{{ ( editable and dataGuia.pendiente ) ? '' : ' disabled' }}>Buscar empleado</button>
 							<hr class="hrMovDisp">
 							<p class="nomEmpleado" id="nombreEmpleado" data-idEmpl= "{{ dataGuia.idempl }}"><strong>{{ dataGuia.idempl }} -&nbsp;{{ dataGuia.nombreempl }}</strong></p>
 						</div>
@@ -119,13 +119,24 @@
 							<form id="dataObserv">
   								<div class="form-group row mb-0">
     								<label for="observ" class="col-2 col-form-label text-right">Observaciones</label>
-    								<div class="col-md-9">
+    								<div class="col-9">
     									<input type="text" id="observ" name="observ" class="form-control form-control-sm" value="{{ dataGuia.observac }}">
     								</div>
     							</div>
+    							{# Id usuario es siempre en usuario actual #}
+								<input type="hidden" id="idUsuario" name="idUsuario" value="{{ usuario.Id }}">
 							</form>
 						</div>
 					</div>
+
+				{# ULTIMO USUARIO QUE MODIFICÓ (Viene de la tabla) #}
+					{% if dataGuia.idusuario != 0 %}
+						<div class="row">
+							<div class="col mt-1 mb-0">
+								<p class="text-center mb-0">Último usuario que modificó:  &nbsp;{{ dataGuia.usuario }} &nbsp; ({{ dataGuia.idusuario }})</p>
+							</div>
+						</div>
+					{% endif %}
 
 					<div class="row">
 						<div class="col">
@@ -134,6 +145,17 @@
 					</div>
 
 					<div class="row mb-1">
+						<div class="col d-inline-flex">
+							<button type="button" class="d-inline btn btn-info btn-sm" id="btnImprimirResumenes"{{ (accion == 'Nueva') ? ' disabled' : '' }}>Resúmenes</button>
+							<div class="form-group col-5">
+								<label class="float-right" for="fechavisita">Desde</label>
+								<input type="date" class="form-control form-control-sm" id="fechaDesdeResum" value="{{ desdeResum }}"{{ (accion == 'Nueva') ? ' disabled' : '' }}>
+							</div>
+							<div class="form-group col-5">
+								<label class="float-right" for="fechavisita">Hasta</label>
+								<input type="date" class="form-control form-control-sm" id="fechaHastaResum" value="{{ fechaHasta }}"{{ (accion == 'Nueva') ? ' disabled' : '' }}>
+							</div>
+						</div>
 						<div class="col float-right">
 							<button type="button" class="d-inline btn btn-outline-secondary btn-sm" id="btnCancelarVisita">Cancelar</button>
 							<button type="button" class="d-inline btn btn-primary btn-sm" id="btnGuardarVisita"{{ ( productos and dataGuia.pendiente ) ? '' : ' disabled' }}>Guardar visita</button>
@@ -219,13 +241,27 @@
 
 					</div>
 
-					{# SUMA DE ENTREGAS #}
+					{# SUMAS #}
 					<div class="row">
-						<div class="col">
-							<div id="divSumaEntr" class="text-right mt-3">
-								<p class="font-weight-bold pr-2" id="sumaEntregas">Suma de entregas: $ {{ dataGuia.entregas|number_format(2, ',', '.') }}</p>
+						<div class="col-10">
+							<div id="tituloSumaEntr" class="text-right mt-1">
+								{# SUMAS DE ENTREGAS #}
+								<p class="font-weight-bold pr-2 mb-0" id="tituloSumaEntregas">Suma de entregas:</p>
+								{# SUBTOTAL PRODUCTO HIELO #}
+								<p class="pr-2 mt-0 mb-0" id="tituloSubTotalHielo">Entregas x Hielo:</p>
+								{# SUBTOTAL OTROS PRODUCTOS #}
+								<p class="pr-2 mt-0 mb-0" id="tituloSubTotalOtros">Entregas x Otros:</p>
 							</div>
-							<hr>
+						</div>
+						<div class="col-2">
+							<div id="divSumaEntr" class="text-right mt-1">
+								{# SUMAS DE ENTREGAS #}
+								<p class="font-weight-bold pr-2 mb-0" id="sumaEntregas">$&nbsp; {{ dataGuia.entregas|number_format(2, ',', '.') }}</p>
+								{# SUBTOTAL PRODUCTO HIELO #}
+								<p class="pr-2 mt-0 mb-0" id="subTotalHielo">$&nbsp; {{ dataGuia.sumaHielo|number_format(2, ',', '.') }}</p>
+								{# SUBTOTAL OTROS PRODUCTOS #}
+								<p class="pr-2 mt-0 mb-0" id="subTotalOtros">$&nbsp; {{ dataGuia.sumaOtros|number_format(2, ',', '.') }}</p>
+							</div>
 						</div>
 					</div>
 
@@ -302,12 +338,6 @@
 												<td>
 													<input onfocusout="VISITAS._onFocusOut(this, 'debi');" name="debi_{{ datcli.idclie }}x{{ datcli.iddomic }}_{{ datcli.idprod }}o{{ datcli.orden }}" class="form-control form-control-sm celInputEntr nroFloat" type="text" value="{{ datcli.debito }}"{{ (dataGuia.pendiente) ? '' : 'disabled' }}>
 												</td>
-
-{# Usar css font-awesome.min.css
-												<td class="text-center pl-0 pr-0">
-													<button type="button" id="btnElimCli" data-idcli="{{ datcli.idclie }}" data-nomcli="{{ datcli.cliente }}" data-iddom="{{ datcli.iddomic }}" data-idprod="{{ datcli.idprod }}" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="right" title="Borrar"><i class="fa fa-trash" aria-hidden="true"></i></button>
-										        </td>
-#}
 		    								</tr>
 				    					{% endfor %}
 		    						</tbody>
@@ -411,6 +441,7 @@
 				pathDispsDeClie:   "{{ path_for('productos.dispenser.decliente') }}",
 				pathStockEnvases:  "{{ path_for('productos.stockenvases') }}",
 				pathDebitoByAjax:  "{{ path_for('ctasctes.generacomprobbyajax') }}",
+				pathImprimirResumenes: "{{ path_for('repartos.visitas.impresumdetallado') }}",
 				hayClientes:       "{{ (dataClie) ? 1 : 0 }}",
 				ultimOrden:        parseInt("{{ ultimOrd }}") || 0,
 				accion:            "{{ accion }}",
@@ -476,7 +507,7 @@
 			{% endfor %}
 
 		</script>
-		{% set version = '?ver=0.1.8'%}
+		{% set version = '?ver=0.8.1'%}
 
 		<script src="{{ base_url() }}/js/enterXtab.js"></script>
 		<script src="{{ base_url() }}/js/visitas.js{{ version }}"></script>

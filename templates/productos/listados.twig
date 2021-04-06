@@ -96,29 +96,30 @@
 		</div>  {#  /.row #}
 	</div>  {# /.container #}
 
-	{% block javascript %}
-		{{ parent() }}
+{% endblock %}
 
-		<script>
-			// Codigo jQuery:
-			$(document).ready( function () {
-			    // Boton de ir arriba
-			    $('#scrollUp').click( function () {
-			        $('body, html').animate({
-			            scrollTop: '0px'
-			        }, 300);
-			    });
+{% block javascript %}
+	{{ parent() }}
 
-			    // Para chequear scroll para boton ir arriba
-			    $(window).scroll( function () {
-			        if( $(this).scrollTop() > 0 ) {
-			            $('#scrollUp').show();
-			        } else {
-			            $('#scrollUp').hide();
-			        }
-			    });
-			});
-		</script>
+	<script>
+		// Codigo jQuery:
+		$(document).ready( function () {
+		    // Boton de ir arriba
+		    $('#scrollUp').click( function () {
+		        $('body, html').animate({
+		            scrollTop: '0px'
+		        }, 300);
+		    });
 
-	{% endblock %}
+		    // Para chequear scroll para boton ir arriba
+		    $(window).scroll( function () {
+		        if( $(this).scrollTop() > 0 ) {
+		            $('#scrollUp').show();
+		        } else {
+		            $('#scrollUp').hide();
+		        }
+		    });
+		});
+	</script>
+
 {% endblock %}

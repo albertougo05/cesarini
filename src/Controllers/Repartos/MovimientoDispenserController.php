@@ -35,12 +35,12 @@ class MovimientoDispenserController extends Controller
 	{
 		$this->_editable = true;
 		$this->_editableBtnClie = true;
+		date_default_timezone_set("America/Buenos_Aires");
+		$fecha = date('Y-m-d');
 
 		if (empty($request->getParams())) {
 			# Si no hay parametros pasados...
 			$this->_accion  = 'Nuevo';
-	    	date_default_timezone_set("America/Buenos_Aires");
-	    	$fecha = date('Y-m-d');
 			$data = [ 'Fecha' => $fecha,
                       'IdEmpleado' => 0,
 					  'IdCliente'  => 0,
@@ -64,13 +64,17 @@ class MovimientoDispenserController extends Controller
 		$estados = ['Stock', 'Service', 'Cliente', 'Baja'];
 		$empleados = $this->EmpleadosController->listaEmpleadosActivos();
 
+	    $fechaDesde = date("Y-m-d", strtotime($fecha."- 45 days")); 
+
 		$datos = array('titulo'    => 'Cesarini - Movim. dispenser',
-			           'estados'   => $estados,
-			           'accion'    => $this->_accion,
-			           'editable'  => $this->_editable,
-			           'editableBtnClie' => $this->_editableBtnClie,
-			           'empleados' => $empleados,
-			       	   'data'      => $data);
+					   'estados'   => $estados,
+					   'accion'    => $this->_accion,
+					   'editable'  => $this->_editable,
+					   'editableBtnClie' => $this->_editableBtnClie,
+					   'empleados' => $empleados,
+					   'fechaDesde'=> $fechaDesde,
+					   'fechaHasta'=> $fecha,
+					   'data'      => $data);
 
 		return $this->view->render($response, 'repartos/movimdispenser/movimDispenser.twig', $datos);
 	}
@@ -112,6 +116,12 @@ class MovimientoDispenserController extends Controller
 		return $response->withRedirect($this->router->pathFor('repartos.movimientodispenser'));
 	}
 
+
+
+//
+// VOY A REEMPLAZAR ESTO POR UN MODAL COPIADO DE BUSCAR VISITAS
+//
+
 	/**
 	 * Inicio de busqueda de movimiento dispenser (ordena por fecha - Mas actuales arriba)
 	 * Name: repartos.movimientodispenser.buscar
@@ -122,20 +132,37 @@ class MovimientoDispenserController extends Controller
 	 */
 	public function buscar($request, $response)
 	{
-		$listado = MovimientoDispenser::orderBy('Fecha', 'desc')
-									  ->orderBy('Id', 'desc')
+		$desde = $request->getParam('desde');
+		$hasta = $request->getParam('hasta');
+		$arrListado = [];
+		$movims = MovimientoDispenser::where([ ['Fecha', '>=', $desde], 
+												['Fecha', '<=', $hasta] ])
+									  ->orderBy('Fecha', 'desc')
 									  ->get();
-		$txtOrdenadoPor = 'Fecha (desc)';
-		$radioButtonCheck = "FechaAlta";
 
-		$datos = ['titulo'   => 'Cesarini - Buscar mov. dispenser',
-				  'accion'   => 'Buscar',
-				  'txtOrdenadoPor' => $txtOrdenadoPor,
-				  'radioButtonCheck' => $radioButtonCheck,
-				  'listado'  => $listado ];
+		foreach ($movims as $value) {
+			if ($value->IdCliente === 0) {
+				$cliente = '';
+			} else {
+				$cliente = $value->Cliente->ApellidoNombre;
+			}
+			$arr = [ 'Id' => $value->Id,
+					 'Fecha' => $value->Fecha,
+					 'NroInterno' => $value->Dispenser->NroInterno,
+					 'Modelo' => $value->Dispenser->Modelo,
+					 'Empleado' => $value->Empleado->ApellidoNombre,
+					 'Cliente' => $cliente,
+					 'Estado' => $value->Estado ];
 
-		return $this->view->render($response, 'repartos/movimdispenser/buscar.twig', $datos);
+			$arrListado[] = $arr;
+		}
+
+		return json_encode($arrListado);
 	}
+
+
+
+
 
 	/**
 	 * Buscar cliente y su domicilo de tabla ClientesDomicilio

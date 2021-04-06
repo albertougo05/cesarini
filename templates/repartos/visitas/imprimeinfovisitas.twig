@@ -126,21 +126,21 @@
 
 		</div>  {# end container #}
 
-		<script src="{{ base_url() }}/js/jquery-3.3.1.min.js"></script>
 		<script type="text/javascript">
-			// Codigo jQuery
-			$(document).ready(function(){
+			// Código JS
+			(function() {
+				// Click en boton Volver
+			   	const btnVolver = document.getElementById('btnVolver');
+			   	btnVolver.addEventListener('click', event => {
+			   		window.close();
+			   	});
 
-				// Para boton volver
-				$('#btnVolver').click( function() {
-			    	window.close();
-			    });
-
-				// Boton Imprimir
-				$('#btnImprimir').click( function() {
-                    window.print();
-				});
-			});
+				// Click en boton Imprimir
+			   	const btnImprimir = document.getElementById('btnImprimir');
+			   	btnImprimir.addEventListener('click', event => {
+			   		window.print();
+			   	});
+			})();
 		</script>
 	</body>
 </html>

@@ -299,32 +299,32 @@
     </div>
 
     {% include 'partes/modalFiltroFecha.twig' %}
-
     {% include 'partes/modalBuscaClie.twig' %}
 
-    {% block javascript %}
-        {{ parent() }}
-        <script src="{{ base_url() }}/js/jquery.tableFilter.js"></script>
+{% endblock %}
 
-        <script>
-            var global_ordenainforme = "{{ path_for('repartos.ordenainforme') }}";
-            var global_datamovimdisp = "{{ path_for('repartos.datamovimdisp') }}";
-            var global_buscardisp = "{{ path_for('productos.dispenser.buscar') }}";
-            //var global_imprimeinforme = "{{ path_for('repartos.imprimeinforme') }}";
-            var global_buscarcliente 
-            // Objeto con los parametros de opciones y filtros
-            var _urlParams = {
-                    column: "{{ urlParams.column }}",
-                     orden: "{{ urlParams.orden }}",
-                  ordFecha: "{{ urlParams.ordFecha }}",
-                     desde: "{{ urlParams.desde }}",
-                     hasta: "{{ urlParams.hasta }}",
-                    idDisp: "{{ urlParams.idDisp }}",
-                    idClie: "{{ urlParams.idClie }}",
-                    estado: "{{ urlParams.estado }}"
-            };
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ base_url() }}/js/jquery.tableFilter.js"></script>
 
-        </script>
-        <script src="{{ base_url() }}/js/informeMovDispenser.js"></script>
-    {% endblock %}
+    <script>
+        var global_ordenainforme = "{{ path_for('repartos.ordenainforme') }}";
+        var global_datamovimdisp = "{{ path_for('repartos.datamovimdisp') }}";
+        var global_buscardisp = "{{ path_for('productos.dispenser.buscar') }}";
+        //var global_imprimeinforme = "{{ path_for('repartos.imprimeinforme') }}";
+        var global_buscarcliente 
+        // Objeto con los parametros de opciones y filtros
+        var _urlParams = {
+                column: "{{ urlParams.column }}",
+                 orden: "{{ urlParams.orden }}",
+              ordFecha: "{{ urlParams.ordFecha }}",
+                 desde: "{{ urlParams.desde }}",
+                 hasta: "{{ urlParams.hasta }}",
+                idDisp: "{{ urlParams.idDisp }}",
+                idClie: "{{ urlParams.idClie }}",
+                estado: "{{ urlParams.estado }}"
+        };
+
+    </script>
+    <script src="{{ base_url() }}/js/informeMovDispenser.js"></script>
 {% endblock %}

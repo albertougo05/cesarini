@@ -29,7 +29,7 @@ class VisitasSegunGuiaController extends Controller
 	public function visitasSegunGuia($request, $response)
 	{
 	    date_default_timezone_set("America/Buenos_Aires");
-	    $listaGuiaRep = $this->RepartosBuscarGuiaController->listaParaBuscarGuiaRep();
+	    $listaGuiaRep = $this->RepartosBuscarGuiaController->listaParaBuscarGuiaRep('visitas');
 
 		$datos = array( 'titulo'     => 'Cesarini - Listado Visitas',
 						'fechaDesde' => date("Y-m-d",strtotime(date('Y-m-d')."- 1 month")),

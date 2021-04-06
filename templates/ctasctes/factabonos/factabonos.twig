@@ -170,34 +170,34 @@
 	  </div>
 	</div>
 
-	{% block javascript %}
-		{{ parent() }}
+{% endblock %}
 
-		<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
-		<script src="{{ base_url() }}/js/jquery.inputmask.bundle.min.js"></script>
-		<script src="{{ base_url() }}/js/toastr.min.js"></script>
+{% block javascript %}
+	{{ parent() }}
 
-		<script type="text/javascript">
+	<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+	<script src="{{ base_url() }}/js/jquery.inputmask.bundle.min.js"></script>
+	<script src="{{ base_url() }}/js/toastr.min.js"></script>
 
-			// Variable global
-			var FACTABONO = {
-				// Variables de path
-				productosClie:    "{{ path_for('ctasctes.factabonos.productos') }}",
-				confirmComprob:   "{{ path_for('ctasctes.factabonos.confirmcomprob') }}",
-				resumenDetallado: "{{ path_for('ctasctes.verresumendetallado') }}",
-				clientesGuiaRep:  "{{ path_for('ctasctes.factabonos.clientesguiarep') }}",
-				pathFechaPeriodo: "{{ path_for('ctasctes.factabonos.fechaperiodo') }}",
-				pathClientesAbono: "{{ path_for('ctasctes.factabonos.clientesabono') }}",
-				fechaDesde:       "{{ fechaDesde }}",
-				fechaHasta:       "{{ fechaHasta }}",
-				periodoFac:       "{{  periodo }}",
-				fechaActual:      "{{  fechaActual }}",
-			};
+	<script type="text/javascript">
 
-		</script>
+		// Variable global
+		var FACTABONO = {
+			// Variables de path
+			productosClie:    "{{ path_for('ctasctes.factabonos.productos') }}",
+			confirmComprob:   "{{ path_for('ctasctes.factabonos.confirmcomprob') }}",
+			resumenDetallado: "{{ path_for('ctasctes.verresumendetallado') }}",
+			clientesGuiaRep:  "{{ path_for('ctasctes.factabonos.clientesguiarep') }}",
+			pathFechaPeriodo: "{{ path_for('ctasctes.factabonos.fechaperiodo') }}",
+			pathClientesAbono: "{{ path_for('ctasctes.factabonos.clientesabono') }}",
+			fechaDesde:       "{{ fechaDesde }}",
+			fechaHasta:       "{{ fechaHasta }}",
+			periodoFac:       "{{  periodo }}",
+			fechaActual:      "{{  fechaActual }}",
+		};
 
-		<script src="{{ base_url() }}/js/factabonos.js?ver=1.2.9"></script>
+	</script>
 
-	{% endblock %}
+	<script src="{{ base_url() }}/js/factabonos.js?ver=1.3.0"></script>
 
 {% endblock %}

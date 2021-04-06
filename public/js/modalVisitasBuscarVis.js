@@ -2,7 +2,7 @@
 // Funciones para el modal de búsqueda de Visitas
 // 
 
-BUSCARVIS = {
+const BUSCARVIS = {
 
 	// Flag para cargar lista por única vez
 	listaCargada: false,
@@ -12,9 +12,10 @@ BUSCARVIS = {
 		let lin = "<tr class='linTablaBuscaVisita' " + "onclick='BUSCARVIS.clickBuscVis(this);'>";
 		lin += "<td class='cellRight'>" + visita.id + "</td>";
 		lin += "<td>" + this.convertirFecha( visita.fecha ) + "</td>";
-		lin += "<td>" + visita.diasem + "</td>";
-		lin += "<td>" + visita.turno + "</td>";
-		lin += "<td class='filter-cell'>" + visita.empleado  +"</td>";
+		//lin += "<td>" + visita.diasem + "</td>";
+		//lin += "<td>" + visita.turno + "</td>";
+		lin += "<td class='celdaNombre filter-cell'>" + visita.nombre + "</td>";
+		lin += "<td class='celdaEmpleado'>" + visita.empleado  +"</td>";
 		lin += "<td class='cellRight'>" + visita.salida.substring(0,5) + "</td>";
 		lin += "<td class='cellRight'>" + visita.retorno.substring(0,5) + "</td>";
 		lin += "<td><div class='custom-control custom-checkbox d-flex align-items-center flex-column'>";
@@ -105,3 +106,35 @@ $('#btnSelecPorId').click(function(event) {
 
 	} else $('#inpSelId').val('');		// Si no es número, vacia el input
 });
+
+// Al seleccionar checkbox de Búsqueda
+function handleClickRadios(radioBtn) {
+
+	const changeFilterCell = cell => {
+
+		switch (cell) {
+			case 'celdaEmpleado':
+				$("td.celdaNombre").toggleClass("filter-cell");
+				$("td." + cell).addClass("filter-cell");
+				break;
+
+			case 'celdaNombre':
+				$("td.celdaEmpleado").toggleClass("filter-cell");
+				$("td." + cell).addClass("filter-cell");
+				break;
+		}
+
+		return null;
+	}
+
+	if (radioBtn.value === 'empleado') {
+		document.getElementById('filter').placeholder='Buscar por empleado...';
+		changeFilterCell('celdaEmpleado');
+
+	} else {
+		document.getElementById('filter').placeholder='Buscar por nombre...';
+		changeFilterCell('celdaNombre');
+	}
+
+
+};

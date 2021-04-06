@@ -3,7 +3,8 @@ const _setupAutonum = {
     allowDecimalPadding: "floats",
     decimalCharacter: ",",
     decimalCharacterAlternative: ".",
-    digitGroupSeparator: "."
+    digitGroupSeparator: ".",
+    emptyInputBehavior: 'null'
 };
 
 // Inicialization input Precio y excedente

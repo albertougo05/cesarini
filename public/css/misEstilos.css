@@ -4,7 +4,7 @@
 
 body {
   background-color: #a8e9fa;
-  background: url('../img/fondo1.jpg') no-repeat center center fixed;
+  background: url('../img/fondo1.jpg') no-repeat center fixed;
   background-size: cover;
   height: 100%;
   /*overflow: hidden;*/
@@ -31,6 +31,7 @@ body {
     cursor: pointer;
     position: fixed;
     display: none;
+    z-index: 100;
 }
 
 .formlogin {
@@ -178,7 +179,7 @@ button#btnAgregarProd {
 }
 
 .buscarMovDisp {
-  margin: 0px 0px 13px;
+  margin: 10px 0px 20px;
   padding: 10px 0px 5px;
   background: #E7E8E9;
   border-radius: 5px; 
@@ -333,4 +334,13 @@ div#enviando {
 
 .columVisitas {
   display: flex;
+}
+
+.linTabBuscarMovDisp {
+  line-height: 0.92;
+  font-size: 0.875em;
+}
+
+table#tablaBuscarMovsDisp tr {
+  cursor: pointer;
 }

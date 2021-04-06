@@ -20,6 +20,7 @@ class RepartosBuscarGuiaController extends Controller
 
 	/**
 	 * Pantalla para seleccionar/buscar Guia de Reparto
+	 * Name: repartos.buscarguiarep
 	 * 
 	 * @param  Request $request  
 	 * @param  Response $response
@@ -28,11 +29,15 @@ class RepartosBuscarGuiaController extends Controller
 	 */
 	public function buscarGuiaDeReparto($request, $response)
 	{
-		$listaGuiaRep = $this->listaParaBuscarGuiaRep();
+		if ($request->getParam('vienede')) {
+			$vienede = $request->getParam('vienede');
+		} else {
+			$vienede = "buscar";
+		}
 
 		$datos = [ 'titulo'   => 'Cesarini - Buscar Guia Rep.',
-			       'guiaReparto' => $listaGuiaRep,
-			       'vienede'     => $request->getParam('vienede') ];
+			       'guiaReparto' => $this->listaParaBuscarGuiaRep($vienede),
+			       'vienede'     => $vienede ];
 
 		return $this->view->render($response, 'repartos/guiadereparto/buscarGuiaRepartoPant.twig', $datos);
 	}
@@ -42,10 +47,15 @@ class RepartosBuscarGuiaController extends Controller
 	 * 
 	 * @return array Lista de guias
 	 */
-	public function listaParaBuscarGuiaRep()
+	public function listaParaBuscarGuiaRep($vieneDe)
 	{
 		$listaGuia = [];
-		$tablaGuiaRep = GuiaReparto::all();
+
+		if ($vieneDe == 'visitas') {
+			$tablaGuiaRep = GuiaReparto::where('Estado', 'Vigente')->get();
+		} else {
+			$tablaGuiaRep = GuiaReparto::all();
+		}
 
 		foreach ($tablaGuiaRep as $value) {
 			$empleado = Empleado::find($value->IdEmpleado);
@@ -54,6 +64,7 @@ class RepartosBuscarGuiaController extends Controller
 			$descActividad = $actividad->Descripcion;
 
 			$listaGuia[] = [ 'id'        => $value->Id,
+							 'nombre'    => $value->Nombre,
 					 		 'dia'       => $value->DiaSemana,
 							 'turno'     => $value->Turno,
 							 'empleado'  => $nomEmpleado,

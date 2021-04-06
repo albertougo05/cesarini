@@ -51,3 +51,7 @@
 	$app->get('/repartos/visitas/infoprodsdebs', 'InformeProductosDebitosVisitasController:infoProdsDebs')->setName('repartos.visitas.infoprodsdebs');
 	# Repartos / Informe productos y debitos en Visitas
 	$app->get('/repartos/visitas/imprimeinfoprodsdebs', 'InformeProductosDebitosVisitasController:imprimeInfoProdsDebs')->setName('repartos.visitas.imprimeinfoprodsdebs');
+
+# IMPRESION DE RESUMENES DETALLADOS
+	# Repartos / Visitas / Imprime Resumenes detallados
+	$app->get('/repartos/visitas/impresumdetallado', 'ImprimeResumDetalladoController:imprimir')->setName('repartos.visitas.impresumdetallado');

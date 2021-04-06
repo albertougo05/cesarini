@@ -1,21 +1,25 @@
 			<form id="form-guia-reparto" autocomplete="off">
 				<div class="form-row">
+					<div class="form-group col-md-1">
+						<label for="idGuia">Id Guía:</label>
+						<input type="text" class="form-control form-control-sm" id="idGuia" value="{{ data.Id }}" name="idGuia" aria-describedby="idGuia" readonly>
+					</div>
+					<div class="form-group col-md-3">
+						<label for="nombre">Nombre Guía:</label>
+						<input type="text" class="form-control form-control-sm" id="nombre" name="nombre" value="{{ data.Nombre }}">
+					</div>
 					<div class="form-group col-md-2">
-		                <label for="idGuia">Id Guía reparto:</label>
-		                <input type="text" class="form-control form-control-sm" id="idGuia" value="{{ data.Id }}" name="idGuia" aria-describedby="idGuia"  readonly>
-		            </div>
-			    	<div class="form-group col-md-2">
-			      		<label for="diaSemana">Día de la semana</label>
-				        <select id="diaSemana" class="form-control form-control-sm" name="diaSemana">
-				            <option  value='0' {% if data.DiaSemana == '0' %}selected{% endif %}>Seleccione...</option>
-				            <option{% if data.DiaSemana == 'Lunes' %} selected{% endif %}>Lunes</option>
+						<label for="diaSemana">Día de la semana</label>
+						<select id="diaSemana" class="form-control form-control-sm" name="diaSemana">
+							<option  value='0' {% if data.DiaSemana == '0' %}selected{% endif %}>Seleccione...</option>
+							<option{% if data.DiaSemana == 'Lunes' %} selected{% endif %}>Lunes</option>
 							<option{% if data.DiaSemana == 'Martes' %} selected{% endif %}>Martes</option>
-				            <option{% if data.DiaSemana == 'Miercoles' %} selected{% endif %}>Miercoles</option>
-				            <option{% if data.DiaSemana == 'Jueves' %} selected{% endif %}>Jueves</option>
-				            <option{% if data.DiaSemana == 'Viernes' %} selected{% endif %}>Viernes</option>
-				            <option{% if data.DiaSemana == 'Sabado' %} selected{% endif %}>Sabado</option>
-				            <option{% if data.DiaSemana == 'Domingo' %} selected{% endif %}>Domingo</option>
-				        </select>
+							<option{% if data.DiaSemana == 'Miercoles' %} selected{% endif %}>Miercoles</option>
+							<option{% if data.DiaSemana == 'Jueves' %} selected{% endif %}>Jueves</option>
+							<option{% if data.DiaSemana == 'Viernes' %} selected{% endif %}>Viernes</option>
+							<option{% if data.DiaSemana == 'Sabado' %} selected{% endif %}>Sabado</option>
+							<option{% if data.DiaSemana == 'Domingo' %} selected{% endif %}>Domingo</option>
+						</select>
 			    	</div>
 				    <div class="form-group col-md-3">
 				        <label for="idEmpleado">Repartidor</label>
@@ -26,6 +30,9 @@
 					        {% endfor %}
 				        </select>
 				    </div>
+				    <div class="form-group col-md-3"></div>
+			    </div>
+			    <div class="form-row">
 				    <div class="form-group col-md-2">
 				        <label for="turno">Turno</label>
 				        <select id="turno" class="form-control form-control-sm" name="turno">
@@ -34,15 +41,12 @@
 				            <option{% if data.Turno == 'Tarde' %} selected{% endif %}>Tarde</option>
 				        </select>
 				    </div>
-				    <div class="form-group col-md-3"></div>
-			    </div>
-			    <div class="form-row">
-			    	<div class="form-group col-md-2">
-			      		<label for="horaSalida">Hora salida</label>
+			    	<div class="form-group col-md-1">
+			      		<label for="horaSalida">Salida</label>
 			      		<input type="text" class="form-control form-control-sm" id="horaSalida" name="horaSalida"{% if data.HoraSalida != '' %} value="{{ data.HoraSalida[:5] }}"{% endif %}>
 			    	</div>
-			    	<div class="form-group col-md-2">
-			      		<label for="horaRetorno">Hora retorno</label>
+			    	<div class="form-group col-md-1">
+			      		<label for="horaRetorno">Retorno</label>
 			      		<input type="text" class="form-control form-control-sm" id="horaRetorno" name="horaRetorno"{% if data.HoraRetorno != '' %} value="{{ data.HoraRetorno[:5] }}"{% endif %}>
 			    	</div>
 				    <div class="form-group col-md-3">

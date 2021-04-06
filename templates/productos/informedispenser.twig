@@ -214,14 +214,15 @@
 
     {% include 'partes/modalBuscaClie.twig' %}    
 
-    {% block javascript %}
-        {{ parent() }}
-        <script src="{{ base_url() }}/js/jquery.tableFilter.js"></script>
+{% endblock %}
 
-        <script>
-            var global_imprimeinforme = "{{ path_for('productos.infodispimprime') }}";
-        </script>
-        <script src="{{ base_url() }}/js/informedispenser.js"></script>
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ base_url() }}/js/jquery.tableFilter.js"></script>
 
-    {% endblock %}
+    <script>
+        var global_imprimeinforme = "{{ path_for('productos.infodispimprime') }}";
+    </script>
+    <script src="{{ base_url() }}/js/informedispenser.js"></script>
+
 {% endblock %}

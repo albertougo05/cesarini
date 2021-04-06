@@ -23,22 +23,32 @@
 						    <label class="lblFecha pr-2 pt-1" for="fechaHasta">Hasta</label>
 						    <input type="date" class="form-control form-control-sm" id="fechaHasta" name="fechaHasta" value="{{ fechaHasta }}">
 						</div>
-						<div class="col d-md-inline-flex">
+						<div class="col-md-3">
 							<button id="btnActualizar" type="button" class="btn btn-success btn-sm btnModal">Actualizar</button>
 						</div>
 		        	</div>
 
 		    		<div class="row">
-		    			<div class="col-md-4 offset-md-1 mb-0 mt-3">
+		    			<div class="col-md-3 offset-md-1 mb-0 mt-3">
 							<div class="input-group mb-3">
-							  <input id="inpSelId" type="text" class="form-control form-control-sm" placeholder="Id de visita" aria-label="Id Visita" aria-describedby="button-addon2">
+							  <input id="inpSelId" type="text" class="form-control form-control-sm" placeholder="Id visita" aria-label="Id Visita" aria-describedby="button-addon2">
 							  <div class="input-group-append">
 							    <button class="btn btn-sm btn-primary" type="button" id="btnSelecPorId">Seleccionar</button>
 							  </div>
 							</div>
 		    			</div>
-		    			<div class="col-md-4 mb-0 mt-3">
-		    				<input id="filter" class="form-control form-control-sm" type="text" placeholder="Buscar empleado..." autofocus>
+		    			<div class="col-md-4 mb-0 mt-3 ml-4 mr-0 pt-1 pr-0 pl-2">
+			    			<div class="form-check form-check-inline">
+			    				<input class="form-check-input" type="radio" onclick="handleClickRadios(this);" name="radioBuscarPor" id="nombre" value="nombre" checked>
+								<label class="form-check-label" for="nombre">Nombre</label>
+			    			</div>
+			    			<div class="form-check form-check-inline">
+			    				<input class="form-check-input" type="radio" onclick="handleClickRadios(this);" name="radioBuscarPor" id="empleado" value="empleado">
+								<label class="form-check-label" for="nombre">Empleado</label>
+			    			</div>
+			    		</div>
+		    			<div class="col-md-3 mb-0 mt-3 mr-0 pl-0">
+		    				<input id="filter" class="form-control form-control-sm" type="text" placeholder="Buscar por nombre..." autofocus>
 		  				</div>
 					</div>
 					<br />
@@ -49,8 +59,9 @@
 				                    <tr>
 					                    <th scope="col" class="cellRight">ID</th>
 					                    <th scope="col">Fecha</th>
-					                    <th scope="col">Día Sem.</th>
-					                    <th scope="col">Turno</th>
+					                    {# <th scope="col">Día Sem.</th>
+					                    <th scope="col">Turno</th> #}
+					                    <th scope="col">Nombre</th>
 					                    <th scope="col">Empleado</th>
 					                    <th scope="col" class="cellRight">Salida</th>
 					                    <th scope="col" class="cellRight">Retorno</th>

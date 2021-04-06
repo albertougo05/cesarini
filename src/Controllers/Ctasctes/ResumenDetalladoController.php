@@ -65,14 +65,6 @@ class ResumenDetalladoController extends Controller
 			$fechaTransp = $this->ResumenController->calcFechaTransp($request->getParam('desde'), $movsTrans);
 			// Importe transporte
 			$transporte = (count($movsTrans) === 0 ) ? 0 : $movsTrans[count($movsTrans)-1]['Saldo'];
-
-//echo "Array debe transp: <br>";
-//echo "<pre>";
-//print_r($debeTrans);
-//echo "</pre><br>";
-//die('Ver arrays...');
-//echo "Transporte: $transporte <br><br>";
-
 		// Buscar datos del resumen
 			# Movimientos DEBE y HABER
 			$haber = $this->ResumenController->getHaber( false, $request->getParam('idcli'), 
@@ -97,40 +89,12 @@ class ResumenDetalladoController extends Controller
 			$dataDebe = $this->_creaDataDebe( $request->getParam('idcli'), 
 				                      		  $request->getParam('desde'), 
 				                    		  $request->getParam('hasta') );
-
-#echo "Array Debe: <br>";
-#echo "<pre>";
-#print_r($debe);
-#echo "</pre><br><br>";
-#echo "Array dataDebe: <br><pre>";
-#print_r($dataDebe);
-//echo "Array Haber: <br>";
-//echo "<pre>";
-//print_r($haber);
-#echo "</pre><br><br>";
-//die('Ver Resumen...');
-
-
 	    // Datos Visitas
 			$dataVisitas = $this->_datosVisitas( $request->getParam('idcli'), 
 				                    			 $request->getParam('desde'), 
 				                    			 $request->getParam('hasta') );
-
-#echo "Array dataVisitas: <br>";
-#echo "<pre>";
-#print_r($dataVisitas);
-#echo "</pre><br>";
-#die('Ver data visitas...');
-
 	    // Unir todo
 	    $dataResumen = $this->_unirDebeConVisitas($dataDebe, $dataVisitas, $transporte);
-
-//echo "Array dataResumen: <br>";
-//echo "<pre>";
-//print_r($dataResumen);
-//echo "</pre><br>";
-//die('Ver data Resumen...');
-
 		// Período del resumen
 		$periodo = $this->ResumenController->getPeriodoRes($request->getParam('desde'), $request->getParam('hasta'), $resumen);
 		// Movimientos de dispenser de cliente en el periodo

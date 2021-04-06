@@ -164,7 +164,7 @@ VISITAS._onFocusOut = function (elem, input) {
 	let idclie = VISITAS._getIdClie(nombre);
 	let iddom  = VISITAS._getIdDomi(nombre);
 
-//console.log('Valor en focusout: ' + valor + ' - Nombre: ' + nombre);
+	//console.log('Valor en focusout: ' + valor + ' - Nombre: ' + nombre);
 
 	// quito los puntos de miles y cambio las comas por punto decimal
 	valor = valor.replace(".", "");
@@ -175,20 +175,16 @@ VISITAS._onFocusOut = function (elem, input) {
 
 	if (input === 'entr') {
 		VISITAS.prodsDeClies[idx].entr = parseFloat( valor );
-		// sumo las entregas para la pantalla
-		let sumaEntregas = VISITAS._funSumaEntregas();
-		// Actualizo pantalla suma de entregas
-		let str = 'Suma de entregas: $ ';
-		str += VISITAS._currencyFormat(sumaEntregas);
-		$('#divSumaEntr p').text(str);
 
 	} else if (input === 'sald') {
 		VISITAS.prodsDeClies[idx].saldo = parseFloat( valor );
 
 	} else if (input === 'debi') {
 		VISITAS.prodsDeClies[idx].debit = parseFloat( valor );
+	}
 
-	} 
+	// sumo las entregas y productos (feb-2021) para la pantalla
+	VISITAS._funSumaEntregasYProductos();
 }
 
 // Evento onKeyUp para inputs RETIRADOS a cliente... (Envases)
@@ -211,15 +207,32 @@ VISITAS._onKeyUpEnv = function (elem) {
 	}
 }
 
-// Suma de entregas
-VISITAS._funSumaEntregas = function () {
-	let suma = 0;
+// Suma de entregas y productos
+VISITAS._funSumaEntregasYProductos = function () {
+	let sumaEntr  = 0, 
+		sumaHielo = 0,
+		sumaOtros = 0;
+	const codigosHielo = [9, 10, 11, 12, 13, 14];
+	const str = '$ ';
+	let valor = '';
 
 	VISITAS.prodsDeClies.forEach( function (elem) {
-		suma += ( elem['entr'] || 0 );
+		sumaEntr += ( elem['entr'] || 0 );
+
+		if (codigosHielo.includes(parseInt(elem['idpro']))) {
+			sumaHielo += elem['entr'];
+		} else {
+			sumaOtros += elem['entr'];
+		}
 	});
 
-	return suma;
+	// Actualizo pantalla suma de entregas
+	valor = str + VISITAS._currencyFormat(sumaEntr);
+	$('#sumaEntregas').text(valor);
+	valor = str + VISITAS._currencyFormat(sumaHielo);
+	$('#subTotalHielo').text(valor);
+	valor = str + VISITAS._currencyFormat(sumaOtros);
+	$('#subTotalOtros').text(valor);
 }
 
 // Formatea float a string de moneda
@@ -487,6 +500,7 @@ $(document).ready( function () {
 
 		if ( VISITAS.salvaForm ) {
 	    	$('button#btnImprimirVisita').attr('disabled', true);
+	    	$('button#btnImprimirResumenes').attr('disabled', true);
 	    	$('#alertGuardar').slideDown( "slow" ).fadeOut(5000);
 
 	    	// Salir de la visita guardada. Espera 3 segundos
@@ -580,12 +594,21 @@ $(document).ready( function () {
 	});
 
 	$('button#btnImprimirVisita').unbind('click');
+	$('button#btnImprimirResumenes').unbind('click');
 
 	// Click Boton Imprimir
 	$('button#btnImprimirVisita').click(function (event) {
 		let id = $('input#id').val();
 
 		window.open( VISITAS.pathImprimir + '?idvisita=' + id, '_blank');
+	});
+
+	// Click Boton Imprimir Resumenes
+	$('button#btnImprimirResumenes').click(function (event) {
+		const id = $('input#id').val();
+		const desdeHasta = '&desde=' + $('input#fechaDesdeResum').val() + '&hasta=' + $('input#fechaHastaResum').val();
+
+		window.open( VISITAS.pathImprimirResumenes + '?id=' + id + desdeHasta, '_blank');
 	});
 
     // Initializing the typeahead with remote dataset without highlighting

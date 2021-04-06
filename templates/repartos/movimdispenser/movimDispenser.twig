@@ -4,6 +4,7 @@
 		{{ parent() }}
 
 		<link rel="stylesheet" href="{{ base_url() }}/css/jquery-confirm.min.css">
+		<link rel="stylesheet" href="{{ base_url() }}/css/table-scroll.css">
 		<link rel="stylesheet" href="{{ base_url() }}/css/all.css">
 		
 	{% endblock %}	
@@ -151,6 +152,7 @@
 		</div>     {# /.container #}
 
 		{% include 'partes/modalEmpleados.twig' %}
+		{% include 'repartos/movimdispenser/modalBuscar.twig' %}
 
 	{% endblock %}
 
@@ -158,6 +160,7 @@
 		{{ parent() }}
 
 		<script src="{{ base_url() }}/js/jquery-confirm.min.js"></script>
+		<script src="{{ base_url() }}/js/jquery.tableFilter.js"></script>
 		<script type="text/javascript">
 			// Código javascript
 			// 
@@ -166,9 +169,12 @@
 			var global_movimDisp = "{{ path_for('repartos.movimientodispenser') }}";
 			var global_buscarCliente = "{{ path_for('repartos.movimientodispenser.buscarcliente') }}";
 			var global_eliminarMovDisp = "{{ path_for('repartos.movimientodispenser.elimina') }}";
+			var global_buscarMovimDisp = "{{ path_for('repartos.movimientodispenser.buscar') }}";
 			var global_accion = "{{ accion }}";
+			var global_fechaHasta = "{{ fechaHasta }}";
 
 		</script>
-		<script src="{{ base_url() }}/js/movimientodispenser.js?0.3.0"></script>
+		<script src="{{ base_url() }}/js/movimientodispenser.js?ver=0.3.6"></script>
+		<script src="{{ base_url() }}/js/modalBuscarMovimDisp.js?ver=0.0.6"></script>
 
 	{% endblock %}

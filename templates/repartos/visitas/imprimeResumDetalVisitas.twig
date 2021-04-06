@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	    <!-- Required meta tags -->
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<link rel="icon" type="image/png" href="{{ base_url() }}/img/favicon.ico">
+
+	   <!-- Bootstrap CSS -->
+	   <link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/bootstrap.min.css">
+
+		<!-- Mis estilos css -->
+		<link rel="stylesheet" type="text/css" href="{{ base_url() }}/css/estilosPrint.css">
+		<title>{{ titulo }}</title>
+		<style type="text/css">
+			body {
+				font-size: 100%;
+			}
+			.cellRight {
+			  text-align: right;
+			}
+			p#razon {
+				font-size: 1.1em;
+			}
+			p.data {
+				font-size: 0.875em;
+				margin: 1px;
+			}
+			hr.lin {
+				margin: 10px auto;
+			}
+			table#resumen {
+				font-size: 0.875em;
+			}
+			@media all {
+					div.saltopagina{
+					display: none;
+				}
+			}
+			@media print{
+				div.saltopagina{
+					display:block;
+					page-break-before:always;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<div class="container-fluid">
+				<div class="row justify-content-end">
+					<div class="col-xs-3">
+						<button id="btnImprimir" type="button" class="btn btn-primary">Imprimir</button>
+						<button id="btnVolver" type="button" class="btn btn-light mr-1">Volver</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<hr>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		{% for lista in listado %}
+			<div class="container-fluid">
+				<div class="row mb-0">
+					<div class="col-8 pl-4">
+						<p id="razon" class="mb-1">Razón social: <strong>{{ lista.cliente.ApellidoNombre }} - [{{ lista.cliente.Id }}]</strong></p>
+					</div>
+					<div class="col-4 pr-4">
+						<p class="text-right mb-1">Fecha emisión:&nbsp; {{ fecha }}</p>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-4 pl-4">
+						<p class="data">Dirección:&nbsp; {{ lista.cliente.Direccion }}</p>
+					</div>
+					<div class="col-4">
+						<p class="data">Localidad:&nbsp; {{ lista.cliente.Localidad }}</p>
+					</div>
+					<div class="col-3">
+						<p class="data">Celular:&nbsp; {{ lista.cliente.Celular }}</p>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-8 pl-4">
+						<p class="data">Dispensers:&nbsp; {{ lista.dispensers }}</p>
+					</div>
+					<div class="col">
+						<p class="data">Costo Abono: $&nbsp;{{ lista.cliente.CostoAbono|number_format(2, ',', '.')  }}</p>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-8"></div>
+					<div class="col-4 pr-4">
+						<p class="text-right data">Saldo anterior:&nbsp; $ {{ lista.transporte|number_format(2, ',', '.') }} </p>
+					</div>
+				</div>
+
+				<div class="row mt-2">
+					<div class="col pl-4 pr-4">
+						<table id="resumen" class="table table-sm table-hover">
+						  	<tbody>
+								{% for list in lista.resumen %}
+									<tr>
+										<td>{{ list.Fecha|date("d/m/Y") }}</td>
+										<td>{{ list.Comprobante }}</td>
+										<td>{{ list.DiaTurno }}</td>
+										<td>{{ list.Producto }}</td>
+										<td class="cellRight">{{ (list.Stock == 0) ? '' : list.Stock }}</td>
+										<td class="cellRight">{{ (list.Deja == 0) ? '' : list.Deja }}</td>
+										<td class="cellRight">{{ (list.Retira == 0) ? '' : list.Retira }}</td>
+										<td class="cellRight">{{ (list.Debito == 0) ? '' : list.Debito|number_format(2, ',', '.') }}</td>
+										<td class="cellRight">{{ (list.Entrega == 0) ? '' : list.Entrega|number_format(2, ',', '.') }}</td>
+										<td class="cellRight">{{ list.Saldo|number_format(2, ',', '.') }}</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col pl-4">
+						<p class="mt-0 mb-4 data">Saldo del período: &nbsp;$&nbsp; {{ lista.saldoperiodo|number_format(2, ',', '.') }}</p>
+					</div>
+				</div>
+			</div>  {# end container #}
+
+			{%  if loop.index in idxssalto %}
+				<div class="saltopagina"></div>
+			{% endif %}
+
+		{% endfor %}
+
+		<script src="{{ base_url() }}/js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript">
+			// Codigo jQuery
+			$(document).ready(function(){
+
+				// Para boton volver
+				$('#btnVolver').click( function() {
+			    	window.close();
+			    });
+
+				// Boton Imprimir
+				$('#btnImprimir').click( function() {
+                    window.print();
+				});
+			});
+		</script>
+	</body>
+</html>

@@ -115,3 +115,12 @@ table#tabClientes th {   /* Crea el sticky para titulos de tabla clientes con ab
   position: sticky;
   top: 68px;
 }
+
+#btnBuscarGuiaRep #btnBuscarEmp {
+  margin-bottom: 10px;
+}
+
+#btnImprimirResumenes {
+	height: 38px !important;
+	margin-top: 25px;
+}

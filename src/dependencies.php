@@ -169,6 +169,12 @@ $container['utils'] = function ($container) {
         return new \App\Controllers\Repartos\InformeProductosDebitosVisitasController($container);
     };
 
+// Visitas imprime resumenes de cuenta de clientes de una visita
+    $container['ImprimeResumDetalladoController'] = function ($container) {
+
+        return new \App\Controllers\Repartos\ImprimeResumDetalladoController($container);
+    };
+
 // Productos cliente
     $container['ProductosClienteController'] = function ($container) {
 

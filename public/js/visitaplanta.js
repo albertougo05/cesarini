@@ -310,23 +310,17 @@ $(document).ready( function () {
 		let idempl = $('#selectEmpleado').val();
 		let idclie = $('input#idcliente').val();
         let iddom  = $('input#iddomicil').val();
-
-//console.log( "Productos: " + _tablaProductos );
-
+        //console.log( "Productos: " + _tablaProductos );
 		$.get( _pathGuardaVisita, { idemp: idempl, 
                                     idcli: idclie, 
                                     iddom: iddom, 
                                     prods: _tablaProductos } )
 		  	.done(function( data ) {
-
 				//console.log( "Data devuelto: " + data );
-
 				// Id devuelto por AJAX
 				let obj = $.parseJSON(data);
 				_idVisitaParaImp = obj.id;
-
-//console.log( "Id para imp: " + _idVisitaParaImp );
-
+                //console.log( "Id para imp: " + _idVisitaParaImp );
 	    		$('div#enviando').css('display','none');    // Spinner out !
 	    		$('#alertGuardar').slideDown("slow").fadeOut(5000);   // Show cartel Hecho...
 	    		$('#btnImprimir').prop('disabled', false);

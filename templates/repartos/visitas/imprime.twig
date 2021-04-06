@@ -112,13 +112,28 @@
 			</div>
 
 			<div class="row">
-				<div class="col-1"></div>
+				<div class="col-10 offset-1">
+					<hr />
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col offset-1">
+					<p class="font-weight-bold mb-0">Total otros prod: $&nbsp; {{ dataGuia.sumaOtros|number_format(2, ',', '.') }}</p>
+				</div>
+				<div class="col text-center">				
+					<p class="font-weight-bold mb-0">Total Hielo: $&nbsp; {{ dataGuia.sumaHielo|number_format(2, ',', '.') }}</p>
+				</div>
 				<div class="col text-right">
-					<hr>
-					<p class="font-weight-bold pr-4">Total entregas: $&nbsp; {{ dataGuia.entregas|number_format(2, ',', '.') }}</p>
-					<hr>
+					<p class="font-weight-bold mb-0">Total entregas: $&nbsp; {{ dataGuia.entregas|number_format(2, ',', '.') }}</p>
 				</div>
 				<div class="col-1"></div>
+			</div>
+
+			<div class="row">
+				<div class="col-10 offset-1">
+					<hr />
+				</div>
 			</div>
 
 			<div class="row ml-4 mr-4">
@@ -183,13 +198,14 @@
 						        <!-- <th scope="col">Id</th> -->
 						        <th scope="col">Cliente</th>
 						        <!-- <th class="text-center">Orden</th> -->
-						        <th scope="col" style="width: 140px;">Producto</th>
+						        <th scope="col" style="width: 120px;">Producto</th>
 						        <th scope="col" class="cellRight" style="width: 60px;">Stk.Env</th>
 						        <th scope="col" class="cellRight" style="width: 65px;">Venta</th>
 						        <th scope="col" class="cellRight" style="width: 65px;">Envases</th>
 						        <th scope="col" class="cellRight" style="width: 65px;">FacVenc</th>
 								<th scope="col" class="cellRight">Saldo CtaCte</th>
-								<th scope="col" class="cellRight">Entrega</th>
+								<th scope="col" class="cellRight">Entregas</th>
+								<th scope="col" class="cellRight">Débitos</th>
 					    	</tr>
 						</thead>
 						<tbody>
@@ -220,6 +236,9 @@
 									</td>
 									<td class="cellRight">
 										{{ (datcli.entrega == 0) ? '' : datcli.entrega | number_format(2, ',', '.') }}
+									</td>
+									<td class="cellRight">
+										{{ (datcli.debito == 0) ? '' : datcli.debito | number_format(2, ',', '.') }}
 									</td>
 								</tr>
 							{% endfor %}
@@ -269,21 +288,21 @@
 
 		</div>  {# end container #}
 
-		<script src="{{ base_url() }}/js/jquery-3.3.1.min.js"></script>
 		<script type="text/javascript">
-			// Codigo jQuery
-			$(document).ready(function(){
+			// Código JS
+			(function() {
+				// Click en boton Volver
+			   	const btnVolver = document.getElementById('btnVolver');
+			   	btnVolver.addEventListener('click', event => {
+			   		window.close();
+			   	});
 
-				// Para boton volver
-				$('#btnVolver').click( function() {
-			    	window.close();
-			    });
-
-				// Boton Imprimir
-				$('#btnImprimir').click( function() {
-                    window.print();
-				});
-			});
+				// Click en boton Imprimir
+			   	const btnImprimir = document.getElementById('btnImprimir');
+			   	btnImprimir.addEventListener('click', event => {
+			   		window.print();
+			   	});
+			})();
 		</script>
 	</body>
 </html>

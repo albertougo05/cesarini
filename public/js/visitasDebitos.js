@@ -25,10 +25,10 @@ const DEBITOS = {
 
 	// Cuando pierde el foco el input deja...
 	onFocusOut: function (elem) {
-		const codsProdsDebitar = [1, 3, 5, 6, 15, 18];	// Códigos productos a debitar
+		const codsProdsDebitar = [1, 3, 5, 6, 9, 10, 11, 12, 13, 14, 15, 18];	// Códigos productos a debitar (incluye Hielo Feb-2021)
 		const obj = this.setVariables(elem);
 
-			// Si los productos son soda y agua destilada...
+			// Si los productos son soda, agua destilada y hielo (feb-2021)...
 			if (codsProdsDebitar.includes(obj.idprod)) {
 
 				this.debitoComun(obj, 'soda');		// Debito por soda o agua dest

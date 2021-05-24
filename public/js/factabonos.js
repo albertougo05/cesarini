@@ -20,9 +20,32 @@ toastr.options = {
 }
 
 //
+/** Funcionamiento boton UpScroll  **/
+// 
+const _botonUp = document.getElementById("scrollUp");
+
+_botonUp.addEventListener("click", function () {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+});
+// When the user scrolls down 300px from the top of the document, show the button
+window.onscroll = function() {
+    if (document.body.scrollTop > 280 || document.documentElement.scrollTop > 280) {
+        //$('#scrollUp').show();
+         _botonUp.style.display = "block";
+    } else {
+        //$('#scrollUp').hide();
+         _botonUp.style.display = "none";
+    }    
+};
+/** end **/
+
+
+//
 // Variable global
 //
 FACTABONO.clientesCargados = false;
+FACTABONO.idsClieSelecParaResumen = [];
 
 FACTABONO.inputmaskImportes = function () {
 	$('input.nroFloat').inputmask("numeric", {
@@ -41,6 +64,9 @@ FACTABONO.inputmaskImportes = function () {
 
 // Convierte string '1250.25' A '$ 1.250,25'
 FACTABONO.strToCurrency = function (num) {
+  if (num === "" || num === null)
+    return num;
+
   num = num.replace('.', '');
   num = num.replace(',', '.');
   num = parseFloat(num);
@@ -59,18 +85,22 @@ FACTABONO.clickConfirm = function (elem) {
 	const idcli   = elem.name;
 	const idelem  = elem.id;
 	const importe = $('#input_' + idcli).val();
-	const boton  = document.querySelector('#btnVerProd_' + idcli);
-	const firma  = boton.dataset.name;	    
+  const boton  = document.querySelector('#btnVerProd_' + idcli);
+  const firma  = boton.dataset.name;
 
+/*  if (importe == 0 || importe == "0") {
+    toastr["error"]("Debe ingresar importe !!", "Abono: " + firma);
+    return null;
+  } */
+
+  const fecha  = $('input#fechaActual').val();
 	const data = { idcli:   idcli,
 				         firma:   firma,
+                 fecha:   fecha,
 				         periodo: this.periodoFac,
 				         desde:   this.fechaDesde,
 				         hasta:   this.fechaHasta,
 				         importe: importe };
-
-//console.log('Id CLIENTE: ' + idcli + ' - Firma: ' + firma + ' - Periodo: ' + this.periodoFac + ' - Importe: ' + importe);
-//console.log(data);
 
   $.ajax(     // Generar comprobante con valor abono
   {   
@@ -103,12 +133,10 @@ FACTABONO.clickProds = function (elem) {
 
 	$('#tituloModal').html("<strong>" + idcli + " - " + nombre + "</strong>");    //Cambio nombre del cliente en modal
 	$('#listaProds').empty();          // Vacio el <ul>
-	//console.log('Id: ' + idcli + ' - Nombre: ' + nombre);
 
 	pedidoAjax = this.buscarProdsViaAjax(idcli);	// Traer productos por ajax
 
 	pedidoAjax.done(function( data ) {
-		//console.log('Data: ' + data );
 		$('#listaProds').append(data);	   // Agregar lista de productos al modal
 		$('#modalCant').modal('show');    // Mostrar los productos dejado por las visitas
 	});
@@ -119,15 +147,9 @@ FACTABONO.acionesConfirma = function (idElem, idCli) {
 	let htmlElem = document.getElementById(idElem).parentElement.previousSibling.previousSibling;
 	const valInput = $('#input_' + idCli).val();
 
-//console.log('Id Elemento: ' + idElem);
-//console.log('Val input: ' + valInput);
-
 	curValInput = this.strToCurrency(valInput);
-//console.log('Currency: ' + curValInput);
-	$('#input_' + idCli).parent().html(curValInput);	// Cambiar input por importe ingresado...
 
-//console.log('html elem index: ' + htmlElem.cellIndex);
-//console.log('Index row: ' + htmlElem.parentNode.rowIndex);
+	$('#input_' + idCli).parent().html(curValInput);	// Cambiar input por importe ingresado...
 
 	htmlElem.setAttribute("class", "text-center"); 	// Cartel de SI 
 	htmlElem.innerHTML = "<h5><span class='badge badge-success'> SI </span></h5>";
@@ -167,8 +189,6 @@ FACTABONO.poblarTablaClientes = function (idguia) {
 		              periodo: this.periodoFac,
                   desde:   this.fechaDesde,
                   hasta:   this.fechaHasta };
-
-//console.log('poblar...');
 
   if (idguia === 0) {
     url = this.pathClientesAbono;
@@ -211,10 +231,19 @@ FACTABONO.dibujarLineasTabla = function (data) {
 	    importeFact = '';
 
 	data.forEach(o => {
+      //linea += `<tr><td>${o.Id}</td>`;
+      linea += `<tr>`;
+      linea += `<td><div class="custom-control custom-checkbox text-center ml-2">`;
+      linea += `<input type="checkbox" class="custom-control-input" id="${o.Id}" onclick="FACTABONO.clickCheckbox(this);">`;
+      linea += `<label class="custom-control-label" for="${o.Id}"></label>`;
+      linea += `</div></td>`;
+
       if (o.Observaciones.length > 0) {
-          linea += `<tr><td>${o.ApellidoNombre} - (${o.Id }) <small>${o.Direccion}, ${o.Localidad}</small> &nbsp; <span class="badge badge-dark" data-toggle="tooltip" data-placement="top" title="${o.Observaciones}">Obs</span></td>`;
+          //linea += `<tr><td>${o.ApellidoNombre} - (${o.Id }) <small>${o.Direccion}, ${o.Localidad}</small> &nbsp; <span class="badge badge-dark" data-toggle="tooltip" data-placement="top" title="${o.Observaciones}">Obs</span></td>`;
+          linea += `<td>${o.ApellidoNombre} - (${o.Id }) <small>${o.Direccion}, ${o.Localidad}</small> &nbsp; <span class="badge badge-dark" data-toggle="tooltip" data-placement="top" title="${o.Observaciones}">Obs</span></td>`;
       } else {
-          linea += `<tr><td>${o.ApellidoNombre} - (${o.Id }) <small>${o.Direccion}, ${o.Localidad}</small></td>`;
+          //linea += `<tr><td>${o.ApellidoNombre} - (${o.Id }) <small>${o.Direccion}, ${o.Localidad}</small></td>`;
+          linea += `<td>${o.ApellidoNombre} - (${o.Id }) <small>${o.Direccion}, ${o.Localidad}</small></td>`;
       }
       linea += `<td>${o.Dispensers}</td>`;
       linea += `<td class="cellRight">${o.cantBx12}</td>`;
@@ -242,6 +271,7 @@ FACTABONO.dibujarLineasTabla = function (data) {
       linea += `<td class="text-center pl-0 pr-0">`;
       linea += `<button type="button" id="btnVerDetal_${o.Id}" onclick="FACTABONO.clickDetallado(this);" name="${o.Id}" class="btn btn-info btn-sm ml-1 mr-1" data-toggle="tooltip" data-placement="top" title="Ver resumen detallado"><i class="fas fa-list-ul"></i></button>`;
       linea += `</td>`;
+      linea += `</tr>`;
 
       $('#tabBody').append(linea);
       linea = ``;
@@ -267,8 +297,10 @@ FACTABONO.cambiarFechaPeriodo = function (fecha) {
     $('#h4Periodo').text( data.periodo );
     FACTABONO.periodoFac = data.periodo;
     $('#fechaDesde').val(data.desde);
+    $('#fechaDesdeResum').val(data.desde);
     FACTABONO.fechaDesde = data.desde;
     $('#fechaHasta').val(data.hasta);
+    $('#fechaHastaResum').val(data.hasta);
     FACTABONO.fechaHasta = data.hasta;
     FACTABONO.recargarTablaClientes( Number( $('#selGuiaReparto').val() ) );
   });
@@ -284,6 +316,37 @@ FACTABONO.recargarTablaClientes = function (id) {
   this.poblarTablaClientes(id);
 }
 
+FACTABONO.clickCheckbox = function (elem) {
+  const checkBox = document.getElementById(elem.id);
+
+  if (checkBox.checked == true){
+    //console.log('Checked !');
+    FACTABONO.idsClieSelecParaResumen.push(elem.id);
+  } else {
+    //console.log('Not checked');
+    FACTABONO.idsClieSelecParaResumen = FACTABONO.idsClieSelecParaResumen.filter(item => item !== elem.id);
+  }
+
+  FACTABONO.toggleBotonResumenes();
+}
+
+FACTABONO.toggleBotonResumenes = function () {
+  const btnRes = document.getElementById('btnImprimirResumenes');
+  const desde  = document.getElementById('fechaDesdeResum');
+  const hasta  = document.getElementById('fechaHastaResum');
+
+  if (FACTABONO.idsClieSelecParaResumen.length == 0) {
+    btnRes.disabled = true;
+    desde.disabled = true;
+    hasta.disabled = true;
+  } else {
+    if (FACTABONO.idsClieSelecParaResumen.length == 1) {
+      btnRes.disabled = false;
+      desde.disabled = false;
+      hasta.disabled = false;
+    }
+  }
+}
 
 
 
@@ -300,26 +363,10 @@ $(function () {
   $('#fechaActual').focus();
 
   // Al cambiar la fecha de facturación...
-  $('#fechaActual').change( function(event) {
+  $('#fechaAbono').change( function(event) {
     // Evitar dos llamadas
     event.stopImmediatePropagation();
     FACTABONO.cambiarFechaPeriodo( $(this).val() );
-  });
-
-  // Boton de ir arriba
-  $('#scrollUp').click( function () {
-    $('body, html').animate({
-      scrollTop: '0px'
-    }, 300);
-  });
-
-  // Para chequear scroll para boton ir arriba
-  $(window).scroll( function () {
-    if( $(this).scrollTop() > 0 ) {
-      $('#scrollUp').show();
-    } else {
-      $('#scrollUp').hide();
-    }
   });
 
   // Habilito los tooltip
@@ -334,12 +381,22 @@ $(function () {
 	$('#selGuiaReparto').change(function(event) {
     event.preventDefault();
     event.stopImmediatePropagation();
-    // Si es 0 recargo la página
-    //if ($(this).val() === '0') {
-    // 	window.location.assign(location.href);
-    //}
-    FACTABONO.recargarTablaClientes( Number($(this).val()) )    
+
+    // Vacio la lista de ids clientes para resumen
+    FACTABONO.idsClieSelecParaResumen = [];
+    // Disabled botón imprimir resumen y fechas
+    FACTABONO.toggleBotonResumenes();
+    FACTABONO.recargarTablaClientes( Number($(this).val()) );
+    $('#tituloClientesConAbono').text('Clientes Guía de Reparto');
+    $('#tableCaption').text('Clientes Guía de Reparto');
 	});
 
+  // Click en boton imprimir resúmenes
+  $('#btnImprimirResumenes').click( function (e) {
+    const ids = FACTABONO.idsClieSelecParaResumen.join('-');
+    const desdeHasta = '&desde=' + $('input#fechaDesdeResum').val() + '&hasta=' + $('input#fechaHastaResum').val();
+
+    window.open( FACTABONO.pathImprimResumen + '?ids=' + ids + desdeHasta, '_blank');
+  });
 
 });

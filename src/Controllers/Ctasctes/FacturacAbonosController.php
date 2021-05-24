@@ -94,13 +94,12 @@ class FacturacAbonosController extends Controller
 	{
 		$status = 'Error';
 
-		if ( $_SESSION['IdFactAbonos'] === "factAbonos@".date('Y-m-d') ) {
-			# Validar por session id...
-			date_default_timezone_set("America/Buenos_Aires");
-			$fecha = date('Y-m-d');
+		if ( $_SESSION['IdFactAbonos'] === "factAbonos@".date('Y-m-d') ) { # Valida por session id...
+			//date_default_timezone_set("America/Buenos_Aires");
+			//$fecha = date('Y-m-d');
 			$nroComp = $this->_getNroComprob('FA', 'B');
 
-			$datos = [ 'Fecha'          => $fecha,
+			$datos = [ 'Fecha'          => $request->getParam('fecha'),
 					   'TipoForm'       => 'FA', 
 					   'Tipo'           => 'B', 
 					   'Sucursal'       => 1,
@@ -144,14 +143,87 @@ class FacturacAbonosController extends Controller
 	}
 
 	/**
-	 * Devuelve clientes con abono de una guia de reparto
+	 * Devuelve clientes de una guia de reparto
 	 * Name: ctasctes.factabonos.clientesguiarep (GET)
+	 *
+	 * CAMBIO de Abril 2021, van todos los clientes de la GR
 	 * 
 	 * @param  Request $request
 	 * @param  Response $response
 	 * @return json
 	 */
 	public function clientesGuiaRep($request, $response)
+	{
+		$clientes = [];
+		// Obtengo los registros de la tabla
+		$clieGuiaRep = ClienteReparto::distinct()
+									 ->select('IdCliente', 'OrdenVisita')
+									 ->where('IdReparto', $request->getParam('idguia'))
+									 ->orderBy('OrdenVisita')
+									 ->get();
+		//echo "<pre>"; print_r($clieGuiaRep->toArray()); echo "</pre><br>"; die('Ver clientes...');
+	    foreach ($clieGuiaRep as $value) {
+	    	// Busco el cliente
+	    	$cliente = Cliente::find($value->IdCliente);
+
+			if ($cliente) {		// Si el cliente existe...
+
+				if ($cliente->CostoAbono > 0) {
+					// Compruebo si tiene facturado ese periodo...
+		    		$comp = Comprobante::where([ ['IdCliente', '=', $value->IdCliente], 
+		                                     	 ['PeriodoFact', '=', $request->getParam('periodo')] ])
+		    	                   	   ->first();
+			    	if ($comp) {
+			    		$periodoFact = 'si';
+			    		$importe = $comp->Total;
+
+			    	} else {
+
+			    		$periodoFact = 'no';
+			    		$importe = '';
+			    	}
+
+			    } else {
+
+			    	$periodoFact = 'no';
+			    	$importe = '';
+			    }
+
+			    $periodo = ['desde' => $request->getParam('desde'), 'hasta' => $request->getParam('hasta')];
+		    	$cantBx20   = $this->_cantBidones(7, $cliente->Id, $periodo);		// cant bidones x 20 lts. (id 7)
+		    	$cantBx12   = $this->_cantBidones(8, $cliente->Id, $periodo);		// cant bidones x 12 lts. (id 8)
+		    	$dispensers = $this->utils->stringDispensersClie($value->IdCliente);// String con dispensers
+
+		    	# Armo el registro del cliente
+		 		$clientes[] = array( 'Id' => $cliente->Id, 
+		 							 'ApellidoNombre' => $cliente->ApellidoNombre, 
+		 							 'Direccion'      => $cliente->Direccion,		//$dataDomicil
+		 							 'Localidad'      => $cliente->Localidad, 	//$dataDomicil
+		 							 'Observaciones'  => $cliente->Observaciones === null ? '' :  $cliente->Observaciones,
+		 							 'Dispensers'     => $dispensers,
+	 								 'cantBx20'       => $cantBx20,
+	 								 'cantBx12'       => $cantBx12,
+		 							 'CostoAbono'     => $cliente->CostoAbono === null ? '' : $cliente->CostoAbono,
+		 							 'PeriodoFact'    => $periodoFact,
+		 							 'ImporteFact'    => $importe );
+		 	}
+	 	}
+		#echo "<pre>"; print_r($clientes); echo "</pre><br>"; die('Ver ...');
+
+		return json_encode($clientes);
+	}
+
+	/**
+	 * Devuelve clientes con abono de una guia de reparto
+	 * Name: ctasctes.factabonos.clientesguiarep (GET)
+	 *
+	 * CAMBIO de Abril 2021, por que quiere todos los clientes de la GR
+	 * 
+	 * @param  Request $request
+	 * @param  Response $response
+	 * @return json
+	 */
+	public function clientesGuiaRep_old($request, $response)
 	{
 		$clientes = [];
 		// Obtengo los registros de la tabla  //  select('IdCliente')
@@ -170,11 +242,8 @@ class FacturacAbonosController extends Controller
 								->first();
 
 			if ($cliente) {			// Si el cliente existe...
-
-			#echo "Cliente con abono: $cliente->Id - $cliente->ApellidoNombre <br>";
-
+				#echo "Cliente con abono: $cliente->Id - $cliente->ApellidoNombre <br>";
 				//$dataDomicil = ClienteDomicilio::find($value->IdClienteDomicilio);
-
 				// Compruebo si tiene facturado ese periodo...
 	    		$comp = Comprobante::where([ ['IdCliente', '=', $value->IdCliente], 
 	                                     	 ['PeriodoFact', '=', $request->getParam('periodo')] ])
@@ -207,8 +276,7 @@ class FacturacAbonosController extends Controller
 		 	}
 	 	}
 
-#echo "<pre>"; print_r($clientes); echo "</pre><br>"; die('Ver ...');
-
+		#echo "<pre>"; print_r($clientes); echo "</pre><br>"; die('Ver ...');
 	 	// Ordeno por ApellidoNombre
 		//usort($clientes, array($this,'_ordenoArray'));
 
@@ -299,7 +367,7 @@ class FacturacAbonosController extends Controller
     {
     	$clientes = [];
 		$clientesDB = Cliente::where([ ['CostoAbono', '>', 0], 
-	                                   ['Estado', '=', 'Activo'] ])
+		                               ['Estado', '=', 'Activo'] ])
 							 ->orderBy('ApellidoNombre', 'asc')
 			            	 ->get();
 

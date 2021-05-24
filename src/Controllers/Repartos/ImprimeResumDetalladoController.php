@@ -16,7 +16,6 @@ use App\Controllers\Controller;
  */
 class ImprimeResumDetalladoController extends Controller
 {
-
 	/**
 	 * Muestra el resumen detallado
 	 * Name: 'repartos.visitas.impresumdetallado'
@@ -34,8 +33,14 @@ class ImprimeResumDetalladoController extends Controller
 	    $dataResumen = [];	// Donde van a ir los arrays de cada resumen
 	    $fechaDesde = $request->getParam('desde');
 	    $fechaHasta = $request->getParam('hasta');
-	    // Con Id de la visita busco el array de ids de clientes de la visita
-	    $idsClientesVisita = $this->_buscarIdsClientesVisita($request->getParam('id'));
+
+	    if ( $request->getParam('id') !== null ) {
+		    // Con Id de la visita busco el array de ids de clientes de la visita
+		    $idsClientesVisita = $this->_buscarIdsClientesVisita($request->getParam('id'));	    	
+	    } else {
+	    	// Los ids vienen en la variable ids
+	    	$idsClientesVisita = explode("-", $request->getParam('ids'));
+	    }
 
 		foreach($idsClientesVisita as $idcli) {
 			$resumenClie = $this->_armarResumenCliente($idcli, $fechaDesde, $fechaHasta);
@@ -47,10 +52,8 @@ class ImprimeResumDetalladoController extends Controller
 
 		$datos = [ 'titulo'     => 'Cesarini - Visitas Resúmenes Detallado',
 				   'fecha'      => $fecha,
-				   'fechatrans' => $fechaTransp,
-				   'transporte' => $transporte,
-				   'dispensers' => $dispensers,
 				   'listado'    => $dataResumen,
+				   'fechaHasta' => $fechaHasta,
 				   'idxssalto'  => $idxsSaltoPag ];
 
 	    return $this->view->render($response, 'repartos/visitas/imprimeResumDetalVisitas.twig', $datos);
@@ -100,8 +103,8 @@ class ImprimeResumDetalladoController extends Controller
 	private function _datosVisitas($id, $desde, $hasta)
 	{
 		$data = [];
-		$sql2 = "SELECT visi.Fecha, ";
-		$sql2 = $sql2."CONCAT('Reparto/Visita - ', visi.Id) AS Comprobante, ";
+		$sql2 = "SELECT visi.Fecha, cant.IdDomicilio, ";
+		$sql2 = $sql2."CONCAT(cd.Direccion, ' - ', visi.Id) AS Comprobante, ";
 		$sql2 = $sql2."CONCAT(guia.DiaSemana, '-', guia.Turno) AS DiaTurno, ";
 		$sql2 = $sql2."prod.Descripcion AS Producto, cant.CantStock AS Stock, ";
 		$sql2 = $sql2."cant.CantDejada AS Deja, cant.CantRetira AS Retira, ";
@@ -111,14 +114,14 @@ class ImprimeResumDetalladoController extends Controller
 		$sql2 = $sql2."LEFT JOIN GuiaRepartos AS guia ON visi.IdGuiaReparto = guia.Id ";
     	$sql2 = $sql2."LEFT JOIN Productos AS prod ON cant.IdProducto = prod.Id ";
     	$sql2 = $sql2."LEFT JOIN Clientes AS clie ON cant.IdCliente = clie.Id ";
+    	$sql2 = $sql2."LEFT JOIN ClientesDomicilio AS cd ON cant.IdDomicilio = cd.Id ";
     	$sql2 = $sql2."WHERE cant.IdCliente = ";
     	// Agrego Id cliente
     	$sql2 = $sql2 . $id;
     	// Armo where con fechas
 		$sql2 = $sql2 . " AND " . $this->VisitasListadoController->getWhereFechas( $desde, $hasta );
 		$sql2 = $sql2 . " ORDER BY visi.Fecha ASC";
-
-		# Data del cliente...
+		// Obtengo data del cliente...
 		$data = $this->pdo->pdoQuery($sql2);
 
 		return $data;
@@ -171,7 +174,8 @@ class ImprimeResumDetalladoController extends Controller
 			"saldo"      => 0,
 			"resumen"    => [],
 			"dispensers" => [],
-			"saldoperiodo" => 0
+			//"saldoperiodo" => 0
+			"consumoperiodo" => 0
 		];
 
 		$dataResumen2 = [];
@@ -193,8 +197,12 @@ class ImprimeResumDetalladoController extends Controller
 			# Movimientos DEBE y HABER
 			$haber = $this->ResumenController->getHaber(false, $id, $desde, $hasta);
 			$debe  = $this->ResumenController->getDebe(false,  $id, $desde, $hasta);
+
 			# Calcula saldo del periodo
-			$saldoperiodo = $this->_calculoSaldoPeriodo($debe, $haber);
+			//$saldoperiodo = $this->_calculoSaldoPeriodo($debe, $haber);
+
+			# Calcula consumos del período
+			$consumoPeriodo = $this->_calculoConsumoPeriodo($debe);
 			# Junto los movimientos DEBE Y HABER
 			$resumen = $this->ResumenController->juntoMovimientos( $debe, $haber );
 			# Calculo los saldos desde el transporte
@@ -221,7 +229,8 @@ class ImprimeResumDetalladoController extends Controller
 	    $resumenCta['saldo']       = $saldo;
 	    $resumenCta['resumen']     = $dataResumen;
 		$resumenCta['dispensers']  = $dispensers;
-		$resumenCta['saldoperiodo'] = $saldoperiodo;
+		//$resumenCta['saldoperiodo'] = $saldoperiodo;
+		$resumenCta['consumoperiodo'] = $consumoPeriodo;
 
 		return $resumenCta;
 	}
@@ -276,6 +285,17 @@ class ImprimeResumDetalladoController extends Controller
 		}
 
 		return $sumaDebe - $sumaHaber;
+	}
+
+	private function _calculoConsumoPeriodo($debe) 
+	{
+		$sumaDebe = 0;
+
+		foreach ($debe as $value) {
+			$sumaDebe += $value['Importe'];
+		}
+
+		return $sumaDebe;
 	}
 
 }

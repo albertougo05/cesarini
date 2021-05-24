@@ -86,7 +86,7 @@ class VisitasController extends Controller
 	    $fecha                  = date('Y-m-d');
 	    $fechaDesde             = date("Y-m-d", strtotime($fecha."- 60 days")); 
 	    $desdeResum = date("Y-m-d", strtotime($fecha."- 30 days"));
-		$guiaRep['pendiente']   = 1;
+		$guiaRep['pendiente'] = 1;
 
 		$clientes  = $this->_clientesGuiaRep($idGuia, $fecha);		// Clientes de la guia de reparto
 		$ultimOrd  = ( count($clientes) === 0 ) ? 0 : $clientes[count($clientes) - 1]['orden'];		// Saco el ultimo número de orden...
@@ -139,11 +139,12 @@ class VisitasController extends Controller
 		$visita = Visita::find($request->getParam('idvisita'));
 
 		// Chequear si la visita tiene mas de 5 dias de realizada, cambiar pendiente a false
-		if ($this->_checkDiasPendiente($visita)) {
-			$visita->Pendiente = false;
-			Visita::where('Id', $request->getParam('idvisita'))
-					->update(['Pendiente' => false]);
-		}
+		// ANULADO por pedido del 19/04/21
+		//if ($this->_checkDiasPendiente($visita)) {
+		//	$visita->Pendiente = false;
+		//	Visita::where('Id', $request->getParam('idvisita'))
+		//			->update(['Pendiente' => false]);
+		//}
 
     	// Productos de la visita
 		$productos = $this->_productosVisita($request->getParam('idvisita'));
